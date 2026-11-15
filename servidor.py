@@ -73,6 +73,120 @@ ITER = 310_000
 _fallos = {}            # clave -> [intentos, bloqueado_hasta]
 _candado = threading.Lock()
 
+
+# --- memoria: el plan gratuito de Render tiene 512 MB ------------------------------------------
+# smn_server consulta fuentes externas con caché, pero si llegan varias peticiones antes de que la primera
+# termine, cada una descarga por su cuenta. Con los límites de INEGI (11 MB de JSON, ~70 MB en memoria por
+# descarga) eso rebasa los 512 MB. Aquí cada fuente se descarga una sola vez a la vez y los límites se guardan
+# ya serializados y comprimidos (~2 MB) en lugar del objeto completo.
+def _una_a_la_vez(funcion):
+    candado = threading.Lock()
+
+    def envoltura(*a, **k):
+        with candado:
+            return funcion(*a, **k)
+    return envoltura
+
+
+def fetch_smn_ligero():
+    """Igual que smn_server.fetch_smn, pero sin cargar el archivo nacional completo en memoria.
+
+    El SMN (method=3) publica el pronóstico por hora de los ~2,400 municipios del país en un solo archivo
+    comprimido; leerlo entero con json.loads ocupa ~600 MB. Aquí se descomprime por bloques y solo se
+    decodifica cada registro {...} que menciona Guadalajara; la memoria se queda en unos pocos MB."""
+    import zlib
+    from datetime import datetime, timezone
+    import urllib.request
+    req = urllib.request.Request(smn_server.SMN_URL, headers={
+        "User-Agent": "EntornoSeguroGDL/1.0 (SMN municipal forecast integration)",
+        "Accept": "application/json, application/octet-stream;q=0.9, */*;q=0.8",
+        "Accept-Encoding": "gzip, deflate"})
+    filas, resto, dec = [], b"", None
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        enc = (resp.headers.get("Content-Encoding") or "").lower()
+        while True:
+            bloque = resp.read(1 << 20)
+            if dec is None and bloque:
+                if "gzip" in enc or bloque[:2] == b"\x1f\x8b":
+                    dec = zlib.decompressobj(16 + zlib.MAX_WBITS)
+                elif "deflate" in enc or bloque[:1] not in (b"{", b"[", b" ", b"\n", b"\r", b"\xef"):
+                    dec = zlib.decompressobj()
+                else:
+                    dec = False
+            texto = (dec.decompress(bloque) if dec else bloque) if bloque else (dec.flush() if dec else b"")
+            buf = resto + texto
+            ini = 0
+            while True:                         # registros planos {...}: sin llaves anidadas
+                a = buf.find(b"{", ini)
+                if a < 0:
+                    ini = len(buf)
+                    break
+                b = buf.find(b"}", a)
+                if b < 0:
+                    ini = a
+                    break
+                obj = buf[a:b + 1]
+                if b"uadalajara" in obj or b"UADALAJARA" in obj:
+                    try:
+                        filas.append(json.loads(obj.decode("utf-8-sig", "replace")))
+                    except ValueError:
+                        pass
+                ini = b + 1
+            resto = buf[ini:]
+            if not bloque:
+                break
+    hallados = [f for f in filas
+                if smn_server.normalize(f.get("nmun") or f.get("municipio")) == smn_server.MUNICIPALITY_NAME
+                and smn_server.normalize(f.get("nes") or f.get("estado")) == smn_server.STATE_NAME]
+    if not hallados:
+        raise ValueError("El SMN respondió, pero no se encontró Guadalajara, Jalisco en method=3")
+    registros = sorted((smn_server.normalize_record(f) for f in hallados), key=lambda r: r["fecha_hora"] or "")
+    return {"ok": True, "fuente": "Servicio Meteorológico Nacional / CONAGUA", "url_fuente": smn_server.SMN_URL,
+            "estado": "Jalisco", "municipio": "Guadalajara", "periodo": "Pronóstico municipal por hora, hasta 48 horas",
+            "consultado_en": datetime.now(timezone.utc).isoformat(timespec="seconds"), "registros": registros,
+            "stale": False}
+
+
+smn_server.fetch_smn = fetch_smn_ligero
+
+for _n in ("get_forecast", "get_ssn_events", "get_radar_metadata", "get_tectonic_boundaries",
+           "get_goes_metadata", "get_goes_history"):
+    if hasattr(smn_server, _n):
+        setattr(smn_server, _n, _una_a_la_vez(getattr(smn_server, _n)))
+
+_limites = {"gz": None, "crudo": None, "codigo": 502, "t": 0.0}
+_limites_candado = threading.Lock()
+
+
+def _redondea(obj, dec=5):
+    if isinstance(obj, float):
+        return round(obj, dec)
+    if isinstance(obj, list):
+        return [_redondea(x, dec) for x in obj]
+    if isinstance(obj, dict):
+        return {k: _redondea(v, dec) for k, v in obj.items()}
+    return obj
+
+
+def limites_inegi():
+    """Bytes JSON (y gzip) de los límites de INEGI; una sola descarga a la vez, se renueva cada 24 h."""
+    import gzip
+    with _limites_candado:
+        if _limites["crudo"] is not None and time.time() - _limites["t"] < 24 * 3600:
+            return _limites
+        try:
+            datos = _redondea(smn_server.fetch_inegi_boundaries())
+            codigo = 200 if datos.get("ok") else 502
+        except Exception as e:
+            if _limites["crudo"] is not None:
+                return _limites
+            datos, codigo = {"ok": False, "error": str(e)}, 502
+        crudo = json.dumps(datos, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        del datos
+        _limites.update(crudo=crudo, gz=gzip.compress(crudo, 6), codigo=codigo,
+                        t=time.time() if codigo == 200 else 0.0)
+        return _limites
+
 ESQUEMA_USUARIOS = """
 CREATE TABLE IF NOT EXISTS usuarios (
     correo        text PRIMARY KEY,
@@ -392,7 +506,7 @@ class Handler(smn_server.Handler):
         return self._html(txt, codigo)
 
     def send_error(self, code, message=None, explain=None):
-        if urlsplit(self.path).path.startswith("/api/"):
+        if urlsplit(getattr(self, "path", "/") or "/").path.startswith("/api/"):
             return self._json({"ok": False, "error": message or "error"}, code)
         return self._pagina_error(code)
 
@@ -403,7 +517,7 @@ class Handler(smn_server.Handler):
         return self._html(PAGINA_INICIO.replace("__ACCION__", accion))
 
     def do_HEAD(self):
-        return self._json({"ok": True}) if urlsplit(self.path).path == "/salud" else self.send_error(405)
+        return self._json({"ok": True}) if urlsplit(self.path).path in ("/salud", "/") else self.send_error(405)
 
     def do_GET(self):
         u = urlsplit(self.path)
@@ -427,8 +541,21 @@ class Handler(smn_server.Handler):
             return self._json({"ok": True, "login": bool(SECRETO), "correo": s.get("u"), "nombre": s.get("n"),
                                "rol": s.get("r", "admin" if not SECRETO else None), "dependencia": s.get("d")})
         if not ruta.startswith(("/api/bd/", "/api/candidatos", "/api/ordenes", "/api/evidencia/")):
+            if ruta == "/api/limites":
+                lim = limites_inegi()
+                gz = "gzip" in (self.headers.get("Accept-Encoding") or "")
+                cuerpo = lim["gz"] if gz else lim["crudo"]
+                self.send_response(lim["codigo"])
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Cache-Control", "private, max-age=3600")
+                if gz:
+                    self.send_header("Content-Encoding", "gzip")
+                self.send_header("Content-Length", str(len(cuerpo)))
+                self.end_headers()
+                self.wfile.write(cuerpo)
+                return None
             if ruta.startswith("/api/"):
-                return super().do_GET()            # clima, sismos, radar, satélite, límites
+                return super().do_GET()            # clima, sismos, radar, satélite
             if SECRETO and not self._estatico_permitido(ruta):
                 return self.send_error(404)
             if ruta in ("/tablero", "/index.html"):
@@ -528,6 +655,7 @@ def main():
     if SECRETO and DB:
         with con() as c:
             c.execute(ESQUEMA_USUARIOS)
+    threading.Thread(target=limites_inegi, daemon=True).start()   # precarga para que el tablero abra rápido
     srv = ThreadingHTTPServer((a.host, a.port), Handler)
     print(f"Tablero: http://{a.host}:{a.port}/index.html")
     print("Base de datos:", "conectada por DATABASE_URL" if DB else "no configurada (validaciones en el navegador)")
