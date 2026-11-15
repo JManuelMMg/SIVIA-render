@@ -14,7 +14,8 @@ Extiende smn_server.py (clima SMN, GOES, radar, INEGI, SSN, USGS; sin cambios) c
   GET  /api/evidencia/<archivo>        redirige a una liga firmada del bucket (si está configurado)
 
 Seguridad (se activa al definir SESION_SECRETO; en Render es obligatorio):
-  - Todo, incluido el tablero, exige sesión. Solo entran cuentas con correo de un dominio de gobierno
+  - La pantalla de inicio (/) es pública; el tablero (/tablero) y los datos exigen sesión. Solo entran cuentas con
+    correo de un dominio de gobierno o de Gmail
     (GOB_DOMINIOS, por defecto guadalajara.gob.mx,jalisco.gob.mx,gob.mx) dadas de alta por un administrador
     con plataforma/crear_usuario.py. No hay registro abierto.
   - Contraseñas con PBKDF2-SHA256 (310,000 iteraciones y sal propia); sesión firmada con HMAC en cookie
@@ -26,7 +27,7 @@ Seguridad (se activa al definir SESION_SECRETO; en Render es obligatorio):
   - Solo se sirven index.html e img/; el código y los scripts de la carpeta no son descargables.
 
 Credenciales SOLO por variables de entorno, nunca en archivos:
-  DATABASE_URL, SESION_SECRETO, GOB_DOMINIOS, CORREOS_AUTORIZADOS (excepciones: correos exactos separados por coma)
+  DATABASE_URL, SESION_SECRETO, GOB_DOMINIOS, DOMINIOS_PERSONALES (por defecto gmail.com), CORREOS_AUTORIZADOS (excepciones: correos exactos separados por coma)
   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ENDPOINT_URL_S3, AWS_REGION, BUCKET (por defecto "reportbucket")
 Sin SESION_SECRETO y en 127.0.0.1 funciona como antes, para uso local (sin login).
 
@@ -57,6 +58,8 @@ SECRETO = os.environ.get("SESION_SECRETO", "")
 DOMINIOS = [d.strip().lower().lstrip("@") for d in
             os.environ.get("GOB_DOMINIOS", "guadalajara.gob.mx,jalisco.gob.mx,gob.mx").split(",") if d.strip()]
 # Excepciones puntuales (p. ej. el equipo que desarrolla o un asesor externo): correos EXACTOS, nunca dominios.
+# Dominios personales aceptados (solo para cuentas que el administrador da de alta; no hay registro abierto).
+PERSONALES = [d.strip().lower().lstrip("@") for d in os.environ.get("DOMINIOS_PERSONALES", "gmail.com").split(",") if d.strip()]
 EXCEPCIONES = {c.strip().lower() for c in os.environ.get("CORREOS_AUTORIZADOS", "").split(",") if c.strip()}
 HTTPS = os.environ.get("RENDER") is not None or os.environ.get("FORZAR_HTTPS") == "1"
 DURACION = 8 * 3600
@@ -103,7 +106,7 @@ def es_gobierno(correo):
     if correo in EXCEPCIONES:
         return True
     dom = correo.rsplit("@", 1)[-1]
-    return any(dom == d or dom.endswith("." + d) for d in DOMINIOS)
+    return dom in PERSONALES or any(dom == d or dom.endswith("." + d) for d in DOMINIOS)
 
 
 def hash_clave(clave, sal=None):
@@ -177,19 +180,81 @@ h1{margin:0 0 4px;font-size:28px}p{margin:0 0 20px;color:var(--suave);font-size:
 label{display:block;font-size:14px;font-weight:600;margin:14px 0 6px}
 input{width:100%;padding:11px 12px;border:1px solid var(--borde);border-radius:8px;background:var(--fondo);color:var(--texto);font-size:16px}
 button{width:100%;margin-top:22px;padding:12px;border:0;border-radius:8px;background:var(--acento);color:#fff;font-size:16px;font-weight:600;cursor:pointer}
-.error{color:var(--error);font-size:14px;margin:14px 0 0}.nota{margin:20px 0 0;font-size:12px}
+.error{color:var(--error);font-size:14px;margin:14px 0 0}.volver{display:inline-block;margin-bottom:14px;font-size:13px;color:var(--suave);text-decoration:none}.nota{margin:20px 0 0;font-size:12px}
 </style></head><body><main>
-<h1>SIVIA</h1><p>Acceso exclusivo para personal del Gobierno de Guadalajara y de Jalisco.</p>
+<a class="volver" href="/">&larr; Inicio</a>
+<h1>SIVIA</h1><p>Acceso para personal autorizado. Usa tu correo institucional (.gob.mx) o el Gmail que dio de alta el administrador.</p>
 <form method="post" action="/login" autocomplete="on">
 <input type="hidden" name="siguiente" value="__SIG__">
-<label for="correo">Correo institucional</label>
-<input id="correo" name="correo" type="email" required autocomplete="username" placeholder="nombre@guadalajara.gob.mx">
+<label for="correo">Correo</label>
+<input id="correo" name="correo" type="email" required autocomplete="username" placeholder="nombre@guadalajara.gob.mx o @gmail.com">
 <label for="clave">Contraseña</label>
 <input id="clave" name="clave" type="password" required autocomplete="current-password">
 __ERROR__
 <button type="submit">Entrar</button></form>
 <p class="nota">Las cuentas las da de alta el administrador de la plataforma. Cada acceso queda registrado.</p>
 </main></body></html>"""
+
+ESTILO = """<style>
+:root{--fondo:#F5F3EC;--tarjeta:#FBFBF8;--texto:#14302B;--suave:#5A6764;--acento:#1F5C4F;--borde:#D5DBD7;--oro:#E2A229;--rojo:#B8383F}
+@media (prefers-color-scheme:dark){:root{--fondo:#101917;--tarjeta:#18241F;--texto:#E8EEEA;--suave:#A9B8B3;--acento:#5FB39C;--borde:#2D3B36;--rojo:#F08A8F}}
+*{box-sizing:border-box}body{margin:0;background:var(--fondo);color:var(--texto);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--acento)}.boton{display:inline-block;padding:13px 26px;border-radius:10px;background:var(--acento);color:#fff;font-weight:600;text-decoration:none}
+.boton.sec{background:transparent;color:var(--texto);border:1px solid var(--borde)}
+</style>"""
+
+PAGINA_INICIO = """<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>SIVIA · Inicio</title>""" + ESTILO + """
+<style>
+header{background:#14302B;color:#F5F3EC;padding:56px 16px 64px}.cont{max-width:980px;margin:0 auto}
+.ceja{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--oro)}
+h1{margin:0;font-size:clamp(40px,8vw,72px);line-height:1.05}.lema{margin:14px 0 0;font-size:clamp(19px,3vw,26px);max-width:640px}
+.sub{margin:12px 0 28px;color:#CFDDD8;max-width:640px}.acciones{display:flex;gap:12px;flex-wrap:wrap}
+header .boton.sec{color:#F5F3EC;border-color:#4C6A62}
+main{padding:44px 16px 56px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.t{background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px;padding:22px}.t h2{margin:0 0 6px;font-size:18px}
+.t p{margin:0;color:var(--suave);font-size:15px}.t .num{font-size:34px;font-weight:700;color:var(--acento);line-height:1;margin:0 0 8px}
+.cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:0 0 30px}
+footer{border-top:1px solid var(--borde);padding:22px 16px;color:var(--suave);font-size:13px}
+</style></head><body>
+<header><div class="cont"><p class="ceja">Hackathon Jalisco 2026 · Ciudades Inteligentes</p><h1>SIVIA</h1>
+<p class="lema">La ciudad revisa antes de que alguien se lastime.</p>
+<p class="sub">Inspección preventiva con inteligencia artificial del entorno de escuelas, guarderías y hospitales de Guadalajara: detecta fallas en fotos de calle, las asigna a la dependencia que las atiende y las prioriza con el riesgo vial y el pronóstico del SMN.</p>
+<div class="acciones">__ACCION__</div></div></header>
+<main><div class="cont">
+<div class="cifras">
+<div class="t"><p class="num">1,646</p><p>escuelas, guarderías y hospitales en el inventario</p></div>
+<div class="t"><p class="num">494</p><p>órdenes de trabajo priorizadas</p></div>
+<div class="t"><p class="num">127</p><p>detecciones del modelo por validar</p></div>
+<div class="t"><p class="num">5</p><p>dependencias que reciben órdenes</p></div></div>
+<div class="grid">
+<div class="t"><h2>Detecta</h2><p>Un detector YOLO11s propio marca árboles en riesgo, baches y rejillas pluviales en imágenes de calle.</p></div>
+<div class="t"><h2>Prioriza</h2><p>Prioridad = gravedad × impacto × riesgo vial × clima, con datos del INEGI y del SMN.</p></div>
+<div class="t"><h2>Valida</h2><p>Una persona confirma cada detección antes de que se vuelva orden; todo queda en la bitácora.</p></div>
+<div class="t"><h2>Acceso controlado</h2><p>Solo personal autorizado, con roles por dependencia. El tablero y los datos exigen iniciar sesión.</p></div>
+</div></div></main>
+<footer><div class="cont">Datos: DENUE y accidentes de tránsito (INEGI), lluvia y pronóstico (SMN/CONAGUA), imágenes © Mapillary (CC BY-SA 4.0).</div></footer>
+</body></html>"""
+
+PAGINA_ERROR = """<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>SIVIA · __TITULO__</title>""" + ESTILO + """
+<style>body{min-height:100vh;display:grid;place-items:center;padding:16px}
+main{max-width:460px;background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px;padding:34px 28px;text-align:center}
+.codigo{margin:0;font-size:64px;font-weight:700;line-height:1;color:var(--rojo)}h1{margin:12px 0 8px;font-size:24px}
+p{margin:0 0 24px;color:var(--suave)}.acciones{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}</style></head><body>
+<main><p class="codigo">__CODIGO__</p><h1>__TITULO__</h1><p>__MENSAJE__</p>
+<div class="acciones"><a class="boton" href="__LIGA__">__BOTON__</a><a class="boton sec" href="/">Inicio</a></div></main>
+</body></html>"""
+
+ERRORES = {
+    403: ("Acceso no autorizado", "Tu cuenta no tiene permiso para ver esta sección.", "/tablero", "Ir al tablero"),
+    404: ("Página no encontrada", "La dirección no existe o no está disponible.", "/tablero", "Ir al tablero"),
+    405: ("Acción no permitida", "Esta dirección no acepta esa operación.", "/", "Inicio"),
+    429: ("Acceso bloqueado temporalmente",
+          "Hubo demasiados intentos fallidos. Por seguridad, espera 15 minutos e inténtalo de nuevo.", "/login", "Volver al acceso"),
+    500: ("Algo salió mal", "Ocurrió un error inesperado. Intenta de nuevo en unos minutos.", "/", "Inicio"),
+    503: ("Servicio no disponible", "La base de datos no responde en este momento. Intenta de nuevo en unos minutos.", "/", "Inicio"),
+}
 
 BARRA = """<div id="sivia-sesion" style="position:fixed;right:12px;bottom:12px;z-index:9999;background:#14302B;color:#F5F3EC;
 font:13px system-ui,sans-serif;padding:6px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)">
@@ -260,8 +325,8 @@ class Handler(smn_server.Handler):
                 return leer_firma(v)
         return None
 
-    def _login_pagina(self, siguiente="/", error=""):
-        sig = siguiente if siguiente.startswith("/") and not siguiente.startswith("//") else "/"
+    def _login_pagina(self, siguiente="/tablero", error=""):
+        sig = siguiente if siguiente.startswith("/") and not siguiente.startswith("//") else "/tablero"
         msg = f'<p class="error" role="alert">{html.escape(error)}</p>' if error else ""
         return self._html(PAGINA_LOGIN.replace("__SIG__", html.escape(sig)).replace("__ERROR__", msg),
                           401 if error else 200)
@@ -270,10 +335,10 @@ class Handler(smn_server.Handler):
         datos = parse_qs(self._cuerpo_crudo().decode("utf-8", "replace"))
         correo = (datos.get("correo", [""])[0]).strip().lower()
         clave = datos.get("clave", [""])[0]
-        sig = datos.get("siguiente", ["/"])[0]
+        sig = datos.get("siguiente", ["/tablero"])[0]
         llave = f"{correo}|{self._ip()}"
         if bloqueado(llave) or bloqueado(correo):
-            return self._login_pagina(sig, "Demasiados intentos. Espera 15 minutos.")
+            return self._pagina_error(429)
         fila = None
         if CORREO_OK.match(correo) and es_gobierno(correo) and DB:
             try:
@@ -281,7 +346,7 @@ class Handler(smn_server.Handler):
                     fila = c.execute("SELECT nombre, dependencia, rol, hash, activo FROM usuarios WHERE correo = %s",
                                      (correo,)).fetchone()
             except Exception:
-                return self._login_pagina(sig, "La base de datos no responde. Intenta de nuevo.")
+                return self._pagina_error(503)
         if not fila or not fila[4] or not verifica_clave(clave, fila[3]):
             if fila is None:
                 hash_clave(clave)          # mismo tiempo de respuesta exista o no la cuenta
@@ -293,7 +358,7 @@ class Handler(smn_server.Handler):
             c.execute("UPDATE usuarios SET ultimo_acceso = now() WHERE correo = %s", (correo,))
         bitacora("acceso", correo, "inicio", correo, self._ip())
         token = firmar({"u": correo, "n": fila[0], "d": fila[1], "r": fila[2], "exp": int(time.time()) + DURACION})
-        destino = sig if sig.startswith("/") and not sig.startswith("//") else "/"
+        destino = sig if sig.startswith("/") and not sig.startswith("//") and sig != "/" else "/tablero"
         return self._redir(destino, self._cookie(token, DURACION))
 
     def _protegido(self, ruta):
@@ -310,7 +375,7 @@ class Handler(smn_server.Handler):
         return True
 
     def _estatico_permitido(self, ruta):
-        return ruta in ("/", "/index.html") or (ruta.startswith("/img/") and ".." not in ruta)
+        return ruta in ("/tablero", "/index.html") or (ruta.startswith("/img/") and ".." not in ruta)
 
     def _index(self):
         texto = (Path(smn_server.ROOT) / "index.html").read_text(encoding="utf-8")
@@ -320,6 +385,23 @@ class Handler(smn_server.Handler):
             texto = texto.replace("</body>", barra, 1)
         return self._html(texto)
 
+    def _pagina_error(self, codigo, titulo=None, mensaje=None):
+        t, m, liga, boton = ERRORES.get(codigo, ERRORES[500] if codigo >= 500 else ERRORES[404])
+        txt = (PAGINA_ERROR.replace("__CODIGO__", str(codigo)).replace("__TITULO__", html.escape(titulo or t))
+               .replace("__MENSAJE__", html.escape(mensaje or m)).replace("__LIGA__", liga).replace("__BOTON__", boton))
+        return self._html(txt, codigo)
+
+    def send_error(self, code, message=None, explain=None):
+        if urlsplit(self.path).path.startswith("/api/"):
+            return self._json({"ok": False, "error": message or "error"}, code)
+        return self._pagina_error(code)
+
+    def _inicio(self):
+        s = self._sesion() if SECRETO else {"n": "local"}
+        accion = ('<a class="boton" href="/tablero">Ir al tablero</a><a class="boton sec" href="/salir">Cerrar sesión</a>'
+                  if s else '<a class="boton" href="/login">Entrar</a>')
+        return self._html(PAGINA_INICIO.replace("__ACCION__", accion))
+
     def do_HEAD(self):
         return self._json({"ok": True}) if urlsplit(self.path).path == "/salud" else self.send_error(405)
 
@@ -328,14 +410,16 @@ class Handler(smn_server.Handler):
         ruta = u.path
         if ruta == "/salud":
             return self._json({"ok": True})
+        if ruta == "/":
+            return self._inicio()
         if ruta == "/login":
-            if not SECRETO:
-                return self._redir("/")
-            return self._login_pagina(parse_qs(u.query).get("siguiente", ["/"])[0])
+            if not SECRETO or self._sesion():
+                return self._redir("/tablero")
+            return self._login_pagina(parse_qs(u.query).get("siguiente", ["/tablero"])[0])
         if ruta == "/salir":
             if self._sesion():
                 bitacora("acceso", self._sesion()["u"], "salida", self._sesion()["u"], self._ip())
-            return self._redir("/login", self._cookie("", 0))
+            return self._redir("/", self._cookie("", 0))
         if self._protegido(ruta):
             return None
         if ruta == "/api/sesion":
@@ -347,7 +431,7 @@ class Handler(smn_server.Handler):
                 return super().do_GET()            # clima, sismos, radar, satélite, límites
             if SECRETO and not self._estatico_permitido(ruta):
                 return self.send_error(404)
-            if ruta in ("/", "/index.html"):
+            if ruta in ("/tablero", "/index.html"):
                 return self._index()
             return super().do_GET()
         if not DB:

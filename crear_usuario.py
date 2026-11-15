@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from servidor import CORREO_OK, DOMINIOS, ESQUEMA_USUARIOS, ROLES, con, es_gobierno, hash_clave  # noqa: E402
+from servidor import CORREO_OK, DOMINIOS, PERSONALES, ESQUEMA_USUARIOS, ROLES, con, es_gobierno, hash_clave  # noqa: E402
 
 DEPENDENCIAS = {"Parques y Jardines", "Dirección de Pavimentos", "Dirección de Movilidad",
                 "Alumbrado Público / CFE", "Agua y Drenaje (SIAPA)"}
@@ -45,7 +45,7 @@ def pide_clave():
 
 def valida(correo, rol=None, dep=None):
     if not CORREO_OK.match(correo) or not es_gobierno(correo):
-        sys.exit(f"Solo se aceptan correos de gobierno ({', '.join(DOMINIOS)}) o los de CORREOS_AUTORIZADOS.")
+        sys.exit(f"Solo se aceptan correos de gobierno ({', '.join(DOMINIOS)}), de {', '.join(PERSONALES)} o los de CORREOS_AUTORIZADOS.")
     if rol is not None and rol not in ROLES:
         sys.exit(f"Rol inválido. Usa: {', '.join(sorted(ROLES))}.")
     if rol == "dependencia" and dep not in DEPENDENCIAS:
