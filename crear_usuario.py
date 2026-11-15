@@ -45,7 +45,7 @@ def pide_clave():
 
 def valida(correo, rol=None, dep=None):
     if not CORREO_OK.match(correo) or not es_gobierno(correo):
-        sys.exit(f"Solo se aceptan correos de gobierno ({', '.join(DOMINIOS)}).")
+        sys.exit(f"Solo se aceptan correos de gobierno ({', '.join(DOMINIOS)}) o los de CORREOS_AUTORIZADOS.")
     if rol is not None and rol not in ROLES:
         sys.exit(f"Rol inválido. Usa: {', '.join(sorted(ROLES))}.")
     if rol == "dependencia" and dep not in DEPENDENCIAS:

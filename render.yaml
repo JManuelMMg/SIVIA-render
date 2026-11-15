@@ -16,6 +16,8 @@ services:
         generateValue: true
       - key: GOB_DOMINIOS
         value: guadalajara.gob.mx,jalisco.gob.mx,gob.mx
+      - key: CORREOS_AUTORIZADOS
+        sync: false
       - key: DATABASE_URL
         sync: false
       - key: AWS_ENDPOINT_URL_S3

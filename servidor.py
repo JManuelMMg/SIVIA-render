@@ -26,7 +26,7 @@ Seguridad (se activa al definir SESION_SECRETO; en Render es obligatorio):
   - Solo se sirven index.html e img/; el código y los scripts de la carpeta no son descargables.
 
 Credenciales SOLO por variables de entorno, nunca en archivos:
-  DATABASE_URL, SESION_SECRETO, GOB_DOMINIOS
+  DATABASE_URL, SESION_SECRETO, GOB_DOMINIOS, CORREOS_AUTORIZADOS (excepciones: correos exactos separados por coma)
   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ENDPOINT_URL_S3, AWS_REGION, BUCKET (por defecto "reportbucket")
 Sin SESION_SECRETO y en 127.0.0.1 funciona como antes, para uso local (sin login).
 
@@ -56,6 +56,8 @@ BUCKET = os.environ.get("BUCKET", "reportbucket")
 SECRETO = os.environ.get("SESION_SECRETO", "")
 DOMINIOS = [d.strip().lower().lstrip("@") for d in
             os.environ.get("GOB_DOMINIOS", "guadalajara.gob.mx,jalisco.gob.mx,gob.mx").split(",") if d.strip()]
+# Excepciones puntuales (p. ej. el equipo que desarrolla o un asesor externo): correos EXACTOS, nunca dominios.
+EXCEPCIONES = {c.strip().lower() for c in os.environ.get("CORREOS_AUTORIZADOS", "").split(",") if c.strip()}
 HTTPS = os.environ.get("RENDER") is not None or os.environ.get("FORZAR_HTTPS") == "1"
 DURACION = 8 * 3600
 EST_CAND = {"pendiente", "confirmado", "descartado"}
@@ -98,6 +100,8 @@ def s3():
 
 
 def es_gobierno(correo):
+    if correo in EXCEPCIONES:
+        return True
     dom = correo.rsplit("@", 1)[-1]
     return any(dom == d or dom.endswith("." + d) for d in DOMINIOS)
 
@@ -444,7 +448,8 @@ def main():
     print(f"Tablero: http://{a.host}:{a.port}/index.html")
     print("Base de datos:", "conectada por DATABASE_URL" if DB else "no configurada (validaciones en el navegador)")
     print("Bucket:", f"'{BUCKET}' configurado" if s3() else "no configurado")
-    print("Acceso:", f"solo cuentas de gobierno ({', '.join(DOMINIOS)})" if SECRETO else "abierto (solo uso local)")
+    print("Acceso:", f"solo cuentas de gobierno ({', '.join(DOMINIOS)})" + (f" + {len(EXCEPCIONES)} correo(s) autorizado(s)"
+          if EXCEPCIONES else "") if SECRETO else "abierto (solo uso local)")
     print("Presiona Ctrl+C para detener el servidor.")
     try:
         if not a.no_browser:
