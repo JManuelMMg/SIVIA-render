@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIVIA · Mi cuenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/publico/estilo.css">
+<link rel="icon" type="image/png" href="/publico/logo_icono.png">
+<style>
+  .cuenta { padding: 48px 0 80px; }
+  .cuenta .envoltura { max-width: 560px; }
+  .cuenta h1 { font-size: clamp(28px, 3.4vw, 38px); font-stretch: 105%; }
+  .ficha { margin: 22px 0 30px; border-top: 1px solid var(--linea); }
+  .ficha div { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--linea); }
+  .ficha dt { color: var(--suave); } .ficha dd { margin: 0; font-weight: 600; }
+  .cuenta h2 { font-size: 20px; margin: 0 0 6px; font-stretch: 100%; }
+  .cuenta .ayuda { margin: 0 0 18px; color: var(--suave); font-size: 14px; }
+  form { display: grid; gap: 16px; }
+  .ok-msg { margin: 0; padding: 12px 14px; border-radius: var(--radio); border: 1px solid rgba(60, 200, 212, .5); background: rgba(60, 200, 212, .08); color: var(--acento-claro); font-size: 14px; }
+</style>
+</head>
+<body>
+<header class="barra">
+  <div class="envoltura">
+    <a class="marca" href="/" aria-label="SIVIA, inicio"><img src="/publico/logo_icono.png" alt="" width="38" height="34">SIVIA</a>
+    <nav style="margin-left:auto;display:flex;gap:8px">
+      <a class="boton chico sec" href="/tablero">Tablero</a>
+      <a class="boton chico" href="/salir">Salir</a>
+    </nav>
+  </div>
+</header>
+<main class="cuenta">
+  <div class="envoltura">
+    <h1>Mi cuenta</h1>
+    <dl class="ficha">
+      <div><dt>Nombre</dt><dd>__USUARIO__</dd></div>
+      <div><dt>Correo</dt><dd>__CORREO__</dd></div>
+      <div><dt>Rol</dt><dd>__ROL__</dd></div>
+    </dl>
+    <h2>Cambiar contraseña</h2>
+    <p class="ayuda">Usa al menos 12 caracteres, con letras y números. Si el administrador te dio una contraseña inicial, cámbiala aquí.</p>
+    <form id="f" autocomplete="on">
+      <input type="text" name="username" value="__CORREO__" autocomplete="username" hidden>
+      <div class="campo"><label for="actual">Contraseña actual</label><input id="actual" type="password" required autocomplete="current-password"></div>
+      <div class="campo"><label for="nueva">Contraseña nueva</label><input id="nueva" type="password" required minlength="12" autocomplete="new-password"></div>
+      <div class="campo"><label for="otra">Repite la contraseña nueva</label><input id="otra" type="password" required minlength="12" autocomplete="new-password"></div>
+      <p id="msg" role="status" aria-live="polite" hidden></p>
+      <div><button class="boton" type="submit">Guardar contraseña</button></div>
+    </form>
+  </div>
+</main>
+<script>
+const f = document.getElementById("f"), msg = document.getElementById("msg");
+function muestra(txt, ok) { msg.textContent = txt; msg.className = ok ? "ok-msg" : "alerta"; msg.hidden = false; }
+f.addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const actual = document.getElementById("actual").value, nueva = document.getElementById("nueva").value;
+  if (nueva !== document.getElementById("otra").value) return muestra("Las contraseñas nuevas no coinciden.", false);
+  const b = f.querySelector("button"); b.disabled = true;
+  try {
+    const r = await fetch("/api/cuenta/clave", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ actual, nueva }) });
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401 && j.login) return (location.href = "/login?siguiente=/cuenta");
+    if (!j.ok) throw new Error(j.error || "No se pudo cambiar la contraseña.");
+    f.reset(); muestra("Listo: tu contraseña quedó actualizada.", true);
+  } catch (e) { muestra(e.message, false); } finally { b.disabled = false; }
+});
+</script>
+</body>
+</html>
