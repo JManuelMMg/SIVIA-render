@@ -1,0 +1,30 @@
+# Despliegue de SIVIA en Render (Blueprint). Las credenciales NO van aquí: "sync: false" hace que Render
+# las pida en su panel al crear el servicio, y SESION_SECRETO lo genera Render al azar.
+services:
+  - type: web
+    name: sivia
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: python servidor.py --host 0.0.0.0 --port $PORT --no-browser
+    healthCheckPath: /salud
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: SESION_SECRETO
+        generateValue: true
+      - key: GOB_DOMINIOS
+        value: guadalajara.gob.mx,jalisco.gob.mx,gob.mx
+      - key: DATABASE_URL
+        sync: false
+      - key: AWS_ENDPOINT_URL_S3
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        value: us-east-2
+      - key: BUCKET
+        value: reportbucket
