@@ -165,7 +165,7 @@
 <header>
   <div class="brand">
     <h1>SIVIA · Inspección urbana alrededor de escuelas, guarderías y hospitales</h1>
-    <div class="sub">Guadalajara, Jalisco · Prototipo para el Hackathon Jalisco 2026, Reto 01 Ciudades Inteligentes</div>
+    <div class="sub">Guadalajara, Jalisco · Plataforma de inspección preventiva · Hackathon Jalisco 2026, Reto 01 Ciudades Inteligentes</div>
   </div>
   <div class="clima-head">
     <span>Escenario climático</span>
@@ -1037,7 +1037,7 @@ function pintarClima() {
   document.getElementById("climaDatos").innerHTML = r ? [["Temperatura",r.temperatura_c,"°C"],["Lluvia probable",r.probabilidad_lluvia,"%"],["Precipitación",r.precipitacion_mm,"mm"],["Viento",r.viento_kmh,"km/h"],["Ráfagas",r.rafaga_kmh,"km/h"],["Humedad",r.humedad_pct,"%"]].map(([k,v,u])=>`<div><b>${escapar(v == null ? "—" : `${v} ${u}`)}</b><span>${k}</span></div>`).join("") : "";
   document.getElementById("climaActualizado").textContent = climaSMN?.consultado_en ? `Consultado: ${new Date(climaSMN.consultado_en).toLocaleString("es-MX")}${climaSMN.stale ? ` · ${climaSMN.aviso||"dato antiguo"}` : ""}` : "Sin consulta disponible";
   const rows = [...Object.entries(FACTOR_TORMENTA).map(([k,v])=>[k,v,"viento ≥ 40 km/h"]),...Object.entries(FACTOR_LLUVIA).map(([k,v])=>[k,v,"lluvia ≥ 60% o ≥ 5 mm"])].map(([key,value,condition])=>`<div class="stat-row"><span>${escapar(textoCategoria[key]||key)} · ${condition}</span><span>×${escapar(value)}</span></div>`).join("");
-  document.getElementById("factoresClima").innerHTML = `<h2>Factores piloto configurados</h2><p>Umbrales ajustables del prototipo; no son alertas oficiales del SMN.</p>${rows}`;
+  document.getElementById("factoresClima").innerHTML = `<h2>Factores piloto configurados</h2><p>Umbrales ajustables de la plataforma; no son alertas oficiales del SMN.</p>${rows}`;
 }
 
 async function cargarClima() {

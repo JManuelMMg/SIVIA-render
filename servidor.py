@@ -282,97 +282,38 @@ def bitacora(tabla, registro, estado, usuario, nota=None):
         pass
 
 
-PAGINA_LOGIN = """<!doctype html><html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>SIVIA · Acceso</title>
-<style>
-:root{--fondo:#F5F3EC;--tarjeta:#FBFBF8;--texto:#14302B;--suave:#5A6764;--acento:#1F5C4F;--borde:#D5DBD7;--error:#B8383F}
-@media (prefers-color-scheme:dark){:root{--fondo:#101917;--tarjeta:#18241F;--texto:#E8EEEA;--suave:#A9B8B3;--acento:#5FB39C;--borde:#2D3B36;--error:#F08A8F}}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--fondo);
-color:var(--texto);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px}
-main{width:100%;max-width:380px;background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px;padding:32px 28px}
-h1{margin:0 0 4px;font-size:28px}p{margin:0 0 20px;color:var(--suave);font-size:14px}
-label{display:block;font-size:14px;font-weight:600;margin:14px 0 6px}
-input{width:100%;padding:11px 12px;border:1px solid var(--borde);border-radius:8px;background:var(--fondo);color:var(--texto);font-size:16px}
-button{width:100%;margin-top:22px;padding:12px;border:0;border-radius:8px;background:var(--acento);color:#fff;font-size:16px;font-weight:600;cursor:pointer}
-.error{color:var(--error);font-size:14px;margin:14px 0 0}.volver{display:inline-block;margin-bottom:14px;font-size:13px;color:var(--suave);text-decoration:none}.nota{margin:20px 0 0;font-size:12px}
-</style></head><body><main>
-<a class="volver" href="/">&larr; Inicio</a>
-<h1>SIVIA</h1><p>Acceso para personal autorizado. Usa tu correo institucional (.gob.mx) o el Gmail que dio de alta el administrador.</p>
-<form method="post" action="/login" autocomplete="on">
-<input type="hidden" name="siguiente" value="__SIG__">
-<label for="correo">Correo</label>
-<input id="correo" name="correo" type="email" required autocomplete="username" placeholder="nombre@guadalajara.gob.mx o @gmail.com">
-<label for="clave">Contraseña</label>
-<input id="clave" name="clave" type="password" required autocomplete="current-password">
-__ERROR__
-<button type="submit">Entrar</button></form>
-<p class="nota">Las cuentas las da de alta el administrador de la plataforma. Cada acceso queda registrado.</p>
-</main></body></html>"""
+WEB = Path(__file__).resolve().parent / "web"     # plantillas y recursos públicos (inicio, acceso, errores)
+_plantillas = {}
 
-ESTILO = """<style>
-:root{--fondo:#F5F3EC;--tarjeta:#FBFBF8;--texto:#14302B;--suave:#5A6764;--acento:#1F5C4F;--borde:#D5DBD7;--oro:#E2A229;--rojo:#B8383F}
-@media (prefers-color-scheme:dark){:root{--fondo:#101917;--tarjeta:#18241F;--texto:#E8EEEA;--suave:#A9B8B3;--acento:#5FB39C;--borde:#2D3B36;--rojo:#F08A8F}}
-*{box-sizing:border-box}body{margin:0;background:var(--fondo);color:var(--texto);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
-a{color:var(--acento)}.boton{display:inline-block;padding:13px 26px;border-radius:10px;background:var(--acento);color:#fff;font-weight:600;text-decoration:none}
-.boton.sec{background:transparent;color:var(--texto);border:1px solid var(--borde)}
-</style>"""
 
-PAGINA_INICIO = """<!doctype html><html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>SIVIA · Inicio</title>""" + ESTILO + """
-<style>
-header{background:#14302B;color:#F5F3EC;padding:56px 16px 64px}.cont{max-width:980px;margin:0 auto}
-.ceja{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--oro)}
-h1{margin:0;font-size:clamp(40px,8vw,72px);line-height:1.05}.lema{margin:14px 0 0;font-size:clamp(19px,3vw,26px);max-width:640px}
-.sub{margin:12px 0 28px;color:#CFDDD8;max-width:640px}.acciones{display:flex;gap:12px;flex-wrap:wrap}
-header .boton.sec{color:#F5F3EC;border-color:#4C6A62}
-main{padding:44px 16px 56px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.t{background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px;padding:22px}.t h2{margin:0 0 6px;font-size:18px}
-.t p{margin:0;color:var(--suave);font-size:15px}.t .num{font-size:34px;font-weight:700;color:var(--acento);line-height:1;margin:0 0 8px}
-.cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:0 0 30px}
-footer{border-top:1px solid var(--borde);padding:22px 16px;color:var(--suave);font-size:13px}
-</style></head><body>
-<header><div class="cont"><p class="ceja">Hackathon Jalisco 2026 · Ciudades Inteligentes</p><h1>SIVIA</h1>
-<p class="lema">La ciudad revisa antes de que alguien se lastime.</p>
-<p class="sub">Inspección preventiva con inteligencia artificial del entorno de escuelas, guarderías y hospitales de Guadalajara: detecta fallas en fotos de calle, las asigna a la dependencia que las atiende y las prioriza con el riesgo vial y el pronóstico del SMN.</p>
-<div class="acciones">__ACCION__</div></div></header>
-<main><div class="cont">
-<div class="cifras">
-<div class="t"><p class="num">1,646</p><p>escuelas, guarderías y hospitales en el inventario</p></div>
-<div class="t"><p class="num">494</p><p>órdenes de trabajo priorizadas</p></div>
-<div class="t"><p class="num">127</p><p>detecciones del modelo por validar</p></div>
-<div class="t"><p class="num">5</p><p>dependencias que reciben órdenes</p></div></div>
-<div class="grid">
-<div class="t"><h2>Detecta</h2><p>Un detector YOLO11s propio marca árboles en riesgo, baches y rejillas pluviales en imágenes de calle.</p></div>
-<div class="t"><h2>Prioriza</h2><p>Prioridad = gravedad × impacto × riesgo vial × clima, con datos del INEGI y del SMN.</p></div>
-<div class="t"><h2>Valida</h2><p>Una persona confirma cada detección antes de que se vuelva orden; todo queda en la bitácora.</p></div>
-<div class="t"><h2>Acceso controlado</h2><p>Solo personal autorizado, con roles por dependencia. El tablero y los datos exigen iniciar sesión.</p></div>
-</div></div></main>
-<footer><div class="cont">Datos: DENUE y accidentes de tránsito (INEGI), lluvia y pronóstico (SMN/CONAGUA), imágenes © Mapillary (CC BY-SA 4.0).</div></footer>
-</body></html>"""
+def plantilla(nombre):
+    if nombre not in _plantillas:
+        _plantillas[nombre] = (WEB / nombre).read_text(encoding="utf-8")
+    return _plantillas[nombre]
 
-PAGINA_ERROR = """<!doctype html><html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>SIVIA · __TITULO__</title>""" + ESTILO + """
-<style>body{min-height:100vh;display:grid;place-items:center;padding:16px}
-main{max-width:460px;background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px;padding:34px 28px;text-align:center}
-.codigo{margin:0;font-size:64px;font-weight:700;line-height:1;color:var(--rojo)}h1{margin:12px 0 8px;font-size:24px}
-p{margin:0 0 24px;color:var(--suave)}.acciones{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}</style></head><body>
-<main><p class="codigo">__CODIGO__</p><h1>__TITULO__</h1><p>__MENSAJE__</p>
-<div class="acciones"><a class="boton" href="__LIGA__">__BOTON__</a><a class="boton sec" href="/">Inicio</a></div></main>
-</body></html>"""
+
+PUBLICOS = {"/publico/estilo.css": ("estilo.css", "text/css; charset=utf-8"),
+            "/publico/mapa.svg": ("mapa.svg", "image/svg+xml")}
 
 ERRORES = {
-    403: ("Acceso no autorizado", "Tu cuenta no tiene permiso para ver esta sección.", "/tablero", "Ir al tablero"),
-    404: ("Página no encontrada", "La dirección no existe o no está disponible.", "/tablero", "Ir al tablero"),
+    403: ("Acceso no autorizado", "Tu cuenta no tiene permiso para ver esta sección. Si lo necesitas, pide al administrador que cambie tu rol.", "/tablero", "Ir al tablero"),
+    404: ("Esta página no existe", "La dirección no existe o ya no está disponible. Revisa la liga o vuelve al tablero.", "/tablero", "Ir al tablero"),
     405: ("Acción no permitida", "Esta dirección no acepta esa operación.", "/", "Inicio"),
     429: ("Acceso bloqueado temporalmente",
           "Hubo demasiados intentos fallidos. Por seguridad, espera 15 minutos e inténtalo de nuevo.", "/login", "Volver al acceso"),
     500: ("Algo salió mal", "Ocurrió un error inesperado. Intenta de nuevo en unos minutos.", "/", "Inicio"),
-    503: ("Servicio no disponible", "La base de datos no responde en este momento. Intenta de nuevo en unos minutos.", "/", "Inicio"),
+    503: ("Servicio no disponible", "La base de datos no responde en este momento. Intenta de nuevo en unos minutos.", "/login", "Reintentar"),
 }
+ETIQUETAS = {403: "Acceso denegado", 404: "No encontrado", 405: "No permitido", 429: "Bloqueo de seguridad",
+             500: "Error del servidor", 503: "Sin servicio"}
 
-BARRA = """<div id="sivia-sesion" style="position:fixed;right:12px;bottom:12px;z-index:9999;background:#14302B;color:#F5F3EC;
-font:13px system-ui,sans-serif;padding:6px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.25)">
-__USUARIO__ · __ROL__ · <a href="/salir" style="color:#E2A229">Salir</a></div></body>"""
+BARRA = """<div id="sivia-sesion" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;align-items:center;
+gap:10px;padding:7px 8px 7px 14px;border-radius:999px;background:rgba(8,18,15,.92);border:1px solid #2c4a43;color:#e7f1ec;
+font:500 13px/1.2 system-ui,'Segoe UI',sans-serif;box-shadow:0 12px 28px -12px rgba(0,0,0,.6)">
+<span style="width:8px;height:8px;border-radius:50%;background:#3ee6b0;box-shadow:0 0 0 3px rgba(62,230,176,.18)"></span>
+<span>__USUARIO__ <span style="color:#9db5ad">· __ROL__</span></span>
+<a href="/salir" style="padding:5px 12px;border-radius:999px;border:1px solid #2c4a43;color:#e7f1ec;text-decoration:none">Salir</a>
+</div></body>"""
 
 
 # --- servidor ---------------------------------------------------------------------------------
@@ -441,8 +382,8 @@ class Handler(smn_server.Handler):
 
     def _login_pagina(self, siguiente="/tablero", error=""):
         sig = siguiente if siguiente.startswith("/") and not siguiente.startswith("//") else "/tablero"
-        msg = f'<p class="error" role="alert">{html.escape(error)}</p>' if error else ""
-        return self._html(PAGINA_LOGIN.replace("__SIG__", html.escape(sig)).replace("__ERROR__", msg),
+        msg = f'<p class="alerta" role="alert">{html.escape(error)}</p>' if error else ""
+        return self._html(plantilla("acceso.html").replace("__SIG__", html.escape(sig)).replace("__ERROR__", msg),
                           401 if error else 200)
 
     def _login(self):
@@ -501,8 +442,10 @@ class Handler(smn_server.Handler):
 
     def _pagina_error(self, codigo, titulo=None, mensaje=None):
         t, m, liga, boton = ERRORES.get(codigo, ERRORES[500] if codigo >= 500 else ERRORES[404])
-        txt = (PAGINA_ERROR.replace("__CODIGO__", str(codigo)).replace("__TITULO__", html.escape(titulo or t))
-               .replace("__MENSAJE__", html.escape(mensaje or m)).replace("__LIGA__", liga).replace("__BOTON__", boton))
+        txt = (plantilla("error.html").replace("__CODIGO__", str(codigo)).replace("__TITULO__", html.escape(titulo or t))
+               .replace("__MENSAJE__", html.escape(mensaje or m)).replace("__LIGA__", liga).replace("__BOTON__", boton)
+               .replace("__ETIQUETA__", ETIQUETAS.get(codigo, "Aviso"))
+               .replace("__GRAVEDAD__", "grave" if codigo in (403, 429) or codigo >= 500 else ""))
         return self._html(txt, codigo)
 
     def send_error(self, code, message=None, explain=None):
@@ -512,9 +455,41 @@ class Handler(smn_server.Handler):
 
     def _inicio(self):
         s = self._sesion() if SECRETO else {"n": "local"}
-        accion = ('<a class="boton" href="/tablero">Ir al tablero</a><a class="boton sec" href="/salir">Cerrar sesión</a>'
-                  if s else '<a class="boton" href="/login">Entrar</a>')
-        return self._html(PAGINA_INICIO.replace("__ACCION__", accion))
+        if s:
+            accion = '<a class="boton" href="/tablero">Ir al tablero</a><a class="boton sec" href="/salir">Cerrar sesión</a>'
+            barra = '<a class="boton chico" href="/tablero">Tablero</a>'
+            acceso = '<a class="boton sec" href="/tablero">Abrir el tablero</a>'
+        else:
+            accion = '<a class="boton" href="/login">Entrar al tablero</a><a class="boton sec" href="#como-funciona">Cómo funciona</a>'
+            barra = '<a class="boton chico" href="/login">Entrar</a>'
+            acceso = '<a class="boton sec" href="/login">Iniciar sesión</a>'
+        return self._html(plantilla("inicio.html").replace("__ACCION_BARRA__", barra).replace("__ACCION_ACCESO__", acceso)
+                          .replace("__ACCION__", accion))
+
+    def _publico(self, ruta):
+        nombre, tipo = PUBLICOS[ruta]
+        cuerpo = (WEB / nombre).read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", tipo)
+        self.send_header("Cache-Control", "public, max-age=86400")
+        self.send_header("Content-Length", str(len(cuerpo)))
+        self.end_headers()
+        self.wfile.write(cuerpo)
+
+    def _estado_publico(self):
+        """Resumen del pronóstico SMN para la barra de la pantalla de inicio (dato público, sin información del sistema)."""
+        try:
+            pr = smn_server.get_forecast()
+            regs = pr.get("registros") or []
+            ahora = time.strftime("%Y-%m-%dT%H", time.gmtime(time.time() - 6 * 3600))   # hora de Guadalajara
+            r = next((x for x in regs if (x.get("fecha_hora") or "") >= ahora), regs[0] if regs else None)
+            if not pr.get("ok", True) or not r:
+                return self._json({"ok": False}, 200)
+            return self._json({"ok": True, "cielo": r.get("descripcion"), "temperatura": r.get("temperatura_c"),
+                               "lluvia": r.get("probabilidad_lluvia"), "viento": r.get("viento_kmh"),
+                               "hora": r.get("fecha_hora")})
+        except Exception:
+            return self._json({"ok": False}, 200)
 
     def do_HEAD(self):
         return self._json({"ok": True}) if urlsplit(self.path).path in ("/salud", "/") else self.send_error(405)
@@ -526,6 +501,10 @@ class Handler(smn_server.Handler):
             return self._json({"ok": True})
         if ruta == "/":
             return self._inicio()
+        if ruta in PUBLICOS:
+            return self._publico(ruta)
+        if ruta == "/api/publico":
+            return self._estado_publico()
         if ruta == "/login":
             if not SECRETO or self._sesion():
                 return self._redir("/tablero")

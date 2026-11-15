@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIVIA · Inspección preventiva de Guadalajara</title>
+<meta name="description" content="Inspección preventiva con inteligencia artificial del entorno de escuelas, guarderías y hospitales de Guadalajara.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/publico/estilo.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2308120f'/%3E%3Cpath d='M16 6a8 8 0 0 0-8 8c0 6 8 12 8 12s8-6 8-12a8 8 0 0 0-8-8z' fill='none' stroke='%233ee6b0' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='14' r='3' fill='%23ff6b6b'/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="barra">
+  <div class="envoltura">
+    <a class="marca" href="/" aria-label="SIVIA, inicio">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4.5a9 9 0 0 0-9 9c0 6.6 9 14 9 14s9-7.4 9-14a9 9 0 0 0-9-9z" fill="none" stroke="#3ee6b0" stroke-width="2.2"/><circle cx="16" cy="13.5" r="3.2" fill="#ff6b6b"/></svg>
+      SIVIA
+    </a>
+    <p class="estado" id="estado" aria-live="polite"><span class="punto"></span><span class="txt">Consultando el pronóstico del SMN…</span></p>
+    __ACCION_BARRA__
+  </div>
+</header>
+
+<main>
+  <section class="portada">
+    <div class="envoltura">
+      <div>
+        <h1>La ciudad revisa <em>antes</em> de que alguien se lastime.</h1>
+        <p class="entrada">SIVIA inspecciona con inteligencia artificial el entorno de las escuelas, guarderías y hospitales de Guadalajara: detecta fallas en fotos de calle, las asigna a la dependencia que las atiende y las ordena por riesgo vial y pronóstico del clima.</p>
+        <div class="acciones">__ACCION__</div>
+        <dl class="registro">
+          <div><dt>Instituciones vigiladas</dt><dd>1,646</dd></div>
+          <div><dt>Órdenes priorizadas</dt><dd>494</dd></div>
+          <div><dt>Detecciones por validar</dt><dd>127</dd></div>
+          <div><dt>Dependencias</dt><dd>5</dd></div>
+          <div><dt>Accidentes analizados</dt><dd>11,568</dd></div>
+          <div><dt>Años de lluvia (SMN)</dt><dd>45</dd></div>
+        </dl>
+      </div>
+      <figure class="mapa">
+        <div class="rejilla" aria-hidden="true"></div>
+        <span class="fuente">GDL · 20.67°N 103.35°O</span>
+        <div class="lienzo"><img src="/publico/mapa.svg" alt="Mapa de Guadalajara con los accidentes de tránsito de 2022 a 2024 y las 1,646 instituciones coloreadas por nivel de riesgo" width="1000" height="992"></div>
+        <figcaption>
+          <span class="ley"><i class="r"></i>Riesgo alto <b>152</b></span>
+          <span class="ley"><i class="a"></i>Medio <b>544</b></span>
+          <span class="ley"><i class="s"></i>Bajo <b>950</b></span>
+          <span class="ley"><i class="x"></i>Accidentes 2022-2024 <b>11,568</b></span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="seccion" id="como-funciona">
+    <div class="envoltura">
+      <h2>De la foto de calle a la orden de trabajo</h2>
+      <p class="lead">Cinco agentes trabajan en cadena. Ninguna detección se vuelve orden sin que una persona la confirme, y cada paso queda en la bitácora.</p>
+      <ol class="flujo">
+        <li><h3>Inspector</h3><p>Un detector YOLO11s propio marca árboles en riesgo, baches y rejillas en imágenes de calle.</p></li>
+        <li><h3>Clasificador</h3><p>Asigna cada falla a la dependencia que la atiende.</p></li>
+        <li><h3>Evaluador</h3><p>Pondera el tipo y tamaño de la institución y los accidentes a 200 m.</p></li>
+        <li><h3>Vigía</h3><p>Sube la prioridad cuando el SMN pronostica lluvia o viento fuerte.</p></li>
+        <li><h3>Coordinador</h3><p>Emite la orden priorizada, con foto de evidencia y explicación.</p></li>
+      </ol>
+      <p class="formula">Prioridad = gravedad <span>×</span> impacto <span>×</span> riesgo vial <span>×</span> clima</p>
+    </div>
+  </section>
+
+  <section class="seccion acceso">
+    <div class="envoltura">
+      <div>
+        <h2>Acceso solo para personal autorizado</h2>
+        <p>Las cuentas las da de alta el administrador de la plataforma; no hay registro abierto. Cada inicio de sesión y cada cambio de estado queda registrado con el nombre de quien lo hizo.</p>
+        __ACCION_ACCESO__
+      </div>
+      <table class="roles">
+        <thead><tr><th>Rol</th><th>Qué puede hacer</th><th>Valida IA</th></tr></thead>
+        <tbody>
+          <tr><td>Consulta</td><td>Ve el mapa, las órdenes y el clima</td><td class="no">no</td></tr>
+          <tr><td>Dependencia</td><td>Atiende y actualiza las órdenes de su dependencia</td><td class="no">no</td></tr>
+          <tr><td>Operador</td><td>Valida detecciones del modelo y actualiza cualquier orden</td><td class="si">sí</td></tr>
+          <tr><td>Administrador</td><td>Todo lo anterior y da de alta cuentas</td><td class="si">sí</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="envoltura">
+    <span>Datos: DENUE y accidentes de tránsito (INEGI) · lluvia y pronóstico (SMN/CONAGUA) · imágenes © Mapillary, CC BY-SA 4.0</span>
+    <span>SIVIA · Hackathon Jalisco 2026, Reto 01 Ciudades Inteligentes</span>
+  </div>
+</footer>
+
+<script>
+(async () => {
+  const caja = document.getElementById("estado"), txt = caja.querySelector(".txt");
+  try {
+    const r = await fetch("/api/publico", { cache: "no-store" });
+    const j = await r.json();
+    if (!j.ok) throw new Error();
+    const partes = ["SMN · Guadalajara", j.cielo];
+    if (j.temperatura != null) partes.push(`${Math.round(j.temperatura)} °C`);
+    if (j.lluvia != null) partes.push(`lluvia ${Math.round(j.lluvia)} %`);
+    if (j.viento != null) partes.push(`viento ${Math.round(j.viento)} km/h`);
+    txt.textContent = partes.filter(Boolean).join(" · ");
+    caja.classList.add("vivo");
+  } catch (_) {
+    txt.textContent = "SMN sin conexión; el sistema usa el último pronóstico guardado";
+    caja.classList.add("caido");
+  }
+})();
+</script>
+</body>
+</html>
