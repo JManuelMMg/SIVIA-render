@@ -293,7 +293,10 @@ def plantilla(nombre):
 
 
 PUBLICOS = {"/publico/estilo.css": ("estilo.css", "text/css; charset=utf-8"),
-            "/publico/mapa.svg": ("mapa.svg", "image/svg+xml")}
+            "/publico/mapa.svg": ("mapa.svg", "image/svg+xml"),
+            "/publico/logo.png": ("logo.png", "image/png"),
+            "/publico/logo_icono.png": ("logo_icono.png", "image/png"),
+            "/favicon.ico": ("logo_icono.png", "image/png")}
 
 ERRORES = {
     403: ("Acceso no autorizado", "Tu cuenta no tiene permiso para ver esta sección. Si lo necesitas, pide al administrador que cambie tu rol.", "/tablero", "Ir al tablero"),
@@ -308,11 +311,11 @@ ETIQUETAS = {403: "Acceso denegado", 404: "No encontrado", 405: "No permitido", 
              500: "Error del servidor", 503: "Sin servicio"}
 
 BARRA = """<div id="sivia-sesion" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;align-items:center;
-gap:10px;padding:7px 8px 7px 14px;border-radius:999px;background:rgba(8,18,15,.92);border:1px solid #2c4a43;color:#e7f1ec;
+gap:10px;padding:7px 8px 7px 14px;border-radius:999px;background:rgba(6,10,19,.93);border:1px solid #2b3c63;color:#eef2fa;
 font:500 13px/1.2 system-ui,'Segoe UI',sans-serif;box-shadow:0 12px 28px -12px rgba(0,0,0,.6)">
-<span style="width:8px;height:8px;border-radius:50%;background:#3ee6b0;box-shadow:0 0 0 3px rgba(62,230,176,.18)"></span>
-<span>__USUARIO__ <span style="color:#9db5ad">· __ROL__</span></span>
-<a href="/salir" style="padding:5px 12px;border-radius:999px;border:1px solid #2c4a43;color:#e7f1ec;text-decoration:none">Salir</a>
+<img src="/publico/logo_icono.png" alt="" style="width:24px;height:auto">
+<span>__USUARIO__ <span style="color:#a9b5cf">· __ROL__</span></span>
+<a href="/salir" style="padding:5px 12px;border-radius:999px;background:#e3a83a;color:#1a1204;font-weight:700;text-decoration:none">Salir</a>
 </div></body>"""
 
 
