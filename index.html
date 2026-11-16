@@ -1430,7 +1430,7 @@ window.addEventListener("online", actualizarFuentesAlVolver);
 document.getElementById("filtroIA").value="pendiente";
 setTimeout(()=>mapa.invalidateSize(),120);
 </script>
-<style>.cam-aviso{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:10000;max-width:min(560px,92vw);padding:11px 16px;border-radius:12px;background:var(--panel);color:var(--tx);border:1px solid var(--acento);box-shadow:var(--shadow);font-size:13px}.cam-aviso[hidden]{display:none}.cam-veh{position:relative}.cam-veh-punto{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--acento);border:3px solid var(--panel);box-shadow:0 0 0 4px rgba(60,200,212,.35)}.cam-veh-nombre{position:absolute;left:12px;top:-10px;padding:1px 7px;border-radius:6px;background:var(--panel);color:var(--tx);border:1px solid var(--line);font:600 11px/1.6 'IBM Plex Mono',monospace;white-space:nowrap}.cam-veh-punto{cursor:pointer}.cam-vivo{position:fixed;right:16px;bottom:16px;z-index:9000;width:min(360px,calc(100vw - 32px));background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;font-size:13px}.cam-vivo[hidden]{display:none}.cam-vivo header{display:flex;align-items:center;gap:8px;padding:9px 10px 9px 14px;border-bottom:1px solid var(--line)}.cam-vivo-titulo{flex:1;font-weight:600}.cam-vivo-luz{width:9px;height:9px;border-radius:50%;background:#ff5d5d;box-shadow:0 0 0 3px rgba(255,93,93,.25);animation:camLuz 1.6s ease-in-out infinite}.cam-vivo-quieta .cam-vivo-luz{background:var(--muted,#8a94a6);box-shadow:none;animation:none}@keyframes camLuz{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.cam-vivo-luz{animation:none}}.cam-vivo-cerrar{width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:var(--tx);font-size:20px;line-height:1;cursor:pointer}.cam-vivo-cerrar:hover{background:var(--line)}.cam-vivo-marco{position:relative;aspect-ratio:16/9;background:#05080f}.cam-vivo-marco img{display:block;width:100%;height:100%;object-fit:contain}.cam-vivo-espera{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:#c7d0de}.cam-vivo-espera[hidden]{display:none}.cam-vivo-estado{margin:8px 14px 4px;color:var(--muted,inherit);font:500 12px/1.4 'IBM Plex Mono',monospace}.cam-vivo-dets{list-style:none;margin:0;padding:0 14px 12px;display:flex;flex-wrap:wrap;gap:6px}.cam-vivo-dets li{padding:2px 9px;border-radius:999px;border:1px solid var(--acento);font-weight:600;font-size:12px}.cam-vivo-dets li.cam-vivo-nada{border-color:var(--line);font-weight:400;color:var(--muted,inherit)}</style>
+<style>.cam-aviso{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:10000;max-width:min(560px,92vw);padding:11px 16px;border-radius:12px;background:var(--panel);color:var(--tx);border:1px solid var(--acento);box-shadow:var(--shadow);font-size:13px}.cam-aviso[hidden]{display:none}.cam-veh{position:relative}.cam-veh-punto{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--acento);border:3px solid var(--panel);box-shadow:0 0 0 4px rgba(60,200,212,.35)}.cam-veh-nombre{position:absolute;left:12px;top:-10px;padding:1px 7px;border-radius:6px;background:var(--panel);color:var(--tx);border:1px solid var(--line);font:600 11px/1.6 'IBM Plex Mono',monospace;white-space:nowrap}.cam-veh-punto{cursor:pointer}.cam-vivo{position:fixed;right:16px;bottom:16px;z-index:9000;width:min(360px,calc(100vw - 32px));background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;font-size:13px}.cam-vivo[hidden]{display:none}.cam-vivo header{display:flex;align-items:center;gap:8px;padding:9px 10px 9px 14px;border-bottom:1px solid var(--line)}.cam-vivo-titulo{flex:1;font-weight:600}.cam-vivo-luz{width:9px;height:9px;border-radius:50%;background:#ff5d5d;box-shadow:0 0 0 3px rgba(255,93,93,.25);animation:camLuz 1.6s ease-in-out infinite}.cam-vivo-quieta .cam-vivo-luz{background:var(--muted,#8a94a6);box-shadow:none;animation:none}@keyframes camLuz{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.cam-vivo-luz{animation:none}}.cam-vivo-cerrar{width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:var(--tx);font-size:20px;line-height:1;cursor:pointer}.cam-vivo-cerrar:hover{background:var(--line)}.cam-vivo-marco{position:relative;aspect-ratio:16/9;background:#05080f}.cam-vivo-marco img{display:block;width:100%;height:100%;object-fit:contain}.cam-vivo-espera{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:#c7d0de}.cam-vivo-espera[hidden]{display:none}.cam-vivo-estado{margin:8px 14px 4px;color:var(--muted,inherit);font:500 12px/1.4 'IBM Plex Mono',monospace}.cam-vivo-dets{list-style:none;margin:0;padding:0 14px 12px;display:flex;flex-wrap:wrap;gap:6px}.cam-vivo-dets li{padding:2px 9px;border-radius:999px;border:1px solid var(--acento);font-weight:600;font-size:12px}.cam-vivo-dets li.cam-vivo-nada{border-color:var(--line);font-weight:400;color:var(--muted,inherit)}.cam-vivo-seguir{display:flex;align-items:center;gap:8px;padding:9px 14px;border-top:1px solid var(--line);font-size:12.5px;cursor:pointer}.cam-vivo-seguir input{accent-color:var(--acento);width:16px;height:16px}.ot-dialogo{width:min(680px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--tx);box-shadow:var(--shadow)}.ot-dialogo::backdrop{background:rgba(5,8,15,.6)}.ot-cab{display:flex;gap:14px;align-items:flex-start;padding:16px 16px 12px;border-bottom:1px solid var(--line)}.ot-foto{flex:0 0 96px;height:72px;border-radius:10px;overflow:hidden;background:var(--line)}.ot-foto img{width:100%;height:100%;object-fit:cover;display:block}.ot-cab>div:nth-child(2){flex:1;min-width:0}.ot-sobre{margin:0;font-size:12px;color:var(--muted,inherit);text-transform:uppercase;letter-spacing:.04em}.ot-titulo{margin:2px 0;font-size:18px}.ot-lugar{margin:0;font-size:13px;color:var(--muted,inherit)}.ot-cerrar{width:34px;height:34px;border:0;border-radius:8px;background:transparent;color:var(--tx);font-size:22px;cursor:pointer}.ot-cerrar:hover{background:var(--line)}.ot-campos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px;padding:16px}.ot-campos label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600}.ot-campos .ot-ancho{grid-column:1/-1}.ot-opc{font-weight:400;color:var(--muted,inherit)}.ot-campos input,.ot-campos select,.ot-campos textarea{font:inherit;font-size:14px;font-weight:400;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg,transparent);color:var(--tx);resize:vertical}.ot-campos input:focus,.ot-campos select:focus,.ot-campos textarea:focus{outline:2px solid var(--acento);outline-offset:1px}.ot-error{margin:0 16px 8px;padding:8px 12px;border-radius:9px;background:rgba(255,93,93,.14);color:var(--tx);border:1px solid #ff5d5d;font-size:13px}.ot-error[hidden]{display:none}.ot-pie{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px 16px;border-top:1px solid var(--line)}.ot-btn{font:inherit;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid var(--line)}.ot-sec{background:transparent;color:var(--tx)}.ot-pri{background:var(--acento);color:#06121a;border-color:var(--acento)}.ot-pri:disabled{opacity:.6;cursor:wait}@media (max-width:620px){.ot-campos{grid-template-columns:1fr}.ot-foto{display:none}}.ot-bandeja{flex:0 0 auto;margin:0 0 14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}.ot-bandeja-cab{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line)}.ot-bandeja-cab h3{margin:0;font-size:15px}.ot-bandeja-res{font-size:12.5px;color:var(--muted,inherit)}.ot-bandeja-lista{max-height:340px;overflow:auto}.ot-vacio{margin:0;padding:14px;font-size:13px;color:var(--muted,inherit)}.ot-fila{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}.ot-fila:last-child{border-bottom:0}.ot-fila:hover{background:rgba(60,200,212,.06)}.ot-fila-a{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.ot-folio{font:600 12.5px 'IBM Plex Mono',monospace}.ot-fila-b{font-size:13.5px;min-width:0}.ot-meta{font-size:12px;color:var(--muted,inherit);margin-top:2px}.ot-sev,.ot-vencida{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;text-transform:capitalize;border:1px solid var(--line)}.ot-sev-urgente{background:#ff5d5d;color:#1a0505;border-color:#ff5d5d}.ot-sev-alta{border-color:#ff5d5d}.ot-sev-media{border-color:#f2b33d}.ot-vencida{background:#f2b33d;color:#1a1205;border-color:#f2b33d}.ot-estado select{font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--tx)}.ot-resuelta .ot-fila-b,.ot-descartada .ot-fila-b{opacity:.6}.ot-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}@media (max-width:620px){.ot-fila{grid-template-columns:1fr}}</style>
 <script>
 /* Tablero · detecciones en vivo de las cámaras de los vehículos.
    Cada 20 s trae de la plataforma las detecciones nuevas (modelo YOLO11s v9 corriendo en la cámara) y las suma a
@@ -1485,11 +1485,17 @@ setTimeout(()=>mapa.invalidateSize(),120);
       <button type="button" class="cam-vivo-cerrar" aria-label="Cerrar la vista de la cámara">×</button></header>
     <div class="cam-vivo-marco"><img hidden alt="Último cuadro que vio la cámara, con lo que detectó el modelo"><p class="cam-vivo-espera">Esperando el primer cuadro…</p></div>
     <p class="cam-vivo-estado"></p>
-    <ul class="cam-vivo-dets"></ul>`;
+    <ul class="cam-vivo-dets"></ul>
+    <label class="cam-vivo-seguir"><input type="checkbox"> Seguir al vehículo en el mapa</label>`;
   document.body.append(panel);
   const pImg = panel.querySelector("img"), pEspera = panel.querySelector(".cam-vivo-espera");
   const pTitulo = panel.querySelector(".cam-vivo-titulo"), pEstado = panel.querySelector(".cam-vivo-estado");
-  const pDets = panel.querySelector(".cam-vivo-dets");
+  const pDets = panel.querySelector(".cam-vivo-dets"), pSeguir = panel.querySelector(".cam-vivo-seguir input");
+  pSeguir.addEventListener("change", () => { if (pSeguir.checked) centra(); });
+  function centra() {
+    const v = activos.find(x => x.vehiculo === elegido);
+    if (v) mapa.setView([v.lat, v.lng], Math.max(mapa.getZoom(), 15), { animate: true });
+  }
   let elegido = null, cerradoPor = null, urlVista = null, activos = [];
   panel.querySelector(".cam-vivo-cerrar").addEventListener("click", () => { cerradoPor = elegido; panel.hidden = true; });
 
@@ -1502,6 +1508,7 @@ setTimeout(()=>mapa.invalidateSize(),120);
     panel.classList.toggle("cam-vivo-quieta", v.hace_s > 15);
     const partes = [];
     if (v.cuadro) partes.push(v.total ? `Cuadro ${v.cuadro} de ${v.total}` : `Cuadro ${v.cuadro}`);
+    if (v.km) partes.push(`${v.km.toFixed(1)} km recorridos`);
     if (v.ms) partes.push(`modelo ${v.ms} ms`);
     partes.push(v.hace_s <= 2 ? "ahora" : `hace ${v.hace_s} s`);
     pEstado.textContent = partes.join(" · ");
@@ -1544,6 +1551,16 @@ setTimeout(()=>mapa.invalidateSize(),120);
       if (!capaVeh) capaVeh = L.layerGroup().addTo(mapa);
       capaVeh.clearLayers();
       for (const v of activos) {
+        // recorrido en vivo: por dónde ha pasado el vehículo
+        if (v.ruta && v.ruta.length > 1) {
+          L.polyline(v.ruta, { color: "#0b1220", weight: 8, opacity: .35, interactive: false }).addTo(capaVeh);
+          L.polyline(v.ruta, { color: "#3cc8d4", weight: 4, opacity: .95, interactive: false }).addTo(capaVeh);
+          L.circleMarker(v.ruta[0], { radius: 5, color: "#3cc8d4", weight: 2, fillColor: "#0b1220", fillOpacity: 1, interactive: false })
+            .addTo(capaVeh);
+          let km = 0;
+          for (let i = 1; i < v.ruta.length; i++) km += mapa.distance(v.ruta[i - 1], v.ruta[i]) / 1000;
+          v.km = km;
+        }
         const icono = L.divIcon({ className: "cam-veh", html: `<span class="cam-veh-punto"></span><span class="cam-veh-nombre"></span>`, iconSize: [0, 0] });
         const m = L.marker([v.lat, v.lng], { icon: icono, zIndexOffset: 1000, keyboard: false }).addTo(capaVeh);
         const el = m.getElement();
@@ -1559,6 +1576,7 @@ setTimeout(()=>mapa.invalidateSize(),120);
       }
       if (!activos.length) panel.hidden = true;
       pinta();
+      if (pSeguir.checked && !panel.hidden) centra();
     } catch (_) { /* sin conexión */ }
   }
 
@@ -1566,6 +1584,233 @@ setTimeout(()=>mapa.invalidateSize(),120);
   setInterval(detecciones, 20000);
   setInterval(vehiculos, 3000);
   setInterval(vista, 2000);
+})();
+
+</script>
+<script>
+/* Tablero · de la validación a la orden de trabajo.
+   Al confirmar un candidato del modelo se abre un formulario (ya prellenado con lo que vio la IA) para describir
+   la falla, la acción y el plazo; al enviarlo, la orden se guarda y se turna a la dependencia que corresponde.
+   En la pestaña Órdenes aparece la bandeja "Órdenes turnadas", donde cada dependencia avanza su estado. */
+(() => {
+  if (typeof DATOS === "undefined") return;
+  const listaIA = document.getElementById("listaIA");
+  const paneOrdenes = document.getElementById("pane-ordenes");
+  if (!listaIA || !paneOrdenes) return;
+
+  const ACCIONES = {
+    arboles_cables: "Poda de las ramas que tocan el cableado y revisión del árbol",
+    baches_banquetas: "Bacheo y reparación de la superficie de rodamiento o banqueta",
+    alcantarilla_riesgo: "Colocar o reponer la tapa, reparar el brocal y señalizar de inmediato",
+    alcantarilla_tapada: "Desazolve y limpieza de la rejilla pluvial antes de lluvias",
+    cableado_postes: "Retiro o tensado del cableado colgante y revisión del poste",
+    sin_cruce: "Balizamiento del cruce peatonal y señalización vertical",
+  };
+  const SEVERIDADES = [["urgente", "Urgente", 2], ["alta", "Alta", 5], ["media", "Media", 15], ["baja", "Baja", 30]];
+  const ESTADOS = [["asignada", "Asignada"], ["en_atencion", "En atención"], ["resuelta", "Resuelta"], ["descartada", "Descartada"]];
+  const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const categoria = h => (typeof textoCategoria !== "undefined" && textoCategoria[h.categoria]) || h.modelo_clase || h.categoria || "Falla";
+  let deps = null, turnadas = [];
+
+  async function cargaDependencias() {
+    if (deps) return deps;
+    try {
+      const r = await fetch("/api/ordenes/dependencias", { cache: "no-store" });
+      const j = r.ok ? await r.json() : null;
+      if (j && j.ok && j.dependencias.length) deps = j.dependencias;
+    } catch (_) { /* sin base: se usan las del tablero */ }
+    if (!deps) deps = [...new Set(DATOS.map(h => h.dependencia).filter(Boolean))].sort();
+    return deps;
+  }
+
+  /* ---------- formulario ---------- */
+  const dlg = document.createElement("dialog");
+  dlg.className = "ot-dialogo";
+  dlg.innerHTML = `
+    <form method="dialog" class="ot-form" novalidate>
+      <header class="ot-cab">
+        <div class="ot-foto"></div>
+        <div><p class="ot-sobre">Confirmar hallazgo y crear orden de trabajo</p><h2 class="ot-titulo"></h2><p class="ot-lugar"></p></div>
+        <button type="button" class="ot-cerrar" aria-label="Cerrar sin crear la orden">×</button>
+      </header>
+      <div class="ot-campos">
+        <label class="ot-ancho">Tipo de falla<input name="hallazgo" required maxlength="120"></label>
+        <label>Dependencia que la atiende<select name="dependencia" required></select></label>
+        <label>Severidad<select name="severidad">${SEVERIDADES.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select></label>
+        <label>Plazo de atención (días)<input name="plazo_dias" type="number" min="1" max="180" required></label>
+        <label class="ot-ancho">Ubicación / referencia<input name="ubicacion" maxlength="200"></label>
+        <label class="ot-ancho">Descripción de la falla<textarea name="descripcion" rows="3" required maxlength="600"></textarea></label>
+        <label class="ot-ancho">Acción solicitada<textarea name="accion" rows="2" required maxlength="300"></textarea></label>
+        <label class="ot-ancho"><span>Notas para la cuadrilla <span class="ot-opc">(opcional)</span></span><textarea name="notas" rows="2" maxlength="600"></textarea></label>
+      </div>
+      <p class="ot-error" role="alert" hidden></p>
+      <footer class="ot-pie">
+        <button type="button" class="ot-btn ot-sec" data-cancelar>Cancelar</button>
+        <button type="submit" class="ot-btn ot-pri"></button>
+      </footer>
+    </form>`;
+  document.body.append(dlg);
+  const form = dlg.querySelector("form"), fError = dlg.querySelector(".ot-error"), fEnviar = dlg.querySelector(".ot-pri");
+  let actual = null, plazoTocado = false;
+  const cierra = () => { dlg.close(); actual = null; };
+  dlg.querySelector(".ot-cerrar").addEventListener("click", cierra);
+  dlg.querySelector("[data-cancelar]").addEventListener("click", cierra);
+  form.plazo_dias.addEventListener("input", () => (plazoTocado = true));
+  form.severidad.addEventListener("change", () => {
+    if (!plazoTocado) form.plazo_dias.value = SEVERIDADES.find(s => s[0] === form.severidad.value)[2];
+  });
+  form.dependencia.addEventListener("change", () => (fEnviar.textContent = `Crear orden y turnar a ${form.dependencia.value}`));
+
+  async function abre(id) {
+    const h = DATOS.find(d => d.id === id);
+    if (!h) return;
+    actual = h; plazoTocado = false;
+    const lista = await cargaDependencias();
+    form.dependencia.innerHTML = lista.map(d => `<option>${esc(d)}</option>`).join("");
+    if (h.dependencia && !lista.includes(h.dependencia)) form.dependencia.insertAdjacentHTML("afterbegin", `<option>${esc(h.dependencia)}</option>`);
+    form.dependencia.value = h.dependencia || lista[0];
+    const sev = h.modelo_clase === "alcantarilla_riesgo" ? "urgente"
+      : (["urgente", "alta", "media", "baja"].includes(String(h.severidad).toLowerCase()) ? String(h.severidad).toLowerCase() : "media");
+    form.severidad.value = sev;
+    form.plazo_dias.value = SEVERIDADES.find(s => s[0] === sev)[2];
+    form.hallazgo.value = categoria(h);
+    const la = Number(h.lat), ln = Number(h.lon);
+    form.ubicacion.value = `${h.nombre || "Vía pública"}${Number.isFinite(la) ? ` (${la.toFixed(5)}, ${ln.toFixed(5)})` : ""}`;
+    form.descripcion.value = h.descripcion || "";
+    form.accion.value = ACCIONES[h.categoria] || ACCIONES[h.modelo_clase] || "Revisión en sitio y reparación";
+    form.notas.value = "";
+    dlg.querySelector(".ot-titulo").textContent = `${categoria(h)} · IA ${Math.round(Number(h.confianza || 0) * 100)}%`;
+    dlg.querySelector(".ot-lugar").textContent = [h.nombre, h.fecha_captura].filter(Boolean).join(" · ");
+    const foto = dlg.querySelector(".ot-foto");
+    foto.replaceChildren();
+    const src = typeof imageSource === "function" ? imageSource(h.imagen) : "";
+    if (src) { const im = new Image(); im.alt = "Evidencia"; im.src = src; im.onerror = () => im.remove(); foto.append(im); }
+    fError.hidden = true;
+    fEnviar.disabled = false;
+    fEnviar.textContent = `Crear orden y turnar a ${form.dependencia.value}`;
+    dlg.showModal();
+    form.descripcion.focus();
+  }
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if (!actual) return;
+    for (const campo of ["hallazgo", "descripcion", "accion", "plazo_dias"]) {
+      if (!form[campo].checkValidity() || !String(form[campo].value).trim()) {
+        fError.textContent = "Completa el tipo de falla, la descripción, la acción y un plazo de 1 a 180 días.";
+        fError.hidden = false; form[campo].focus(); return;
+      }
+    }
+    const datos = Object.fromEntries(new FormData(form));
+    Object.assign(datos, { candidato_id: actual.id, lat: actual.lat, lng: actual.lon,
+      prioridad: typeof prioridad === "function" ? prioridad(actual) : Number(actual.prioridad_base || 0) });
+    fEnviar.disabled = true; fEnviar.textContent = "Turnando…";
+    try {
+      const r = await fetch("/api/ordenes/nueva", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
+      const j = await r.json().catch(() => ({}));
+      if (r.status === 401 && j.login) { location.href = "/login"; return; }
+      if (!r.ok || !j.ok) throw new Error(j.error || `error ${r.status}`);
+      const h = actual;
+      revisiones[h.id] = "confirmado";
+      try { localStorage.setItem(REVIEW_KEY, JSON.stringify(revisiones)); } catch (_) {}
+      h.dependencia = j.dependencia;
+      cierra();
+      indicadores(); pintarIA(); pintarAnalisis(); pintarOrdenes(); if (typeof pintarMapa === "function") pintarMapa();
+      avisa(`Orden ${j.folio} creada y turnada a ${j.dependencia} (plazo ${j.plazo_dias} días).`);
+      bandeja();
+    } catch (err) {
+      fError.textContent = `No se pudo crear la orden: ${err.message}.`;
+      fError.hidden = false; fEnviar.disabled = false;
+      fEnviar.textContent = `Crear orden y turnar a ${form.dependencia.value}`;
+    }
+  });
+
+  // "Confirmar" en Validación IA abre el formulario en lugar de confirmar directo
+  listaIA.addEventListener("click", e => {
+    const b = e.target.closest('[data-action="confirmar"]');
+    if (!b) return;
+    e.stopPropagation(); e.preventDefault();
+    abre(b.closest(".ai-card").dataset.id);
+  }, true);
+  const cambiaTexto = () => listaIA.querySelectorAll('[data-action="confirmar"]').forEach(b => {
+    if (b.textContent !== "Confirmar y crear orden") b.textContent = "Confirmar y crear orden";
+  });
+  new MutationObserver(cambiaTexto).observe(listaIA, { childList: true });
+  cambiaTexto();
+
+  /* ---------- aviso ---------- */
+  const aviso = document.createElement("div");
+  aviso.className = "cam-aviso"; aviso.setAttribute("role", "status"); aviso.hidden = true;
+  document.body.append(aviso);
+  let reloj;
+  function avisa(t) { aviso.textContent = t; aviso.hidden = false; clearTimeout(reloj); reloj = setTimeout(() => (aviso.hidden = true), 7000); }
+
+  /* ---------- bandeja de órdenes turnadas (pestaña Órdenes) ---------- */
+  const caja = document.createElement("section");
+  caja.className = "ot-bandeja";
+  caja.innerHTML = `<div class="ot-bandeja-cab"><h3>Órdenes turnadas a dependencias</h3><span class="ot-bandeja-res"></span></div>
+    <div class="ot-bandeja-lista"><p class="ot-vacio">Aún no hay órdenes turnadas. Confirma un candidato en Validación IA para crear la primera.</p></div>`;
+  paneOrdenes.querySelector(".intro").after(caja);
+  const bLista = caja.querySelector(".ot-bandeja-lista"), bRes = caja.querySelector(".ot-bandeja-res");
+
+  function pintaBandeja() {
+    const filtro = document.getElementById("filtroDependencia");
+    const dep = filtro && filtro.value && filtro.value !== "Todas" ? filtro.value : null;
+    const filas = turnadas.filter(o => !dep || o.dependencia === dep);
+    const abiertas = filas.filter(o => o.estado === "asignada" || o.estado === "en_atencion").length;
+    bRes.textContent = filas.length ? `${filas.length} órdenes · ${abiertas} abiertas · ${filas.filter(o => o.vencida).length} vencidas` : "";
+    if (!filas.length) {
+      bLista.innerHTML = `<p class="ot-vacio">${turnadas.length ? "No hay órdenes turnadas a esa dependencia." : "Aún no hay órdenes turnadas. Confirma un candidato en Validación IA para crear la primera."}</p>`;
+      return;
+    }
+    bLista.innerHTML = filas.map(o => {
+      const limite = new Date(new Date(o.creada_en).getTime() + (o.plazo_dias || 15) * 864e5);
+      return `<article class="ot-fila ot-${esc(o.estado)}" data-cand="${esc(o.candidato_id)}" data-id="${esc(o.id)}">
+        <div class="ot-fila-a"><b class="ot-folio">${esc(o.folio)}</b><span class="ot-sev ot-sev-${esc(o.severidad)}">${esc(o.severidad)}</span>
+          ${o.vencida ? '<span class="ot-vencida">Vencida</span>' : ""}</div>
+        <div class="ot-fila-b"><strong>${esc(o.hallazgo)}</strong> · ${esc(o.institucion || o.ubicacion || "Vía pública")}
+          <div class="ot-meta">${esc(o.dependencia)} · atender antes del ${limite.toLocaleDateString("es-MX", { day: "numeric", month: "short" })}</div>
+          <div class="ot-meta">${esc(o.accion)}</div></div>
+        <label class="ot-estado"><span class="ot-sr">Estado de ${esc(o.folio)}</span>
+          <select>${ESTADOS.map(([v, t]) => `<option value="${v}"${v === o.estado ? " selected" : ""}>${t}</option>`).join("")}</select></label>
+      </article>`;
+    }).join("");
+    bLista.querySelectorAll(".ot-fila").forEach(fila => {
+      fila.addEventListener("click", e => { if (!e.target.closest("select, label") && typeof focusMarker === "function") focusMarker(fila.dataset.cand); });
+      const sel = fila.querySelector("select");
+      sel.addEventListener("change", async () => {
+        const previo = turnadas.find(o => o.id === fila.dataset.id).estado;
+        sel.disabled = true;
+        try {
+          const r = await fetch(`/api/ordenes/${encodeURIComponent(fila.dataset.id)}`, { method: "POST",
+            headers: { "Content-Type": "application/json" }, body: JSON.stringify({ estado: sel.value }) });
+          const j = await r.json().catch(() => ({}));
+          if (!r.ok || !j.ok) throw new Error(j.error || `error ${r.status}`);
+          turnadas.find(o => o.id === fila.dataset.id).estado = sel.value;
+          avisa(`${fila.querySelector(".ot-folio").textContent}: ${sel.options[sel.selectedIndex].text}.`);
+          pintaBandeja();
+        } catch (err) {
+          sel.value = previo; sel.disabled = false;
+          avisa(`No se pudo cambiar el estado: ${err.message}.`);
+        }
+      });
+    });
+  }
+
+  async function bandeja() {
+    try {
+      const r = await fetch("/api/ordenes/turnadas", { cache: "no-store" });
+      if (!r.ok) return;
+      const j = await r.json();
+      if (!j.ok) return;
+      turnadas = j.ordenes;
+      pintaBandeja();
+    } catch (_) { /* sin base de datos */ }
+  }
+  const filtro = document.getElementById("filtroDependencia");
+  if (filtro) filtro.addEventListener("change", pintaBandeja);
+  bandeja();
+  setInterval(bandeja, 30000);
 })();
 
 </script>

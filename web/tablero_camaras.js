@@ -51,11 +51,17 @@
       <button type="button" class="cam-vivo-cerrar" aria-label="Cerrar la vista de la cámara">×</button></header>
     <div class="cam-vivo-marco"><img hidden alt="Último cuadro que vio la cámara, con lo que detectó el modelo"><p class="cam-vivo-espera">Esperando el primer cuadro…</p></div>
     <p class="cam-vivo-estado"></p>
-    <ul class="cam-vivo-dets"></ul>`;
+    <ul class="cam-vivo-dets"></ul>
+    <label class="cam-vivo-seguir"><input type="checkbox"> Seguir al vehículo en el mapa</label>`;
   document.body.append(panel);
   const pImg = panel.querySelector("img"), pEspera = panel.querySelector(".cam-vivo-espera");
   const pTitulo = panel.querySelector(".cam-vivo-titulo"), pEstado = panel.querySelector(".cam-vivo-estado");
-  const pDets = panel.querySelector(".cam-vivo-dets");
+  const pDets = panel.querySelector(".cam-vivo-dets"), pSeguir = panel.querySelector(".cam-vivo-seguir input");
+  pSeguir.addEventListener("change", () => { if (pSeguir.checked) centra(); });
+  function centra() {
+    const v = activos.find(x => x.vehiculo === elegido);
+    if (v) mapa.setView([v.lat, v.lng], Math.max(mapa.getZoom(), 15), { animate: true });
+  }
   let elegido = null, cerradoPor = null, urlVista = null, activos = [];
   panel.querySelector(".cam-vivo-cerrar").addEventListener("click", () => { cerradoPor = elegido; panel.hidden = true; });
 
@@ -68,6 +74,7 @@
     panel.classList.toggle("cam-vivo-quieta", v.hace_s > 15);
     const partes = [];
     if (v.cuadro) partes.push(v.total ? `Cuadro ${v.cuadro} de ${v.total}` : `Cuadro ${v.cuadro}`);
+    if (v.km) partes.push(`${v.km.toFixed(1)} km recorridos`);
     if (v.ms) partes.push(`modelo ${v.ms} ms`);
     partes.push(v.hace_s <= 2 ? "ahora" : `hace ${v.hace_s} s`);
     pEstado.textContent = partes.join(" · ");
@@ -110,6 +117,16 @@
       if (!capaVeh) capaVeh = L.layerGroup().addTo(mapa);
       capaVeh.clearLayers();
       for (const v of activos) {
+        // recorrido en vivo: por dónde ha pasado el vehículo
+        if (v.ruta && v.ruta.length > 1) {
+          L.polyline(v.ruta, { color: "#0b1220", weight: 8, opacity: .35, interactive: false }).addTo(capaVeh);
+          L.polyline(v.ruta, { color: "#3cc8d4", weight: 4, opacity: .95, interactive: false }).addTo(capaVeh);
+          L.circleMarker(v.ruta[0], { radius: 5, color: "#3cc8d4", weight: 2, fillColor: "#0b1220", fillOpacity: 1, interactive: false })
+            .addTo(capaVeh);
+          let km = 0;
+          for (let i = 1; i < v.ruta.length; i++) km += mapa.distance(v.ruta[i - 1], v.ruta[i]) / 1000;
+          v.km = km;
+        }
         const icono = L.divIcon({ className: "cam-veh", html: `<span class="cam-veh-punto"></span><span class="cam-veh-nombre"></span>`, iconSize: [0, 0] });
         const m = L.marker([v.lat, v.lng], { icon: icono, zIndexOffset: 1000, keyboard: false }).addTo(capaVeh);
         const el = m.getElement();
@@ -125,6 +142,7 @@
       }
       if (!activos.length) panel.hidden = true;
       pinta();
+      if (pSeguir.checked && !panel.hidden) centra();
     } catch (_) { /* sin conexión */ }
   }
 

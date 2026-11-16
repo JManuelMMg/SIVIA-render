@@ -122,7 +122,9 @@ _posiciones, _pos_lock = {}, threading.Lock()
 
 
 MAX_VISTA = 250_000
+MAX_TRAZA = 600
 _vistas = {}          # vehículo -> JPEG del último cuadro (solo en memoria; no se guarda en la base ni en el bucket)
+_trazas = {}          # vehículo -> puntos recorridos [(lat, lng), ...]
 
 
 def _entero(v):
@@ -150,6 +152,13 @@ def posicion(vehiculo, datos):
         if len(vista) > MAX_VISTA or vista[:3] != b"\xff\xd8\xff":
             raise ErrorCamara("la vista debe ser JPEG de 250 KB o menos")
     with _pos_lock:
+        # recorrido en vivo: los últimos puntos por donde pasó (se reinicia si estuvo más de 10 min sin señal)
+        previa = _posiciones.get(vehiculo)
+        traza = _trazas.setdefault(vehiculo, deque(maxlen=MAX_TRAZA))
+        if previa and time.time() - previa["t"] > 600:
+            traza.clear()
+        if not traza or metros(traza[-1][0], traza[-1][1], la, ln) >= 5:
+            traza.append((round(la, 6), round(ln, 6)))
         _posiciones[vehiculo] = {"vehiculo": vehiculo, "lat": la, "lng": ln, "t": time.time(),
                                  "cuadro": _entero(datos.get("cuadro")), "total": _entero(datos.get("total")),
                                  "ms": _entero(datos.get("ms")), "dets": dets, "vista": vista is not None}
@@ -169,7 +178,8 @@ def vista(vehiculo, max_seg=600):
 def vehiculos(max_seg=600):
     ahora = time.time()
     with _pos_lock:
-        return [dict(v, hace_s=round(ahora - v["t"])) for v in _posiciones.values() if ahora - v["t"] <= max_seg]
+        return [dict(v, hace_s=round(ahora - v["t"]), ruta=list(_trazas.get(v["vehiculo"], ())))
+                for v in _posiciones.values() if ahora - v["t"] <= max_seg]
 
 
 def registra(c, datos, vehiculo, cliente_s3, bucket):
