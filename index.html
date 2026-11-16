@@ -1430,16 +1430,21 @@ window.addEventListener("online", actualizarFuentesAlVolver);
 document.getElementById("filtroIA").value="pendiente";
 setTimeout(()=>mapa.invalidateSize(),120);
 </script>
-<style>.cam-aviso{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:10000;max-width:min(560px,92vw);padding:11px 16px;border-radius:12px;background:var(--panel);color:var(--tx);border:1px solid var(--acento);box-shadow:var(--shadow);font-size:13px}.cam-aviso[hidden]{display:none}.cam-veh{position:relative}.cam-veh-punto{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--acento);border:3px solid var(--panel);box-shadow:0 0 0 4px rgba(60,200,212,.35)}.cam-veh-nombre{position:absolute;left:12px;top:-10px;padding:1px 7px;border-radius:6px;background:var(--panel);color:var(--tx);border:1px solid var(--line);font:600 11px/1.6 'IBM Plex Mono',monospace;white-space:nowrap}.cam-veh-punto{cursor:pointer}.cam-vivo{position:fixed;right:16px;bottom:16px;z-index:9000;width:min(360px,calc(100vw - 32px));background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;font-size:13px}.cam-vivo[hidden]{display:none}.cam-vivo header{display:flex;align-items:center;gap:8px;padding:9px 10px 9px 14px;border-bottom:1px solid var(--line)}.cam-vivo-titulo{flex:1;font-weight:600}.cam-vivo-luz{width:9px;height:9px;border-radius:50%;background:#ff5d5d;box-shadow:0 0 0 3px rgba(255,93,93,.25);animation:camLuz 1.6s ease-in-out infinite}.cam-vivo-quieta .cam-vivo-luz{background:var(--muted,#8a94a6);box-shadow:none;animation:none}@keyframes camLuz{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.cam-vivo-luz{animation:none}}.cam-vivo-cerrar{width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:var(--tx);font-size:20px;line-height:1;cursor:pointer}.cam-vivo-cerrar:hover{background:var(--line)}.cam-vivo-marco{position:relative;aspect-ratio:16/9;background:#05080f}.cam-vivo-marco img{display:block;width:100%;height:100%;object-fit:contain}.cam-vivo-espera{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:#c7d0de}.cam-vivo-espera[hidden]{display:none}.cam-vivo-estado{margin:8px 14px 4px;color:var(--muted,inherit);font:500 12px/1.4 'IBM Plex Mono',monospace}.cam-vivo-dets{list-style:none;margin:0;padding:0 14px 12px;display:flex;flex-wrap:wrap;gap:6px}.cam-vivo-dets li{padding:2px 9px;border-radius:999px;border:1px solid var(--acento);font-weight:600;font-size:12px}.cam-vivo-dets li.cam-vivo-nada{border-color:var(--line);font-weight:400;color:var(--muted,inherit)}.cam-vivo-seguir{display:flex;align-items:center;gap:8px;padding:9px 14px;border-top:1px solid var(--line);font-size:12.5px;cursor:pointer}.cam-vivo-seguir input{accent-color:var(--acento);width:16px;height:16px}.ot-dialogo{width:min(680px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--tx);box-shadow:var(--shadow)}.ot-dialogo::backdrop{background:rgba(5,8,15,.6)}.ot-cab{display:flex;gap:14px;align-items:flex-start;padding:16px 16px 12px;border-bottom:1px solid var(--line)}.ot-foto{flex:0 0 96px;height:72px;border-radius:10px;overflow:hidden;background:var(--line)}.ot-foto img{width:100%;height:100%;object-fit:cover;display:block}.ot-cab>div:nth-child(2){flex:1;min-width:0}.ot-sobre{margin:0;font-size:12px;color:var(--muted,inherit);text-transform:uppercase;letter-spacing:.04em}.ot-titulo{margin:2px 0;font-size:18px}.ot-lugar{margin:0;font-size:13px;color:var(--muted,inherit)}.ot-cerrar{width:34px;height:34px;border:0;border-radius:8px;background:transparent;color:var(--tx);font-size:22px;cursor:pointer}.ot-cerrar:hover{background:var(--line)}.ot-campos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px;padding:16px}.ot-campos label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600}.ot-campos .ot-ancho{grid-column:1/-1}.ot-opc{font-weight:400;color:var(--muted,inherit)}.ot-campos input,.ot-campos select,.ot-campos textarea{font:inherit;font-size:14px;font-weight:400;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg,transparent);color:var(--tx);resize:vertical}.ot-campos input:focus,.ot-campos select:focus,.ot-campos textarea:focus{outline:2px solid var(--acento);outline-offset:1px}.ot-error{margin:0 16px 8px;padding:8px 12px;border-radius:9px;background:rgba(255,93,93,.14);color:var(--tx);border:1px solid #ff5d5d;font-size:13px}.ot-error[hidden]{display:none}.ot-pie{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px 16px;border-top:1px solid var(--line)}.ot-btn{font:inherit;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid var(--line)}.ot-sec{background:transparent;color:var(--tx)}.ot-pri{background:var(--acento);color:#06121a;border-color:var(--acento)}.ot-pri:disabled{opacity:.6;cursor:wait}@media (max-width:620px){.ot-campos{grid-template-columns:1fr}.ot-foto{display:none}}.ot-bandeja{flex:0 0 auto;margin:0 0 14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}.ot-bandeja-cab{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line)}.ot-bandeja-cab h3{margin:0;font-size:15px}.ot-bandeja-res{font-size:12.5px;color:var(--muted,inherit)}.ot-bandeja-lista{max-height:340px;overflow:auto}.ot-vacio{margin:0;padding:14px;font-size:13px;color:var(--muted,inherit)}.ot-fila{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}.ot-fila:last-child{border-bottom:0}.ot-fila:hover{background:rgba(60,200,212,.06)}.ot-fila-a{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.ot-folio{font:600 12.5px 'IBM Plex Mono',monospace}.ot-fila-b{font-size:13.5px;min-width:0}.ot-meta{font-size:12px;color:var(--muted,inherit);margin-top:2px}.ot-sev,.ot-vencida{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;text-transform:capitalize;border:1px solid var(--line)}.ot-sev-urgente{background:#ff5d5d;color:#1a0505;border-color:#ff5d5d}.ot-sev-alta{border-color:#ff5d5d}.ot-sev-media{border-color:#f2b33d}.ot-vencida{background:#f2b33d;color:#1a1205;border-color:#f2b33d}.ot-estado select{font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--tx)}.ot-resuelta .ot-fila-b,.ot-descartada .ot-fila-b{opacity:.6}.ot-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}@media (max-width:620px){.ot-fila{grid-template-columns:1fr}}</style>
+<style>.cam-aviso{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:10000;max-width:min(560px,92vw);padding:11px 16px;border-radius:12px;background:var(--panel);color:var(--tx);border:1px solid var(--acento);box-shadow:var(--shadow);font-size:13px}.cam-aviso[hidden]{display:none}.cam-veh{position:relative}.cam-veh-punto{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--acento);border:3px solid var(--panel);box-shadow:0 0 0 4px rgba(60,200,212,.35)}.cam-veh-nombre{position:absolute;left:12px;top:-10px;padding:1px 7px;border-radius:6px;background:var(--panel);color:var(--tx);border:1px solid var(--line);font:600 11px/1.6 'IBM Plex Mono',monospace;white-space:nowrap}.cam-veh-punto{cursor:pointer}.rec-luz,.rec-tab-luz{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff5d5d;box-shadow:0 0 0 3px rgba(255,93,93,.25);animation:camLuz 1.6s ease-in-out infinite;flex:0 0 auto}.rec-tab-luz{margin-right:7px;vertical-align:1px}.rec-tab-luz[hidden]{display:none}.rec-luz.quieta,.quieta .rec-luz{background:#8a94a6;box-shadow:none;animation:none}@keyframes camLuz{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.rec-luz,.rec-tab-luz{animation:none}}.rec-chip{display:flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--tx);font-weight:600;font-size:12px;line-height:1.3;cursor:pointer;box-shadow:var(--shadow)}.rec-chip[hidden]{display:none}.rec-chip u{text-decoration-color:var(--acento);text-underline-offset:3px}.rec-chip:hover{border-color:var(--acento)}#pane-recorrido>*{flex:0 0 auto}.rec-vehiculos{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.rec-vehiculos[hidden]{display:none}.rec-veh{font-weight:600;font-size:12.5px;line-height:1;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--tx);cursor:pointer}.rec-veh.activo{background:var(--acento);color:#06121a;border-color:var(--acento)}.rec-sin{margin:8px 0;padding:14px;border:1px dashed var(--line);border-radius:12px;font-size:13px}.rec-sin[hidden]{display:none}.rec-cuerpo{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(240px,1fr);gap:16px;align-items:start}.rec-cuerpo[hidden]{display:none}.rec-video{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#05080f}.rec-marco{position:relative;aspect-ratio:16/9}.rec-marco img{display:block;width:100%;height:100%;object-fit:contain}.rec-marco img[hidden]{display:none}.rec-espera{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:#c7d0de;font-size:13px}.rec-espera[hidden]{display:none}.rec-envivo{position:absolute;left:10px;top:10px;display:flex;align-items:center;gap:7px;padding:4px 10px;border-radius:999px;background:rgba(5,8,15,.72);color:#fff;font:600 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.04em}.rec-avance{height:4px;background:rgba(255,255,255,.12)}.rec-avance span{display:block;height:100%;width:0;background:var(--acento);transition:width .6s ease}.rec-lado{display:flex;flex-direction:column;gap:14px;min-width:0}.rec-datos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}.rec-datos div{padding:9px 11px;border:1px solid var(--line);border-radius:11px}.rec-datos dt{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,inherit)}.rec-datos dd{margin:3px 0 0;font:600 14px/1.3 'IBM Plex Mono',monospace}.rec-sub{margin:0 0 7px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,inherit)}.rec-dets{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}.rec-dets li{padding:3px 10px;border-radius:999px;border:1px solid var(--acento);font-weight:600;font-size:12.5px;text-transform:capitalize}.rec-hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px}.rec-hist li{display:flex;gap:6px;align-items:baseline;text-transform:capitalize}.rec-hist li span{margin-left:auto;font:500 11.5px 'IBM Plex Mono',monospace;color:var(--muted,inherit);text-transform:none}.rec-dets li.rec-nada,.rec-hist li.rec-nada{border-color:var(--line);font-weight:400;color:var(--muted,inherit);text-transform:none}.rec-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.rec-btn{font-weight:600;font-size:13px;line-height:1;padding:9px 14px;border-radius:10px;border:1px solid var(--acento);background:var(--acento);color:#06121a;cursor:pointer}.rec-seguir{display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer}.rec-seguir input{accent-color:var(--acento);width:16px;height:16px}@media (max-width:900px){.rec-cuerpo{grid-template-columns:1fr}}.ot-dialogo{width:min(680px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--tx);box-shadow:var(--shadow)}.ot-dialogo::backdrop{background:rgba(5,8,15,.6)}.ot-cab{display:flex;gap:14px;align-items:flex-start;padding:16px 16px 12px;border-bottom:1px solid var(--line)}.ot-foto{flex:0 0 96px;height:72px;border-radius:10px;overflow:hidden;background:var(--line)}.ot-foto img{width:100%;height:100%;object-fit:cover;display:block}.ot-cab>div:nth-child(2){flex:1;min-width:0}.ot-sobre{margin:0;font-size:12px;color:var(--muted,inherit);text-transform:uppercase;letter-spacing:.04em}.ot-titulo{margin:2px 0;font-size:18px}.ot-lugar{margin:0;font-size:13px;color:var(--muted,inherit)}.ot-cerrar{width:34px;height:34px;border:0;border-radius:8px;background:transparent;color:var(--tx);font-size:22px;cursor:pointer}.ot-cerrar:hover{background:var(--line)}.ot-campos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px;padding:16px}.ot-campos label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600}.ot-campos .ot-ancho{grid-column:1/-1}.ot-opc{font-weight:400;color:var(--muted,inherit)}.ot-campos input,.ot-campos select,.ot-campos textarea{font:inherit;font-size:14px;font-weight:400;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg,transparent);color:var(--tx);resize:vertical}.ot-campos input:focus,.ot-campos select:focus,.ot-campos textarea:focus{outline:2px solid var(--acento);outline-offset:1px}.ot-error{margin:0 16px 8px;padding:8px 12px;border-radius:9px;background:rgba(255,93,93,.14);color:var(--tx);border:1px solid #ff5d5d;font-size:13px}.ot-error[hidden]{display:none}.ot-pie{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px 16px;border-top:1px solid var(--line)}.ot-btn{font:inherit;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid var(--line)}.ot-sec{background:transparent;color:var(--tx)}.ot-pri{background:var(--acento);color:#06121a;border-color:var(--acento)}.ot-pri:disabled{opacity:.6;cursor:wait}@media (max-width:620px){.ot-campos{grid-template-columns:1fr}.ot-foto{display:none}}.ot-bandeja{flex:0 0 auto;margin:0 0 14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}.ot-bandeja-cab{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line)}.ot-bandeja-cab h3{margin:0;font-size:15px}.ot-bandeja-res{font-size:12.5px;color:var(--muted,inherit)}.ot-bandeja-lista{max-height:340px;overflow:auto}.ot-vacio{margin:0;padding:14px;font-size:13px;color:var(--muted,inherit)}.ot-fila{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}.ot-fila:last-child{border-bottom:0}.ot-fila:hover{background:rgba(60,200,212,.06)}.ot-fila-a{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.ot-folio{font:600 12.5px 'IBM Plex Mono',monospace}.ot-fila-b{font-size:13.5px;min-width:0}.ot-meta{font-size:12px;color:var(--muted,inherit);margin-top:2px}.ot-sev,.ot-vencida{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;text-transform:capitalize;border:1px solid var(--line)}.ot-sev-urgente{background:#ff5d5d;color:#1a0505;border-color:#ff5d5d}.ot-sev-alta{border-color:#ff5d5d}.ot-sev-media{border-color:#f2b33d}.ot-vencida{background:#f2b33d;color:#1a1205;border-color:#f2b33d}.ot-estado select{font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--tx)}.ot-resuelta .ot-fila-b,.ot-descartada .ot-fila-b{opacity:.6}.ot-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}@media (max-width:620px){.ot-fila{grid-template-columns:1fr}}</style>
 <script>
-/* Tablero · detecciones en vivo de las cámaras de los vehículos.
-   Cada 20 s trae de la plataforma las detecciones nuevas (modelo YOLO11s v9 corriendo en la cámara) y las suma a
-   la pestaña Validación IA y al mapa como candidatos pendientes. También muestra dónde va cada vehículo. */
+/* Tablero · cámaras de los vehículos y recorrido en vivo.
+   - Cada 20 s trae las detecciones nuevas de las cámaras (modelo YOLO11s v9 a bordo) y las suma a Validación IA.
+   - Cada 3 s dibuja en el mapa dónde va cada vehículo y su recorrido.
+   - La pestaña "Recorrido en vivo" muestra lo que ve la cámara (con los recuadros del modelo), el avance y lo
+     detectado. GDL-SIM es un recorrido simulado que la propia plataforma reproduce para todos los usuarios. */
 (() => {
   if (typeof DATOS === "undefined" || typeof mapa === "undefined") return;
   const vistos = new Set(DATOS.map(h => h.id));
   let capaVeh = null, primera = true;
+  const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const nombreClase = c => String(c || "").replace(/_/g, " ");
 
+  /* ---------- aviso ---------- */
   const aviso = document.createElement("div");
   aviso.className = "cam-aviso";
   aviso.setAttribute("role", "status");
@@ -1452,6 +1457,7 @@ setTimeout(()=>mapa.invalidateSize(),120);
     clearTimeout(reloj); reloj = setTimeout(() => (aviso.hidden = true), 6000);
   }
 
+  /* ---------- detecciones de cámara -> Validación IA ---------- */
   async function detecciones() {
     try {
       const r = await fetch("/api/camara/candidatos", { cache: "no-store" });
@@ -1468,64 +1474,139 @@ setTimeout(()=>mapa.invalidateSize(),120);
       if (nuevos) {
         indicadores(); pintarMapa(); pintarIA(); pintarAnalisis(); pintarOrdenes();
         if (!primera) avisa(nuevos === 1
-          ? `Nueva detección de la cámara ${ultimo.vehiculo}: ${ultimo.modelo_clase} cerca de ${ultimo.nombre}. Revísala en Validación IA.`
+          ? `Nueva detección de la cámara ${ultimo.vehiculo}: ${nombreClase(ultimo.modelo_clase)} cerca de ${ultimo.nombre}. Revísala en Validación IA.`
           : `${nuevos} detecciones nuevas de las cámaras. Revísalas en Validación IA.`);
       }
     } catch (_) { /* sin conexión: se intenta en la siguiente vuelta */ }
     primera = false;
   }
 
-  /* Panel "Cámara en vivo": lo que está viendo la cámara del vehículo, con los recuadros del modelo. */
-  const panel = document.createElement("section");
-  panel.className = "cam-vivo";
-  panel.hidden = true;
-  panel.setAttribute("aria-label", "Cámara en vivo");
-  panel.innerHTML = `
-    <header><span class="cam-vivo-luz" aria-hidden="true"></span><b class="cam-vivo-titulo">Cámara en vivo</b>
-      <button type="button" class="cam-vivo-cerrar" aria-label="Cerrar la vista de la cámara">×</button></header>
-    <div class="cam-vivo-marco"><img hidden alt="Último cuadro que vio la cámara, con lo que detectó el modelo"><p class="cam-vivo-espera">Esperando el primer cuadro…</p></div>
-    <p class="cam-vivo-estado"></p>
-    <ul class="cam-vivo-dets"></ul>
-    <label class="cam-vivo-seguir"><input type="checkbox"> Seguir al vehículo en el mapa</label>`;
-  document.body.append(panel);
-  const pImg = panel.querySelector("img"), pEspera = panel.querySelector(".cam-vivo-espera");
-  const pTitulo = panel.querySelector(".cam-vivo-titulo"), pEstado = panel.querySelector(".cam-vivo-estado");
-  const pDets = panel.querySelector(".cam-vivo-dets"), pSeguir = panel.querySelector(".cam-vivo-seguir input");
-  pSeguir.addEventListener("change", () => { if (pSeguir.checked) centra(); });
-  function centra() {
-    const v = activos.find(x => x.vehiculo === elegido);
-    if (v) mapa.setView([v.lat, v.lng], Math.max(mapa.getZoom(), 15), { animate: true });
-  }
-  let elegido = null, cerradoPor = null, urlVista = null, activos = [];
-  panel.querySelector(".cam-vivo-cerrar").addEventListener("click", () => { cerradoPor = elegido; panel.hidden = true; });
+  /* ---------- pestaña "Recorrido en vivo" ---------- */
+  const tabs = document.querySelector(".tab")?.parentElement;
+  const paneRef = document.getElementById("pane-validacion");
+  if (!tabs || !paneRef) return;
+  const boton = document.createElement("button");
+  boton.className = "tab"; boton.dataset.tab = "recorrido"; boton.type = "button";
+  boton.innerHTML = `<span class="rec-tab-luz" hidden aria-hidden="true"></span>Recorrido en vivo`;
+  document.querySelector('.tab[data-tab="validacion"]').after(boton);
+  boton.addEventListener("click", () => { mostrarTab("recorrido"); vista(); });
 
-  function abre(veh) { elegido = veh; cerradoPor = null; panel.hidden = false; pinta(); vista(); }
+  const pane = document.createElement("section");
+  pane.className = "pane"; pane.id = "pane-recorrido";
+  pane.innerHTML = `
+    <div class="intro"><h2>Recorrido en vivo</h2>
+      <p>Lo que ve la cámara de cada vehículo mientras recorre la ciudad, con los recuadros de lo que detecta el modelo.
+      <b>GDL-SIM</b> es un recorrido simulado con fotos reales de calles de Guadalajara (Mapillary, CC BY-SA 4.0): la plataforma
+      lo reproduce para todas las personas que entran al tablero.</p></div>
+    <div class="rec-vehiculos" role="group" aria-label="Elegir vehículo"></div>
+    <p class="rec-sin" hidden>No hay vehículos transmitiendo en este momento.</p>
+    <div class="rec-cuerpo" hidden>
+      <div class="rec-video">
+        <div class="rec-marco"><img hidden alt="Último cuadro que vio la cámara, con lo que detectó el modelo">
+          <p class="rec-espera">Esperando el primer cuadro…</p>
+          <span class="rec-envivo"><span class="rec-luz" aria-hidden="true"></span><span class="rec-envivo-txt">EN VIVO</span></span>
+        </div>
+        <div class="rec-avance" aria-hidden="true"><span></span></div>
+      </div>
+      <div class="rec-lado">
+        <dl class="rec-datos">
+          <div><dt>Cuadro</dt><dd data-d="cuadro">–</dd></div>
+          <div><dt>Recorrido</dt><dd data-d="km">–</dd></div>
+          <div><dt>Modelo</dt><dd data-d="ms">–</dd></div>
+          <div><dt>Última señal</dt><dd data-d="hace">–</dd></div>
+        </dl>
+        <div><h3 class="rec-sub">En este cuadro</h3><ul class="rec-dets"></ul></div>
+        <div class="rec-hist-caja"><h3 class="rec-sub">Detectado en el recorrido <span class="rec-hist-n"></span></h3><ol class="rec-hist"></ol></div>
+        <div class="rec-acciones">
+          <button type="button" class="rec-btn" data-ver>Ver en el mapa</button>
+          <label class="rec-seguir"><input type="checkbox"> Seguir al vehículo</label>
+        </div>
+      </div>
+    </div>`;
+  paneRef.parentElement.insertBefore(pane, paneRef.nextSibling);
+  const $ = s => pane.querySelector(s);
+  const pImg = $(".rec-marco img"), pEspera = $(".rec-espera"), pCuerpo = $(".rec-cuerpo"), pSin = $(".rec-sin");
+  const pVehs = $(".rec-vehiculos"), pDets = $(".rec-dets"), pHist = $(".rec-hist"), pHistN = $(".rec-hist-n");
+  const pSeguir = $(".rec-seguir input"), pAvance = $(".rec-avance span"), pEnvivo = $(".rec-envivo");
+  const dato = k => pane.querySelector(`[data-d="${k}"]`);
+
+  let elegido = null, urlVista = null, activos = [];
+  const historial = {};                // vehículo -> [{cuadro, clase, confianza}]
+  const ultimoCuadro = {};
+
+  function centra(zoom) {
+    const v = activos.find(x => x.vehiculo === elegido);
+    if (v) mapa.setView([v.lat, v.lng], zoom || Math.max(mapa.getZoom(), 15), { animate: true });
+  }
+  $("[data-ver]").addEventListener("click", () => {
+    centra(15);
+    document.getElementById("mapa")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+  pSeguir.addEventListener("change", () => { if (pSeguir.checked) centra(); });
+
+  /* chip compacto sobre el mapa: no tapa el recorrido y lleva a la pestaña */
+  const Chip = L.Control.extend({
+    onAdd() {
+      const b = L.DomUtil.create("button", "rec-chip");
+      b.type = "button";
+      L.DomEvent.disableClickPropagation(b);
+      b.addEventListener("click", () => {
+        mostrarTab("recorrido"); vista();
+        pane.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      return b;
+    },
+  });
+  const chip = new Chip({ position: "topright" }).addTo(mapa).getContainer();
+  chip.hidden = true;
+
+  function pintaVehiculos() {
+    pVehs.replaceChildren(...activos.map(v => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "rec-veh" + (v.vehiculo === elegido ? " activo" : "");
+      b.setAttribute("aria-pressed", v.vehiculo === elegido ? "true" : "false");
+      b.textContent = v.simulado ? `${v.vehiculo} · simulado` : v.vehiculo;
+      b.addEventListener("click", () => { elegido = v.vehiculo; pinta(); vista(); });
+      return b;
+    }));
+    pVehs.hidden = activos.length < 2;
+  }
 
   function pinta() {
     const v = activos.find(x => x.vehiculo === elegido);
+    pSin.hidden = !!v; pCuerpo.hidden = !v;
+    boton.querySelector(".rec-tab-luz").hidden = !activos.length;
+    chip.hidden = !v;
+    pintaVehiculos();
     if (!v) return;
-    pTitulo.textContent = `Cámara ${v.vehiculo} · en vivo`;
-    panel.classList.toggle("cam-vivo-quieta", v.hace_s > 15);
-    const partes = [];
-    if (v.cuadro) partes.push(v.total ? `Cuadro ${v.cuadro} de ${v.total}` : `Cuadro ${v.cuadro}`);
-    if (v.km) partes.push(`${v.km.toFixed(1)} km recorridos`);
-    if (v.ms) partes.push(`modelo ${v.ms} ms`);
-    partes.push(v.hace_s <= 2 ? "ahora" : `hace ${v.hace_s} s`);
-    pEstado.textContent = partes.join(" · ");
-    pDets.replaceChildren();
-    const lista = v.dets && v.dets.length ? v.dets : null;
-    if (!lista) {
-      const li = document.createElement("li"); li.className = "cam-vivo-nada";
-      li.textContent = "Sin fallas en este cuadro"; pDets.append(li);
-    } else for (const d of lista) {
+    const quieto = v.hace_s > 15;
+    chip.innerHTML = `<span class="rec-luz${quieto ? " quieta" : ""}"></span>${esc(v.vehiculo)} ${v.simulado ? "simulado" : "en vivo"} · <u>ver cámara</u>`;
+    pEnvivo.classList.toggle("quieta", quieto);
+    pEnvivo.querySelector(".rec-envivo-txt").textContent = `${quieto ? "SIN SEÑAL" : v.simulado ? "SIMULADO" : "EN VIVO"} · ${v.vehiculo}`;
+    dato("cuadro").textContent = v.cuadro ? (v.total ? `${v.cuadro} de ${v.total}` : String(v.cuadro)) : "–";
+    dato("km").textContent = v.km ? `${v.km.toFixed(1)} km` : "–";
+    dato("ms").textContent = v.ms ? `${v.ms} ms por cuadro` : "–";
+    dato("hace").textContent = v.hace_s <= 2 ? "ahora" : `hace ${v.hace_s} s`;
+    pAvance.style.width = v.total ? `${Math.min(100, (100 * v.cuadro) / v.total)}%` : "0";
+    pDets.replaceChildren(...(v.dets && v.dets.length ? v.dets : [null]).map(d => {
       const li = document.createElement("li");
-      li.textContent = `${d.clase.replace(/_/g, " ")} · ${Math.round(d.confianza * 100)}%`;
-      pDets.append(li);
-    }
+      if (!d) { li.className = "rec-nada"; li.textContent = "Sin fallas en este cuadro"; }
+      else li.textContent = `${nombreClase(d.clase)} · ${Math.round(d.confianza * 100)}%`;
+      return li;
+    }));
+    const h = historial[v.vehiculo] || [];
+    pHistN.textContent = h.length ? `(${h.length})` : "";
+    pHist.replaceChildren(...(h.length ? h.slice(-8).reverse() : [null]).map(x => {
+      const li = document.createElement("li");
+      if (!x) { li.className = "rec-nada"; li.textContent = "Todavía nada en este recorrido."; }
+      else li.innerHTML = `<b>${esc(nombreClase(x.clase))}</b> ${Math.round(x.confianza * 100)}% <span>cuadro ${x.cuadro}</span>`;
+      return li;
+    }));
   }
 
   async function vista() {
-    if (panel.hidden || !elegido || document.hidden) return;
+    if (tabActiva !== "recorrido" || !elegido || document.hidden) return;
     try {
       const r = await fetch("/api/camara/vista?v=" + encodeURIComponent(elegido), { cache: "no-store" });
       if (!r.ok) return;
@@ -1547,14 +1628,21 @@ setTimeout(()=>mapa.invalidateSize(),120);
       if (!r.ok) return;
       const j = await r.json();
       if (!j.ok) return;
-      activos = j.vehiculos;
+      activos = j.vehiculos.sort((a, b) => (a.simulado - b.simulado) || a.vehiculo.localeCompare(b.vehiculo));
       if (!capaVeh) capaVeh = L.layerGroup().addTo(mapa);
       capaVeh.clearLayers();
       for (const v of activos) {
-        // recorrido en vivo: por dónde ha pasado el vehículo
+        // historial de lo detectado (se reinicia cuando el recorrido vuelve a empezar)
+        if (ultimoCuadro[v.vehiculo] && v.cuadro && v.cuadro < ultimoCuadro[v.vehiculo]) historial[v.vehiculo] = [];
+        if (v.cuadro && v.cuadro !== ultimoCuadro[v.vehiculo] && v.dets && v.dets.length) {
+          (historial[v.vehiculo] = historial[v.vehiculo] || []).push(...v.dets.map(d => ({ ...d, cuadro: v.cuadro })));
+        }
+        if (v.cuadro) ultimoCuadro[v.vehiculo] = v.cuadro;
+        // recorrido en el mapa
         if (v.ruta && v.ruta.length > 1) {
           L.polyline(v.ruta, { color: "#0b1220", weight: 8, opacity: .35, interactive: false }).addTo(capaVeh);
-          L.polyline(v.ruta, { color: "#3cc8d4", weight: 4, opacity: .95, interactive: false }).addTo(capaVeh);
+          L.polyline(v.ruta, { color: "#3cc8d4", weight: 4, opacity: .95, interactive: false, dashArray: v.simulado ? "1 7" : null,
+            lineCap: "round" }).addTo(capaVeh);
           L.circleMarker(v.ruta[0], { radius: 5, color: "#3cc8d4", weight: 2, fillColor: "#0b1220", fillOpacity: 1, interactive: false })
             .addTo(capaVeh);
           let km = 0;
@@ -1564,19 +1652,13 @@ setTimeout(()=>mapa.invalidateSize(),120);
         const icono = L.divIcon({ className: "cam-veh", html: `<span class="cam-veh-punto"></span><span class="cam-veh-nombre"></span>`, iconSize: [0, 0] });
         const m = L.marker([v.lat, v.lng], { icon: icono, zIndexOffset: 1000, keyboard: false }).addTo(capaVeh);
         const el = m.getElement();
-        if (el) el.querySelector(".cam-veh-nombre").textContent = v.vehiculo;
+        if (el) el.querySelector(".cam-veh-nombre").textContent = v.simulado ? `${v.vehiculo} · simulado` : v.vehiculo;
         m.bindTooltip(`Cámara ${v.vehiculo} · clic para ver lo que está viendo`, { direction: "top" });
-        m.on("click", () => abre(v.vehiculo));
+        m.on("click", () => { elegido = v.vehiculo; mostrarTab("recorrido"); pinta(); vista(); });
       }
-      // se abre sola con la primera cámara activa (salvo que la persona la haya cerrado)
-      if (!activos.some(v => v.vehiculo === elegido)) elegido = null;
-      if (!elegido && activos.length) {
-        const v = activos.find(x => x.vista && x.hace_s < 60 && x.vehiculo !== cerradoPor);
-        if (v) abre(v.vehiculo);
-      }
-      if (!activos.length) panel.hidden = true;
+      if (!activos.some(v => v.vehiculo === elegido)) elegido = activos[0] ? activos[0].vehiculo : null;
       pinta();
-      if (pSeguir.checked && !panel.hidden) centra();
+      if (pSeguir.checked && tabActiva === "recorrido") centra();
     } catch (_) { /* sin conexión */ }
   }
 

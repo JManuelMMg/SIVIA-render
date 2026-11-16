@@ -61,6 +61,7 @@ import smn_server  # noqa: E402
 import admin  # noqa: E402
 import camaras  # noqa: E402
 import turnado  # noqa: E402
+import recorrido_demo  # noqa: E402
 
 DB = os.environ.get("DATABASE_URL")
 BUCKET = os.environ.get("BUCKET", "reportbucket")
@@ -863,6 +864,8 @@ def main():
             if SECRETO:
                 c.execute(ESQUEMA_USUARIOS)
     threading.Thread(target=limites_inegi, daemon=True).start()   # precarga para que el tablero abra rápido
+    if recorrido_demo.inicia():
+        print(f"Recorrido simulado: {recorrido_demo.VEHICULO} en el tablero para todos (DEMO_RECORRIDO=0 lo apaga)")
     srv = ThreadingHTTPServer((a.host, a.port), Handler)
     print(f"Tablero: http://{a.host}:{a.port}/index.html")
     print("Base de datos:", "conectada por DATABASE_URL" if DB else "no configurada (validaciones en el navegador)")

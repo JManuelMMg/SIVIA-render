@@ -151,6 +151,17 @@ def posicion(vehiculo, datos):
             raise ErrorCamara("vista inválida")
         if len(vista) > MAX_VISTA or vista[:3] != b"\xff\xd8\xff":
             raise ErrorCamara("la vista debe ser JPEG de 250 KB o menos")
+    registra_posicion(vehiculo, la, ln, _entero(datos.get("cuadro")), _entero(datos.get("total")),
+                      _entero(datos.get("ms")), dets, vista)
+
+
+def reinicia_traza(vehiculo):
+    with _pos_lock:
+        _trazas.pop(vehiculo, None)
+
+
+def registra_posicion(vehiculo, la, ln, cuadro=None, total=None, ms=None, dets=(), vista=None, simulado=False):
+    """Guarda en memoria dónde va el vehículo, su recorrido y lo último que vio (lo usan cámaras y simulación)."""
     with _pos_lock:
         # recorrido en vivo: los últimos puntos por donde pasó (se reinicia si estuvo más de 10 min sin señal)
         previa = _posiciones.get(vehiculo)
@@ -159,9 +170,10 @@ def posicion(vehiculo, datos):
             traza.clear()
         if not traza or metros(traza[-1][0], traza[-1][1], la, ln) >= 5:
             traza.append((round(la, 6), round(ln, 6)))
+        anterior = _posiciones.get(vehiculo) or {}
         _posiciones[vehiculo] = {"vehiculo": vehiculo, "lat": la, "lng": ln, "t": time.time(),
-                                 "cuadro": _entero(datos.get("cuadro")), "total": _entero(datos.get("total")),
-                                 "ms": _entero(datos.get("ms")), "dets": dets, "vista": vista is not None}
+                                 "cuadro": cuadro, "total": total, "ms": ms, "dets": list(dets),
+                                 "vista": vista is not None or bool(anterior.get("vista")), "simulado": simulado}
         if vista:
             _vistas[vehiculo] = vista
 
