@@ -74,6 +74,12 @@ def autentica(cabecera):
     return None
 
 
+def vehiculo_de(correo):
+    """Nombre del 'vehículo' cuando alguien transmite con la cámara de su celular o laptop."""
+    nombre = "".join(ch for ch in (correo or "").split("@")[0] if ch.isalnum()).upper()[:12]
+    return f"MOVIL-{nombre or 'USUARIO'}"
+
+
 _ritmo, _ritmo_lock = {}, threading.Lock()
 
 

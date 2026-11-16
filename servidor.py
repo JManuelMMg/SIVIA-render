@@ -11,6 +11,8 @@ Extiende smn_server.py (clima SMN, GOES, radar, INEGI, SSN, USGS; sin cambios) c
   POST /api/camara/deteccion, /posicion  cámaras de los vehículos (token de dispositivo en CAMARA_TOKENS)
   GET  /api/camara/candidatos, /vehiculos detecciones de cámara y vehículos activos para el tablero (con sesión)
   GET  /api/camara/vista?v=GDL-01        último cuadro que vio esa cámara, con los recuadros (con sesión)
+  GET  /api/camara/modelo.onnx           detector YOLO11s v9 para la cámara del navegador (con sesión)
+  (las POST de cámara aceptan también la sesión de un operador o admin: cámara del celular o laptop)
   GET  /api/bd/estado                  conexión y conteos
   GET  /api/candidatos                 {id: estado} de los candidatos del modelo
   POST /api/candidatos/<id>            {"estado": "confirmado"|"descartado"|"pendiente"}      (operador, admin)
@@ -53,6 +55,7 @@ import threading
 import time
 import webbrowser
 from http.server import ThreadingHTTPServer
+import shutil
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlsplit
 
@@ -399,12 +402,25 @@ class Handler(smn_server.Handler):
             raise camaras.ErrorCamara("JSON inválido")
 
     def _post_camara(self, ruta):
-        """Detecciones y posición que mandan las cámaras de los vehículos (sin sesión: token de dispositivo)."""
-        if not camaras.tokens():
-            return self._json({"ok": False, "error": "cámaras no configuradas (CAMARA_TOKENS)"}, 503)
-        veh = camaras.autentica(self.headers.get("Authorization"))
-        if not veh:
-            return self._json({"ok": False, "error": "token de cámara inválido"}, 401)
+        """Detecciones y posición de las cámaras. Dos formas de entrar:
+        - equipo del vehículo: token de dispositivo (CAMARA_TOKENS) en Authorization;
+        - cámara del navegador: una persona con sesión de operador o admin usa su celular o laptop
+          (el vehículo se llama MOVIL-<usuario>; se verifica el encabezado Origin)."""
+        if self.headers.get("Authorization"):
+            if not camaras.tokens():
+                return self._json({"ok": False, "error": "cámaras no configuradas (CAMARA_TOKENS)"}, 503)
+            veh = camaras.autentica(self.headers.get("Authorization"))
+            if not veh:
+                return self._json({"ok": False, "error": "token de cámara inválido"}, 401)
+        else:
+            sesion = self._sesion() if SECRETO else {"u": "local", "r": "admin"}
+            if not sesion:
+                return self._json({"ok": False, "login": True, "error": "inicia sesión"}, 401)
+            if sesion.get("r") not in ("operador", "admin"):
+                return self._json({"ok": False, "error": "solo operador o admin pueden transmitir con su cámara"}, 403)
+            if SECRETO and urlsplit(self.headers.get("Origin") or "").netloc != self.headers.get("Host"):
+                return self._json({"ok": False, "error": "origen no permitido"}, 403)
+            veh = camaras.vehiculo_de(sesion["u"])
         if not camaras.ritmo_ok(veh):
             return self._json({"ok": False, "error": "demasiados envíos; espera un momento"}, 429)
         try:
@@ -683,6 +699,18 @@ class Handler(smn_server.Handler):
             return self._get_admin(ruta, u.query)
         if ruta == "/api/camara/vehiculos":
             return self._json({"ok": True, "vehiculos": camaras.vehiculos()})
+        if ruta == "/api/camara/modelo.onnx":            # detector YOLO11s v9 para la cámara del navegador
+            archivo = Path(__file__).resolve().parent / "modelo" / "entorno_seguro_v9_yolo11s.onnx"
+            if not archivo.exists():
+                return self._json({"ok": False, "error": "modelo no incluido en este despliegue"}, 404)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header("Cache-Control", "private, max-age=86400")
+            self.send_header("Content-Length", str(archivo.stat().st_size))
+            self.end_headers()
+            with archivo.open("rb") as fh:
+                shutil.copyfileobj(fh, self.wfile, 256 * 1024)
+            return None
         if ruta == "/api/camara/vista":
             foto = camaras.vista(parse_qs(u.query).get("v", [""])[0])
             if not foto:

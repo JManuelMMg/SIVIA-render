@@ -1430,7 +1430,7 @@ window.addEventListener("online", actualizarFuentesAlVolver);
 document.getElementById("filtroIA").value="pendiente";
 setTimeout(()=>mapa.invalidateSize(),120);
 </script>
-<style>.cam-aviso{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:10000;max-width:min(560px,92vw);padding:11px 16px;border-radius:12px;background:var(--panel);color:var(--tx);border:1px solid var(--acento);box-shadow:var(--shadow);font-size:13px}.cam-aviso[hidden]{display:none}.cam-veh{position:relative}.cam-veh-punto{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--acento);border:3px solid var(--panel);box-shadow:0 0 0 4px rgba(60,200,212,.35)}.cam-veh-nombre{position:absolute;left:12px;top:-10px;padding:1px 7px;border-radius:6px;background:var(--panel);color:var(--tx);border:1px solid var(--line);font:600 11px/1.6 'IBM Plex Mono',monospace;white-space:nowrap}.cam-veh-punto{cursor:pointer}.rec-luz,.rec-tab-luz{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff5d5d;box-shadow:0 0 0 3px rgba(255,93,93,.25);animation:camLuz 1.6s ease-in-out infinite;flex:0 0 auto}.rec-tab-luz{margin-right:7px;vertical-align:1px}.rec-tab-luz[hidden]{display:none}.rec-luz.quieta,.quieta .rec-luz{background:#8a94a6;box-shadow:none;animation:none}@keyframes camLuz{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.rec-luz,.rec-tab-luz{animation:none}}.rec-chip{display:flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--tx);font-weight:600;font-size:12px;line-height:1.3;cursor:pointer;box-shadow:var(--shadow)}.rec-chip[hidden]{display:none}.rec-chip u{text-decoration-color:var(--acento);text-underline-offset:3px}.rec-chip:hover{border-color:var(--acento)}#pane-recorrido>*{flex:0 0 auto}.rec-vehiculos{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.rec-vehiculos[hidden]{display:none}.rec-veh{font-weight:600;font-size:12.5px;line-height:1;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--tx);cursor:pointer}.rec-veh.activo{background:var(--acento);color:#06121a;border-color:var(--acento)}.rec-sin{margin:8px 0;padding:14px;border:1px dashed var(--line);border-radius:12px;font-size:13px}.rec-sin[hidden]{display:none}.rec-cuerpo{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(240px,1fr);gap:16px;align-items:start}.rec-cuerpo[hidden]{display:none}.rec-video{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#05080f}.rec-marco{position:relative;aspect-ratio:16/9}.rec-marco img{display:block;width:100%;height:100%;object-fit:contain}.rec-marco img[hidden]{display:none}.rec-espera{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:#c7d0de;font-size:13px}.rec-espera[hidden]{display:none}.rec-envivo{position:absolute;left:10px;top:10px;display:flex;align-items:center;gap:7px;padding:4px 10px;border-radius:999px;background:rgba(5,8,15,.72);color:#fff;font:600 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.04em}.rec-avance{height:4px;background:rgba(255,255,255,.12)}.rec-avance span{display:block;height:100%;width:0;background:var(--acento);transition:width .6s ease}.rec-lado{display:flex;flex-direction:column;gap:14px;min-width:0}.rec-datos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}.rec-datos div{padding:9px 11px;border:1px solid var(--line);border-radius:11px}.rec-datos dt{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,inherit)}.rec-datos dd{margin:3px 0 0;font:600 14px/1.3 'IBM Plex Mono',monospace}.rec-sub{margin:0 0 7px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,inherit)}.rec-dets{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}.rec-dets li{padding:3px 10px;border-radius:999px;border:1px solid var(--acento);font-weight:600;font-size:12.5px;text-transform:capitalize}.rec-hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px}.rec-hist li{display:flex;gap:6px;align-items:baseline;text-transform:capitalize}.rec-hist li span{margin-left:auto;font:500 11.5px 'IBM Plex Mono',monospace;color:var(--muted,inherit);text-transform:none}.rec-dets li.rec-nada,.rec-hist li.rec-nada{border-color:var(--line);font-weight:400;color:var(--muted,inherit);text-transform:none}.rec-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.rec-btn{font-weight:600;font-size:13px;line-height:1;padding:9px 14px;border-radius:10px;border:1px solid var(--acento);background:var(--acento);color:#06121a;cursor:pointer}.rec-seguir{display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer}.rec-seguir input{accent-color:var(--acento);width:16px;height:16px}@media (max-width:900px){.rec-cuerpo{grid-template-columns:1fr}}.ot-dialogo{width:min(680px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--tx);box-shadow:var(--shadow)}.ot-dialogo::backdrop{background:rgba(5,8,15,.6)}.ot-cab{display:flex;gap:14px;align-items:flex-start;padding:16px 16px 12px;border-bottom:1px solid var(--line)}.ot-foto{flex:0 0 96px;height:72px;border-radius:10px;overflow:hidden;background:var(--line)}.ot-foto img{width:100%;height:100%;object-fit:cover;display:block}.ot-cab>div:nth-child(2){flex:1;min-width:0}.ot-sobre{margin:0;font-size:12px;color:var(--muted,inherit);text-transform:uppercase;letter-spacing:.04em}.ot-titulo{margin:2px 0;font-size:18px}.ot-lugar{margin:0;font-size:13px;color:var(--muted,inherit)}.ot-cerrar{width:34px;height:34px;border:0;border-radius:8px;background:transparent;color:var(--tx);font-size:22px;cursor:pointer}.ot-cerrar:hover{background:var(--line)}.ot-campos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px;padding:16px}.ot-campos label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600}.ot-campos .ot-ancho{grid-column:1/-1}.ot-opc{font-weight:400;color:var(--muted,inherit)}.ot-campos input,.ot-campos select,.ot-campos textarea{font:inherit;font-size:14px;font-weight:400;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg,transparent);color:var(--tx);resize:vertical}.ot-campos input:focus,.ot-campos select:focus,.ot-campos textarea:focus{outline:2px solid var(--acento);outline-offset:1px}.ot-error{margin:0 16px 8px;padding:8px 12px;border-radius:9px;background:rgba(255,93,93,.14);color:var(--tx);border:1px solid #ff5d5d;font-size:13px}.ot-error[hidden]{display:none}.ot-pie{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px 16px;border-top:1px solid var(--line)}.ot-btn{font:inherit;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid var(--line)}.ot-sec{background:transparent;color:var(--tx)}.ot-pri{background:var(--acento);color:#06121a;border-color:var(--acento)}.ot-pri:disabled{opacity:.6;cursor:wait}@media (max-width:620px){.ot-campos{grid-template-columns:1fr}.ot-foto{display:none}}.ot-bandeja{flex:0 0 auto;margin:0 0 14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}.ot-bandeja-cab{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line)}.ot-bandeja-cab h3{margin:0;font-size:15px}.ot-bandeja-res{font-size:12.5px;color:var(--muted,inherit)}.ot-bandeja-lista{max-height:340px;overflow:auto}.ot-vacio{margin:0;padding:14px;font-size:13px;color:var(--muted,inherit)}.ot-fila{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}.ot-fila:last-child{border-bottom:0}.ot-fila:hover{background:rgba(60,200,212,.06)}.ot-fila-a{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.ot-folio{font:600 12.5px 'IBM Plex Mono',monospace}.ot-fila-b{font-size:13.5px;min-width:0}.ot-meta{font-size:12px;color:var(--muted,inherit);margin-top:2px}.ot-sev,.ot-vencida{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;text-transform:capitalize;border:1px solid var(--line)}.ot-sev-urgente{background:#ff5d5d;color:#1a0505;border-color:#ff5d5d}.ot-sev-alta{border-color:#ff5d5d}.ot-sev-media{border-color:#f2b33d}.ot-vencida{background:#f2b33d;color:#1a1205;border-color:#f2b33d}.ot-estado select{font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--tx)}.ot-resuelta .ot-fila-b,.ot-descartada .ot-fila-b{opacity:.6}.ot-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}@media (max-width:620px){.ot-fila{grid-template-columns:1fr}}</style>
+<style>.cam-aviso{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:10000;max-width:min(560px,92vw);padding:11px 16px;border-radius:12px;background:var(--panel);color:var(--tx);border:1px solid var(--acento);box-shadow:var(--shadow);font-size:13px}.cam-aviso[hidden]{display:none}.cam-veh{position:relative}.cam-veh-punto{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--acento);border:3px solid var(--panel);box-shadow:0 0 0 4px rgba(60,200,212,.35)}.cam-veh-nombre{position:absolute;left:12px;top:-10px;padding:1px 7px;border-radius:6px;background:var(--panel);color:var(--tx);border:1px solid var(--line);font:600 11px/1.6 'IBM Plex Mono',monospace;white-space:nowrap}.cam-veh-punto{cursor:pointer}.rec-luz,.rec-tab-luz{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff5d5d;box-shadow:0 0 0 3px rgba(255,93,93,.25);animation:camLuz 1.6s ease-in-out infinite;flex:0 0 auto}.rec-tab-luz{margin-right:7px;vertical-align:1px}.rec-tab-luz[hidden]{display:none}.rec-luz.quieta,.quieta .rec-luz{background:#8a94a6;box-shadow:none;animation:none}@keyframes camLuz{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.rec-luz,.rec-tab-luz{animation:none}}.rec-chip{display:flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--tx);font-weight:600;font-size:12px;line-height:1.3;cursor:pointer;box-shadow:var(--shadow)}.rec-chip[hidden]{display:none}.rec-chip u{text-decoration-color:var(--acento);text-underline-offset:3px}.rec-chip:hover{border-color:var(--acento)}#pane-recorrido>*{flex:0 0 auto}.rec-vehiculos{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}.rec-vehiculos[hidden]{display:none}.rec-veh{font-weight:600;font-size:12.5px;line-height:1;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--tx);cursor:pointer}.rec-veh.activo{background:var(--acento);color:#06121a;border-color:var(--acento)}.rec-sin{margin:8px 0;padding:14px;border:1px dashed var(--line);border-radius:12px;font-size:13px}.rec-sin[hidden]{display:none}.rec-cuerpo{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(240px,1fr);gap:16px;align-items:start}.rec-cuerpo[hidden]{display:none}.rec-video{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#05080f}.rec-marco{position:relative;aspect-ratio:16/9}.rec-marco img{display:block;width:100%;height:100%;object-fit:contain}.rec-marco img[hidden]{display:none}.rec-espera{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:#c7d0de;font-size:13px}.rec-espera[hidden]{display:none}.rec-envivo{position:absolute;left:10px;top:10px;display:flex;align-items:center;gap:7px;padding:4px 10px;border-radius:999px;background:rgba(5,8,15,.72);color:#fff;font:600 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.04em}.rec-avance{height:4px;background:rgba(255,255,255,.12)}.rec-avance span{display:block;height:100%;width:0;background:var(--acento);transition:width .6s ease}.rec-lado{display:flex;flex-direction:column;gap:14px;min-width:0}.rec-datos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}.rec-datos div{padding:9px 11px;border:1px solid var(--line);border-radius:11px}.rec-datos dt{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,inherit)}.rec-datos dd{margin:3px 0 0;font:600 14px/1.3 'IBM Plex Mono',monospace}.rec-sub{margin:0 0 7px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted,inherit)}.rec-dets{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}.rec-dets li{padding:3px 10px;border-radius:999px;border:1px solid var(--acento);font-weight:600;font-size:12.5px;text-transform:capitalize}.rec-hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px}.rec-hist li{display:flex;gap:6px;align-items:baseline;text-transform:capitalize}.rec-hist li span{margin-left:auto;font:500 11.5px 'IBM Plex Mono',monospace;color:var(--muted,inherit);text-transform:none}.rec-dets li.rec-nada,.rec-hist li.rec-nada{border-color:var(--line);font-weight:400;color:var(--muted,inherit);text-transform:none}.rec-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.rec-btn{font-weight:600;font-size:13px;line-height:1;padding:9px 14px;border-radius:10px;border:1px solid var(--acento);background:var(--acento);color:#06121a;cursor:pointer}.rec-seguir{display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer}.rec-seguir input{accent-color:var(--acento);width:16px;height:16px}@media (max-width:900px){.rec-cuerpo{grid-template-columns:1fr}}.ot-dialogo{width:min(680px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--tx);box-shadow:var(--shadow)}.ot-dialogo::backdrop{background:rgba(5,8,15,.6)}.ot-cab{display:flex;gap:14px;align-items:flex-start;padding:16px 16px 12px;border-bottom:1px solid var(--line)}.ot-foto{flex:0 0 96px;height:72px;border-radius:10px;overflow:hidden;background:var(--line)}.ot-foto img{width:100%;height:100%;object-fit:cover;display:block}.ot-cab>div:nth-child(2){flex:1;min-width:0}.ot-sobre{margin:0;font-size:12px;color:var(--muted,inherit);text-transform:uppercase;letter-spacing:.04em}.ot-titulo{margin:2px 0;font-size:18px}.ot-lugar{margin:0;font-size:13px;color:var(--muted,inherit)}.ot-cerrar{width:34px;height:34px;border:0;border-radius:8px;background:transparent;color:var(--tx);font-size:22px;cursor:pointer}.ot-cerrar:hover{background:var(--line)}.ot-campos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px;padding:16px}.ot-campos label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600}.ot-campos .ot-ancho{grid-column:1/-1}.ot-opc{font-weight:400;color:var(--muted,inherit)}.ot-campos input,.ot-campos select,.ot-campos textarea{font:inherit;font-size:14px;font-weight:400;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg,transparent);color:var(--tx);resize:vertical}.ot-campos input:focus,.ot-campos select:focus,.ot-campos textarea:focus{outline:2px solid var(--acento);outline-offset:1px}.ot-error{margin:0 16px 8px;padding:8px 12px;border-radius:9px;background:rgba(255,93,93,.14);color:var(--tx);border:1px solid #ff5d5d;font-size:13px}.ot-error[hidden]{display:none}.ot-pie{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px 16px;border-top:1px solid var(--line)}.ot-btn{font:inherit;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;border:1px solid var(--line)}.ot-sec{background:transparent;color:var(--tx)}.ot-pri{background:var(--acento);color:#06121a;border-color:var(--acento)}.ot-pri:disabled{opacity:.6;cursor:wait}@media (max-width:620px){.ot-campos{grid-template-columns:1fr}.ot-foto{display:none}}.ot-bandeja{flex:0 0 auto;margin:0 0 14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}.ot-bandeja-cab{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line)}.ot-bandeja-cab h3{margin:0;font-size:15px}.ot-bandeja-res{font-size:12.5px;color:var(--muted,inherit)}.ot-bandeja-lista{max-height:340px;overflow:auto}.ot-vacio{margin:0;padding:14px;font-size:13px;color:var(--muted,inherit)}.ot-fila{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}.ot-fila:last-child{border-bottom:0}.ot-fila:hover{background:rgba(60,200,212,.06)}.ot-fila-a{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.ot-folio{font:600 12.5px 'IBM Plex Mono',monospace}.ot-fila-b{font-size:13.5px;min-width:0}.ot-meta{font-size:12px;color:var(--muted,inherit);margin-top:2px}.ot-sev,.ot-vencida{font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;text-transform:capitalize;border:1px solid var(--line)}.ot-sev-urgente{background:#ff5d5d;color:#1a0505;border-color:#ff5d5d}.ot-sev-alta{border-color:#ff5d5d}.ot-sev-media{border-color:#f2b33d}.ot-vencida{background:#f2b33d;color:#1a1205;border-color:#f2b33d}.ot-estado select{font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--tx)}.ot-resuelta .ot-fila-b,.ot-descartada .ot-fila-b{opacity:.6}.ot-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}@media (max-width:620px){.ot-fila{grid-template-columns:1fr}}.cm-caja{flex:0 0 auto;margin:0 0 16px;padding:16px;border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;gap:12px}.cm-cab h3{margin:0 0 4px;font-size:16px}.cm-cab p{margin:0;font-size:13px;color:var(--muted,inherit);max-width:760px}.cm-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.cm-sec{font-weight:600;font-size:13px;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--tx);cursor:pointer}.cm-sec[hidden],.rec-btn[hidden]{display:none}.cm-vista{position:relative;max-width:760px;border-radius:12px;overflow:hidden;background:#05080f}.cm-vista[hidden]{display:none}.cm-vista video{display:block;width:100%;height:auto}.cm-vista canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.cm-estado{margin:0;font:500 12.5px/1.45 'IBM Plex Mono',monospace;color:var(--muted,inherit)}.cm-estado:empty{display:none}</style>
 <script>
 /* Tablero · cámaras de los vehículos y recorrido en vivo.
    - Cada 20 s trae las detecciones nuevas de las cámaras (modelo YOLO11s v9 a bordo) y las suma a Validación IA.
@@ -1534,6 +1534,46 @@ setTimeout(()=>mapa.invalidateSize(),120);
   const historial = {};                // vehículo -> [{cuadro, clase, confianza}]
   const ultimoCuadro = {};
 
+  /* Recorridos simulados extra (zona Centro): archivos estáticos en img/recorridos/ grabados con el detector v9.
+     Se reproducen en el navegador con el reloj, así todas las personas ven el mismo punto al mismo tiempo. */
+  const SEG = 3, PAUSA = 20;
+  const locales = [];
+  (async () => {
+    try {
+      const r = await fetch("img/recorridos/index.json", { cache: "no-store" });
+      if (!r.ok) return;
+      const j = await r.json();
+      for (const [i, x] of j.recorridos.entries()) {
+        const d = await (await fetch(`img/recorridos/${x.id}/recorrido.json`, { cache: "no-store" })).json();
+        locales.push({ id: x.id, vehiculo: d.vehiculo, nombre: d.nombre, cuadros: d.cuadros, desfase: 41 * (i + 1) });
+      }
+      vehiculos();
+    } catch (_) { /* sin recorridos extra */ }
+  })();
+
+  function simulados() {
+    const ahora = Date.now() / 1000;
+    return locales.map(r => {
+      const c = r.cuadros, n = c.length, t = (ahora + r.desfase) % (n * SEG + PAUSA);
+      const corriendo = t < n * SEG;
+      const k = corriendo ? Math.floor(t / SEG) : n - 1;
+      const f = corriendo && k < n - 1 ? (t % SEG) / SEG : 0;   // avanza suave hacia el siguiente cuadro
+      const a = c[k], b = c[Math.min(n - 1, k + 1)];
+      const lat = a.lat + (b.lat - a.lat) * f, lng = a.lng + (b.lng - a.lng) * f;
+      const ruta = c.slice(0, k + 1).map(p => [p.lat, p.lng]);
+      if (f) ruta.push([lat, lng]);
+      return {
+        vehiculo: r.vehiculo, lat, lng, cuadro: k + 1, total: n, ms: a.ms, dets: a.dets, vista: true,
+        simulado: true, local: true, hace_s: corriendo ? 0 : Math.round(t - n * SEG), ruta,
+        foto: `img/recorridos/${r.id}/${a.foto}`,
+        hist: c.slice(0, k + 1).flatMap((p, i) => p.dets.map(d => ({ ...d, cuadro: i + 1 }))),
+      };
+    });
+  }
+
+  const PALETA = ["#3cc8d4", "#f2b33d", "#c08bff", "#5fd38d"], colores = {};
+  const colorDe = veh => colores[veh] || (colores[veh] = PALETA[Object.keys(colores).length % PALETA.length]);
+
   function centra(zoom) {
     const v = activos.find(x => x.vehiculo === elegido);
     if (v) mapa.setView([v.lat, v.lng], zoom || Math.max(mapa.getZoom(), 15), { animate: true });
@@ -1581,7 +1621,9 @@ setTimeout(()=>mapa.invalidateSize(),120);
     pintaVehiculos();
     if (!v) return;
     const quieto = v.hace_s > 15;
-    chip.innerHTML = `<span class="rec-luz${quieto ? " quieta" : ""}"></span>${esc(v.vehiculo)} ${v.simulado ? "simulado" : "en vivo"} · <u>ver cámara</u>`;
+    chip.innerHTML = activos.length > 1
+      ? `<span class="rec-luz"></span>${activos.length} vehículos en recorrido · <u>ver cámaras</u>`
+      : `<span class="rec-luz${quieto ? " quieta" : ""}"></span>${esc(v.vehiculo)} ${v.simulado ? "simulado" : "en vivo"} · <u>ver cámara</u>`;
     pEnvivo.classList.toggle("quieta", quieto);
     pEnvivo.querySelector(".rec-envivo-txt").textContent = `${quieto ? "SIN SEÑAL" : v.simulado ? "SIMULADO" : "EN VIVO"} · ${v.vehiculo}`;
     dato("cuadro").textContent = v.cuadro ? (v.total ? `${v.cuadro} de ${v.total}` : String(v.cuadro)) : "–";
@@ -1607,6 +1649,16 @@ setTimeout(()=>mapa.invalidateSize(),120);
 
   async function vista() {
     if (tabActiva !== "recorrido" || !elegido || document.hidden) return;
+    const v = activos.find(x => x.vehiculo === elegido) || simulados().find(x => x.vehiculo === elegido);
+    if (v && v.local) {                              // recorrido estático: la foto ya trae los recuadros
+      const foto = simulados().find(x => x.vehiculo === elegido).foto;
+      if (pImg.dataset.src === foto) return;
+      const nueva = new Image();
+      nueva.onload = () => { pImg.src = foto; pImg.dataset.src = foto; pImg.hidden = false; pEspera.hidden = true; };
+      nueva.src = foto;
+      return;
+    }
+    pImg.dataset.src = "";
     try {
       const r = await fetch("/api/camara/vista?v=" + encodeURIComponent(elegido), { cache: "no-store" });
       if (!r.ok) return;
@@ -1623,27 +1675,34 @@ setTimeout(()=>mapa.invalidateSize(),120);
   }
 
   async function vehiculos() {
+    let delServidor = [];
     try {
       const r = await fetch("/api/camara/vehiculos", { cache: "no-store" });
-      if (!r.ok) return;
-      const j = await r.json();
-      if (!j.ok) return;
-      activos = j.vehiculos.sort((a, b) => (a.simulado - b.simulado) || a.vehiculo.localeCompare(b.vehiculo));
+      const j = r.ok ? await r.json() : null;
+      if (j && j.ok) delServidor = j.vehiculos;
+    } catch (_) { /* sin conexión: quedan los recorridos estáticos */ }
+    try {
+      activos = [...delServidor, ...simulados()]
+        .sort((a, b) => (a.simulado - b.simulado) || a.vehiculo.localeCompare(b.vehiculo));
       if (!capaVeh) capaVeh = L.layerGroup().addTo(mapa);
       capaVeh.clearLayers();
       for (const v of activos) {
+        const color = colorDe(v.vehiculo);
         // historial de lo detectado (se reinicia cuando el recorrido vuelve a empezar)
-        if (ultimoCuadro[v.vehiculo] && v.cuadro && v.cuadro < ultimoCuadro[v.vehiculo]) historial[v.vehiculo] = [];
-        if (v.cuadro && v.cuadro !== ultimoCuadro[v.vehiculo] && v.dets && v.dets.length) {
-          (historial[v.vehiculo] = historial[v.vehiculo] || []).push(...v.dets.map(d => ({ ...d, cuadro: v.cuadro })));
+        if (v.local) historial[v.vehiculo] = v.hist;
+        else {
+          if (ultimoCuadro[v.vehiculo] && v.cuadro && v.cuadro < ultimoCuadro[v.vehiculo]) historial[v.vehiculo] = [];
+          if (v.cuadro && v.cuadro !== ultimoCuadro[v.vehiculo] && v.dets && v.dets.length) {
+            (historial[v.vehiculo] = historial[v.vehiculo] || []).push(...v.dets.map(d => ({ ...d, cuadro: v.cuadro })));
+          }
         }
         if (v.cuadro) ultimoCuadro[v.vehiculo] = v.cuadro;
         // recorrido en el mapa
         if (v.ruta && v.ruta.length > 1) {
           L.polyline(v.ruta, { color: "#0b1220", weight: 8, opacity: .35, interactive: false }).addTo(capaVeh);
-          L.polyline(v.ruta, { color: "#3cc8d4", weight: 4, opacity: .95, interactive: false, dashArray: v.simulado ? "1 7" : null,
+          L.polyline(v.ruta, { color, weight: 4, opacity: .95, interactive: false, dashArray: v.simulado ? "1 7" : null,
             lineCap: "round" }).addTo(capaVeh);
-          L.circleMarker(v.ruta[0], { radius: 5, color: "#3cc8d4", weight: 2, fillColor: "#0b1220", fillOpacity: 1, interactive: false })
+          L.circleMarker(v.ruta[0], { radius: 5, color, weight: 2, fillColor: "#0b1220", fillOpacity: 1, interactive: false })
             .addTo(capaVeh);
           let km = 0;
           for (let i = 1; i < v.ruta.length; i++) km += mapa.distance(v.ruta[i - 1], v.ruta[i]) / 1000;
@@ -1652,7 +1711,10 @@ setTimeout(()=>mapa.invalidateSize(),120);
         const icono = L.divIcon({ className: "cam-veh", html: `<span class="cam-veh-punto"></span><span class="cam-veh-nombre"></span>`, iconSize: [0, 0] });
         const m = L.marker([v.lat, v.lng], { icon: icono, zIndexOffset: 1000, keyboard: false }).addTo(capaVeh);
         const el = m.getElement();
-        if (el) el.querySelector(".cam-veh-nombre").textContent = v.simulado ? `${v.vehiculo} · simulado` : v.vehiculo;
+        if (el) {
+          el.querySelector(".cam-veh-nombre").textContent = v.simulado ? `${v.vehiculo} · simulado` : v.vehiculo;
+          el.querySelector(".cam-veh-punto").style.background = color;
+        }
         m.bindTooltip(`Cámara ${v.vehiculo} · clic para ver lo que está viendo`, { direction: "top" });
         m.on("click", () => { elegido = v.vehiculo; mostrarTab("recorrido"); pinta(); vista(); });
       }
@@ -1666,6 +1728,225 @@ setTimeout(()=>mapa.invalidateSize(),120);
   setInterval(detecciones, 20000);
   setInterval(vehiculos, 3000);
   setInterval(vista, 2000);
+})();
+
+</script>
+<script>
+/* Tablero · "Mi cámara": recorrido con la cámara y el GPS de este celular o laptop.
+   El detector YOLO11s v9 (ONNX) corre aquí mismo con onnxruntime-web; cada falla se manda a la plataforma con su
+   foto y su posición (como la cámara de un vehículo) y llega a Validación IA como candidato pendiente.
+   La plataforma acepta estos envíos solo con sesión de operador o admin; el vehículo se llama MOVIL-<usuario>. */
+(() => {
+  const pane = document.getElementById("pane-recorrido");
+  if (!pane) return;
+  const ORT = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
+  const CLASES = ["alcantarilla_riesgo", "alcantarilla_tapada", "arbol_riesgo", "dano_pavimento"];
+  const UMBRAL = { alcantarilla_riesgo: 0.5, alcantarilla_tapada: 0.7, arbol_riesgo: 0.5, dano_pavimento: 0.5 };
+  const COLOR = { alcantarilla_riesgo: "#ff5d5d", alcantarilla_tapada: "#3cc8d4", arbol_riesgo: "#ff5d5d",
+                  dano_pavimento: "#f2b33d" };
+  const N = 640, MINIMO = 0.25, IOU = 0.5, PAUSA_MS = 1200;
+  const LIMITES = [20.55, 20.80, -103.47, -103.22];        // los mismos que valida la plataforma
+
+  const caja = document.createElement("div");
+  caja.className = "cm-caja";
+  caja.innerHTML = `
+    <div class="cm-cab">
+      <h3>Mi cámara</h3>
+      <p>Haz un recorrido con la cámara y el GPS de este celular o laptop. El modelo YOLO11s v9 corre aquí mismo y
+      cada falla que encuentra llega a Validación IA con su foto y su ubicación.</p>
+    </div>
+    <div class="cm-acciones">
+      <button type="button" class="rec-btn" data-cm-iniciar>Iniciar recorrido con mi cámara</button>
+      <button type="button" class="cm-sec" data-cm-detener hidden>Detener</button>
+      <label class="rec-seguir"><input type="checkbox" data-cm-enviar checked> Enviar detecciones a la plataforma</label>
+    </div>
+    <div class="cm-vista" hidden><video playsinline muted></video><canvas aria-hidden="true"></canvas></div>
+    <p class="cm-estado" role="status" aria-live="polite"></p>`;
+  pane.querySelector(".intro").after(caja);
+  const $ = s => caja.querySelector(s);
+  const video = $("video"), capa = $(".cm-vista canvas"), estado = $(".cm-estado"), vistaEl = $(".cm-vista");
+  const bIni = $("[data-cm-iniciar]"), bDet = $("[data-cm-detener]"), chkEnviar = $("[data-cm-enviar]");
+
+  let sesion = null, corriendo = false, flujo = null, vigia = null, gps = null, cuadro = 0, enviadas = 0;
+  const ultimoEnvio = {};                    // clase -> {t, lat, lng}: no repetir la misma falla cada segundo
+  const di = t => (estado.textContent = t);
+
+  function cargaScript(src) {
+    return new Promise((ok, mal) => {
+      if (window.ort) return ok();
+      const s = document.createElement("script");
+      s.src = src; s.onload = ok; s.onerror = () => mal(new Error("no se pudo cargar onnxruntime-web"));
+      document.head.append(s);
+    });
+  }
+
+  async function cargaModelo() {
+    if (sesion) return sesion;
+    di("Cargando el motor del modelo…");
+    await cargaScript(ORT + "ort.min.js");
+    window.ort.env.wasm.wasmPaths = ORT;
+    di("Descargando el modelo YOLO11s v9 (38 MB, solo la primera vez)…");
+    const r = await fetch("/api/camara/modelo.onnx");
+    if (r.status === 401) { location.href = "/login"; throw new Error("inicia sesión"); }
+    if (!r.ok) throw new Error("el modelo no está disponible en este despliegue");
+    const bytes = new Uint8Array(await r.arrayBuffer());
+    di("Preparando el modelo…");
+    sesion = await window.ort.InferenceSession.create(bytes, { executionProviders: ["wasm"] });
+    return sesion;
+  }
+
+  // --- detector: letterbox 640, CHW 0-1, salida [1, 8, 8400], NMS por clase (igual que agente/inspector.py) -----
+  const lienzo = document.createElement("canvas");
+  lienzo.width = lienzo.height = N;
+  const ctxL = lienzo.getContext("2d", { willReadFrequently: true });
+  async function detecta(fuente, W, H) {
+    const s = N / Math.max(W, H), nw = Math.round(W * s), nh = Math.round(H * s);
+    const ox = Math.floor((N - nw) / 2), oy = Math.floor((N - nh) / 2);
+    ctxL.fillStyle = "rgb(114,114,114)"; ctxL.fillRect(0, 0, N, N);
+    ctxL.drawImage(fuente, ox, oy, nw, nh);
+    const px = ctxL.getImageData(0, 0, N, N).data, area = N * N, x = new Float32Array(3 * area);
+    for (let i = 0; i < area; i++) {
+      x[i] = px[i * 4] / 255; x[i + area] = px[i * 4 + 1] / 255; x[i + 2 * area] = px[i * 4 + 2] / 255;
+    }
+    const salida = await sesion.run({ [sesion.inputNames[0]]: new window.ort.Tensor("float32", x, [1, 3, N, N]) });
+    const o = salida[sesion.outputNames[0]].data, A = 8400, cand = [];
+    for (let i = 0; i < A; i++) {
+      let c = 0, p = o[4 * A + i];
+      for (let k = 1; k < CLASES.length; k++) if (o[(4 + k) * A + i] > p) { p = o[(4 + k) * A + i]; c = k; }
+      if (p < MINIMO) continue;
+      const cx = o[i], cy = o[A + i], w = o[2 * A + i], h = o[3 * A + i];
+      cand.push({ c, p, x0: cx - w / 2, y0: cy - h / 2, x1: cx + w / 2, y1: cy + h / 2 });
+    }
+    cand.sort((a, b) => b.p - a.p);
+    const res = [];
+    for (const a of cand) {
+      if (res.some(b => b.c === a.c && iou(a, b) >= IOU)) continue;
+      res.push(a);
+    }
+    return res.map(a => {
+      const x0 = Math.max(0, (a.x0 - ox) / s), y0 = Math.max(0, (a.y0 - oy) / s);
+      const x1 = Math.min(W, (a.x1 - ox) / s), y1 = Math.min(H, (a.y1 - oy) / s);
+      return { k: CLASES[a.c], s: a.p, caja: [x0 / W, y0 / H, (x1 - x0) / W, (y1 - y0) / H] };
+    }).filter(d => d.s >= UMBRAL[d.k] && (d.k !== "dano_pavimento" || d.caja[1] + d.caja[3] / 2 > 0.4));
+  }
+  function iou(a, b) {
+    const iw = Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)), ih = Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
+    const inter = iw * ih, u = (a.x1 - a.x0) * (a.y1 - a.y0) + (b.x1 - b.x0) * (b.y1 - b.y0) - inter;
+    return inter / Math.max(u, 1e-6);
+  }
+
+  // --- dibujo de recuadros y fotos JPEG ------------------------------------------------------------------------
+  function dibuja(ctx, W, H, dets) {
+    ctx.lineWidth = Math.max(3, W / 300);
+    ctx.font = `${Math.max(12, Math.round(W / 55))}px sans-serif`;
+    for (const d of dets) {
+      const [x, y, w, h] = d.caja, col = COLOR[d.k] || "#3cc8d4", t = `${d.k} ${Math.round(d.s * 100)}%`;
+      ctx.strokeStyle = col; ctx.strokeRect(x * W, y * H, w * W, h * H);
+      const tw = ctx.measureText(t).width + 10, th = parseInt(ctx.font, 10) + 8;
+      ctx.fillStyle = col; ctx.fillRect(x * W, Math.max(0, y * H - th), tw, th);
+      ctx.fillStyle = "#000"; ctx.fillText(t, x * W + 5, Math.max(0, y * H - th) + th - 6);
+    }
+  }
+  function jpeg(fuente, W, H, ancho, calidad, dets) {
+    const c = document.createElement("canvas"), e = Math.min(1, ancho / W);
+    c.width = Math.round(W * e); c.height = Math.round(H * e);
+    const ctx = c.getContext("2d");
+    ctx.drawImage(fuente, 0, 0, c.width, c.height);
+    dibuja(ctx, c.width, c.height, dets);
+    return c.toDataURL("image/jpeg", calidad).split(",")[1];
+  }
+
+  async function envia(ruta, datos) {
+    const r = await fetch(ruta, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || `error ${r.status}`);
+    return j;
+  }
+  const dentro = p => p && p.lat >= LIMITES[0] && p.lat <= LIMITES[1] && p.lng >= LIMITES[2] && p.lng <= LIMITES[3];
+  function metros(a, b) {
+    const r = Math.PI / 180, x = (b.lng - a.lng) * r * Math.cos((a.lat + b.lat) * r / 2), y = (b.lat - a.lat) * r;
+    return 6371000 * Math.hypot(x, y);
+  }
+
+  // --- ciclo: un cuadro, el modelo, los envíos, una pausa --------------------------------------------------------
+  async function ciclo() {
+    if (!corriendo) return;
+    if (document.hidden || video.readyState < 2) { setTimeout(ciclo, 800); return; }
+    const W = video.videoWidth, H = video.videoHeight;
+    const t0 = performance.now();
+    let dets = [];
+    try { dets = await detecta(video, W, H); } catch (e) { di("Error del modelo: " + e.message); }
+    const ms = Math.round(performance.now() - t0);
+    cuadro++;
+    // recuadros sobre el video
+    capa.width = W; capa.height = H;
+    const cx = capa.getContext("2d");
+    cx.clearRect(0, 0, W, H);
+    dibuja(cx, W, H, dets);
+    const pos = gps && { lat: gps.coords.latitude, lng: gps.coords.longitude, prec: Math.round(gps.coords.accuracy) };
+    const partes = [`Cuadro ${cuadro}`, `modelo ${ms} ms`, dets.length ? `${dets.length} falla(s) en este cuadro` : "sin fallas"];
+    partes.push(pos ? `GPS ±${pos.prec} m` : "esperando GPS…");
+    let aviso = "";
+    if (chkEnviar.checked && pos && !dentro(pos)) aviso = " · Fuera de Guadalajara: el modelo corre, pero no se envía nada.";
+    if (chkEnviar.checked && dentro(pos)) {
+      try {
+        await envia("/api/camara/posicion", { lat: pos.lat, lng: pos.lng, cuadro, total: 0, ms,
+          dets: dets.map(d => ({ clase: d.k, confianza: +d.s.toFixed(3) })), vista_b64: jpeg(video, W, H, 640, 0.62, dets) });
+        for (const d of dets) {
+          const u = ultimoEnvio[d.k];
+          if (u && Date.now() - u.t < 15000 && metros(u, pos) < 15) continue;   // misma falla, mismo lugar
+          await envia("/api/camara/deteccion", { clase: d.k, confianza: +d.s.toFixed(3), caja: d.caja.map(v => +v.toFixed(4)),
+            lat: pos.lat, lng: pos.lng, modelo: "yolo11s_v9_web", imagen_b64: jpeg(video, W, H, 1280, 0.76, [d]) });
+          ultimoEnvio[d.k] = { t: Date.now(), lat: pos.lat, lng: pos.lng };
+          enviadas++;
+        }
+      } catch (e) {
+        aviso = ` · No se pudo enviar: ${e.message}.`;
+        if (/sesión/.test(e.message)) { detener(); location.href = "/login"; return; }
+      }
+    }
+    if (enviadas) partes.push(`${enviadas} enviada(s) a Validación IA`);
+    di(partes.join(" · ") + aviso);
+    setTimeout(ciclo, PAUSA_MS);
+  }
+
+  async function iniciar() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      di("Este navegador no permite usar la cámara (se necesita HTTPS y un navegador actual)."); return;
+    }
+    bIni.disabled = true;
+    try {
+      flujo = await navigator.mediaDevices.getUserMedia({ audio: false,
+        video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } } });
+    } catch (e) {
+      bIni.disabled = false; di("No se pudo abrir la cámara: " + (e.name === "NotAllowedError" ? "permiso negado." : e.message)); return;
+    }
+    video.srcObject = flujo; vistaEl.hidden = false;
+    await video.play().catch(() => {});
+    if (navigator.geolocation) {
+      vigia = navigator.geolocation.watchPosition(p => (gps = p), e => di("GPS: " + e.message),
+        { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 });
+    }
+    try { await cargaModelo(); } catch (e) { di("No se pudo cargar el modelo: " + e.message); detener(); return; }
+    corriendo = true; cuadro = 0; enviadas = 0;
+    bIni.hidden = true; bIni.disabled = false; bDet.hidden = false;
+    di("Recorrido iniciado. Apunta la cámara a la calle.");
+    ciclo();
+  }
+  function detener() {
+    corriendo = false;
+    if (flujo) flujo.getTracks().forEach(t => t.stop());
+    if (vigia !== null && navigator.geolocation) navigator.geolocation.clearWatch(vigia);
+    flujo = null; vigia = null; vistaEl.hidden = true;
+    bIni.hidden = false; bIni.disabled = false; bDet.hidden = true;
+    di(cuadro ? `Recorrido detenido: ${cuadro} cuadros, ${enviadas} detección(es) enviadas.` : "");
+  }
+  bIni.addEventListener("click", iniciar);
+  bDet.addEventListener("click", detener);
+  window.addEventListener("pagehide", detener);
+
+  // Para probar sin cámara: siviaCamaraPrueba(img) corre el modelo sobre una imagen y devuelve las detecciones.
+  window.siviaCamaraPrueba = async img => { await cargaModelo(); return detecta(img, img.naturalWidth, img.naturalHeight); };
 })();
 
 </script>

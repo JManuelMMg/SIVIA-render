@@ -100,6 +100,46 @@
   const historial = {};                // vehículo -> [{cuadro, clase, confianza}]
   const ultimoCuadro = {};
 
+  /* Recorridos simulados extra (zona Centro): archivos estáticos en img/recorridos/ grabados con el detector v9.
+     Se reproducen en el navegador con el reloj, así todas las personas ven el mismo punto al mismo tiempo. */
+  const SEG = 3, PAUSA = 20;
+  const locales = [];
+  (async () => {
+    try {
+      const r = await fetch("img/recorridos/index.json", { cache: "no-store" });
+      if (!r.ok) return;
+      const j = await r.json();
+      for (const [i, x] of j.recorridos.entries()) {
+        const d = await (await fetch(`img/recorridos/${x.id}/recorrido.json`, { cache: "no-store" })).json();
+        locales.push({ id: x.id, vehiculo: d.vehiculo, nombre: d.nombre, cuadros: d.cuadros, desfase: 41 * (i + 1) });
+      }
+      vehiculos();
+    } catch (_) { /* sin recorridos extra */ }
+  })();
+
+  function simulados() {
+    const ahora = Date.now() / 1000;
+    return locales.map(r => {
+      const c = r.cuadros, n = c.length, t = (ahora + r.desfase) % (n * SEG + PAUSA);
+      const corriendo = t < n * SEG;
+      const k = corriendo ? Math.floor(t / SEG) : n - 1;
+      const f = corriendo && k < n - 1 ? (t % SEG) / SEG : 0;   // avanza suave hacia el siguiente cuadro
+      const a = c[k], b = c[Math.min(n - 1, k + 1)];
+      const lat = a.lat + (b.lat - a.lat) * f, lng = a.lng + (b.lng - a.lng) * f;
+      const ruta = c.slice(0, k + 1).map(p => [p.lat, p.lng]);
+      if (f) ruta.push([lat, lng]);
+      return {
+        vehiculo: r.vehiculo, lat, lng, cuadro: k + 1, total: n, ms: a.ms, dets: a.dets, vista: true,
+        simulado: true, local: true, hace_s: corriendo ? 0 : Math.round(t - n * SEG), ruta,
+        foto: `img/recorridos/${r.id}/${a.foto}`,
+        hist: c.slice(0, k + 1).flatMap((p, i) => p.dets.map(d => ({ ...d, cuadro: i + 1 }))),
+      };
+    });
+  }
+
+  const PALETA = ["#3cc8d4", "#f2b33d", "#c08bff", "#5fd38d"], colores = {};
+  const colorDe = veh => colores[veh] || (colores[veh] = PALETA[Object.keys(colores).length % PALETA.length]);
+
   function centra(zoom) {
     const v = activos.find(x => x.vehiculo === elegido);
     if (v) mapa.setView([v.lat, v.lng], zoom || Math.max(mapa.getZoom(), 15), { animate: true });
@@ -147,7 +187,9 @@
     pintaVehiculos();
     if (!v) return;
     const quieto = v.hace_s > 15;
-    chip.innerHTML = `<span class="rec-luz${quieto ? " quieta" : ""}"></span>${esc(v.vehiculo)} ${v.simulado ? "simulado" : "en vivo"} · <u>ver cámara</u>`;
+    chip.innerHTML = activos.length > 1
+      ? `<span class="rec-luz"></span>${activos.length} vehículos en recorrido · <u>ver cámaras</u>`
+      : `<span class="rec-luz${quieto ? " quieta" : ""}"></span>${esc(v.vehiculo)} ${v.simulado ? "simulado" : "en vivo"} · <u>ver cámara</u>`;
     pEnvivo.classList.toggle("quieta", quieto);
     pEnvivo.querySelector(".rec-envivo-txt").textContent = `${quieto ? "SIN SEÑAL" : v.simulado ? "SIMULADO" : "EN VIVO"} · ${v.vehiculo}`;
     dato("cuadro").textContent = v.cuadro ? (v.total ? `${v.cuadro} de ${v.total}` : String(v.cuadro)) : "–";
@@ -173,6 +215,16 @@
 
   async function vista() {
     if (tabActiva !== "recorrido" || !elegido || document.hidden) return;
+    const v = activos.find(x => x.vehiculo === elegido) || simulados().find(x => x.vehiculo === elegido);
+    if (v && v.local) {                              // recorrido estático: la foto ya trae los recuadros
+      const foto = simulados().find(x => x.vehiculo === elegido).foto;
+      if (pImg.dataset.src === foto) return;
+      const nueva = new Image();
+      nueva.onload = () => { pImg.src = foto; pImg.dataset.src = foto; pImg.hidden = false; pEspera.hidden = true; };
+      nueva.src = foto;
+      return;
+    }
+    pImg.dataset.src = "";
     try {
       const r = await fetch("/api/camara/vista?v=" + encodeURIComponent(elegido), { cache: "no-store" });
       if (!r.ok) return;
@@ -189,27 +241,34 @@
   }
 
   async function vehiculos() {
+    let delServidor = [];
     try {
       const r = await fetch("/api/camara/vehiculos", { cache: "no-store" });
-      if (!r.ok) return;
-      const j = await r.json();
-      if (!j.ok) return;
-      activos = j.vehiculos.sort((a, b) => (a.simulado - b.simulado) || a.vehiculo.localeCompare(b.vehiculo));
+      const j = r.ok ? await r.json() : null;
+      if (j && j.ok) delServidor = j.vehiculos;
+    } catch (_) { /* sin conexión: quedan los recorridos estáticos */ }
+    try {
+      activos = [...delServidor, ...simulados()]
+        .sort((a, b) => (a.simulado - b.simulado) || a.vehiculo.localeCompare(b.vehiculo));
       if (!capaVeh) capaVeh = L.layerGroup().addTo(mapa);
       capaVeh.clearLayers();
       for (const v of activos) {
+        const color = colorDe(v.vehiculo);
         // historial de lo detectado (se reinicia cuando el recorrido vuelve a empezar)
-        if (ultimoCuadro[v.vehiculo] && v.cuadro && v.cuadro < ultimoCuadro[v.vehiculo]) historial[v.vehiculo] = [];
-        if (v.cuadro && v.cuadro !== ultimoCuadro[v.vehiculo] && v.dets && v.dets.length) {
-          (historial[v.vehiculo] = historial[v.vehiculo] || []).push(...v.dets.map(d => ({ ...d, cuadro: v.cuadro })));
+        if (v.local) historial[v.vehiculo] = v.hist;
+        else {
+          if (ultimoCuadro[v.vehiculo] && v.cuadro && v.cuadro < ultimoCuadro[v.vehiculo]) historial[v.vehiculo] = [];
+          if (v.cuadro && v.cuadro !== ultimoCuadro[v.vehiculo] && v.dets && v.dets.length) {
+            (historial[v.vehiculo] = historial[v.vehiculo] || []).push(...v.dets.map(d => ({ ...d, cuadro: v.cuadro })));
+          }
         }
         if (v.cuadro) ultimoCuadro[v.vehiculo] = v.cuadro;
         // recorrido en el mapa
         if (v.ruta && v.ruta.length > 1) {
           L.polyline(v.ruta, { color: "#0b1220", weight: 8, opacity: .35, interactive: false }).addTo(capaVeh);
-          L.polyline(v.ruta, { color: "#3cc8d4", weight: 4, opacity: .95, interactive: false, dashArray: v.simulado ? "1 7" : null,
+          L.polyline(v.ruta, { color, weight: 4, opacity: .95, interactive: false, dashArray: v.simulado ? "1 7" : null,
             lineCap: "round" }).addTo(capaVeh);
-          L.circleMarker(v.ruta[0], { radius: 5, color: "#3cc8d4", weight: 2, fillColor: "#0b1220", fillOpacity: 1, interactive: false })
+          L.circleMarker(v.ruta[0], { radius: 5, color, weight: 2, fillColor: "#0b1220", fillOpacity: 1, interactive: false })
             .addTo(capaVeh);
           let km = 0;
           for (let i = 1; i < v.ruta.length; i++) km += mapa.distance(v.ruta[i - 1], v.ruta[i]) / 1000;
@@ -218,7 +277,10 @@
         const icono = L.divIcon({ className: "cam-veh", html: `<span class="cam-veh-punto"></span><span class="cam-veh-nombre"></span>`, iconSize: [0, 0] });
         const m = L.marker([v.lat, v.lng], { icon: icono, zIndexOffset: 1000, keyboard: false }).addTo(capaVeh);
         const el = m.getElement();
-        if (el) el.querySelector(".cam-veh-nombre").textContent = v.simulado ? `${v.vehiculo} · simulado` : v.vehiculo;
+        if (el) {
+          el.querySelector(".cam-veh-nombre").textContent = v.simulado ? `${v.vehiculo} · simulado` : v.vehiculo;
+          el.querySelector(".cam-veh-punto").style.background = color;
+        }
         m.bindTooltip(`Cámara ${v.vehiculo} · clic para ver lo que está viendo`, { direction: "top" });
         m.on("click", () => { elegido = v.vehiculo; mostrarTab("recorrido"); pinta(); vista(); });
       }
