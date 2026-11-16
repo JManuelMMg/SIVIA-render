@@ -10,6 +10,7 @@ Extiende smn_server.py (clima SMN, GOES, radar, INEGI, SSN, USGS; sin cambios) c
   GET  /cuenta, POST /api/cuenta/clave cada usuario cambia su propia contraseña
   POST /api/camara/deteccion, /posicion  cámaras de los vehículos (token de dispositivo en CAMARA_TOKENS)
   GET  /api/camara/candidatos, /vehiculos detecciones de cámara y vehículos activos para el tablero (con sesión)
+  GET  /api/camara/vista?v=GDL-01        último cuadro que vio esa cámara, con los recuadros (con sesión)
   GET  /api/bd/estado                  conexión y conteos
   GET  /api/candidatos                 {id: estado} de los candidatos del modelo
   POST /api/candidatos/<id>            {"estado": "confirmado"|"descartado"|"pendiente"}      (operador, admin)
@@ -678,6 +679,17 @@ class Handler(smn_server.Handler):
             return self._get_admin(ruta, u.query)
         if ruta == "/api/camara/vehiculos":
             return self._json({"ok": True, "vehiculos": camaras.vehiculos()})
+        if ruta == "/api/camara/vista":
+            foto = camaras.vista(parse_qs(u.query).get("v", [""])[0])
+            if not foto:
+                return self._json({"ok": False, "error": "sin vista de esa cámara"}, 404)
+            self.send_response(200)
+            self.send_header("Content-Type", "image/jpeg")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(foto)))
+            self.end_headers()
+            self.wfile.write(foto)
+            return None
         if ruta == "/api/camara/candidatos":
             if not DB:
                 return self._json({"ok": True, "candidatos": []})

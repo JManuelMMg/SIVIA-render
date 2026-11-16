@@ -121,13 +121,49 @@ def cercana(c, la, ln):
 _posiciones, _pos_lock = {}, threading.Lock()
 
 
+MAX_VISTA = 250_000
+_vistas = {}          # vehículo -> JPEG del último cuadro (solo en memoria; no se guarda en la base ni en el bucket)
+
+
+def _entero(v):
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        return None
+
+
 def posicion(vehiculo, datos):
+    """Posición del vehículo y, si viene, la vista en vivo de la cámara (cuadro reducido con los recuadros)."""
     la, ln = float(datos.get("lat")), float(datos.get("lng"))
     if not (LIMITES[0] <= la <= LIMITES[1] and LIMITES[2] <= ln <= LIMITES[3]):
         raise ErrorCamara("posición fuera de Guadalajara")
+    dets = []
+    for d in (datos.get("dets") or [])[:20]:
+        if isinstance(d, dict) and d.get("clase") in CLASES:
+            dets.append({"clase": d["clase"], "confianza": round(float(d.get("confianza") or 0), 3)})
+    vista = None
+    if datos.get("vista_b64"):
+        try:
+            vista = base64.b64decode(datos["vista_b64"], validate=True)
+        except (ValueError, TypeError):
+            raise ErrorCamara("vista inválida")
+        if len(vista) > MAX_VISTA or vista[:3] != b"\xff\xd8\xff":
+            raise ErrorCamara("la vista debe ser JPEG de 250 KB o menos")
     with _pos_lock:
         _posiciones[vehiculo] = {"vehiculo": vehiculo, "lat": la, "lng": ln, "t": time.time(),
-                                 "cuadro": datos.get("cuadro"), "total": datos.get("total")}
+                                 "cuadro": _entero(datos.get("cuadro")), "total": _entero(datos.get("total")),
+                                 "ms": _entero(datos.get("ms")), "dets": dets, "vista": vista is not None}
+        if vista:
+            _vistas[vehiculo] = vista
+
+
+def vista(vehiculo, max_seg=600):
+    """JPEG del último cuadro de ese vehículo, si sigue activo."""
+    with _pos_lock:
+        p = _posiciones.get(vehiculo)
+        if not p or time.time() - p["t"] > max_seg:
+            return None
+        return _vistas.get(vehiculo)
 
 
 def vehiculos(max_seg=600):
