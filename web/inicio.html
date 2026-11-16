@@ -3,20 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SIVIA · Inspección preventiva de Guadalajara</title>
-<meta name="description" content="Inspección preventiva con inteligencia artificial del entorno de escuelas, guarderías y hospitales de Guadalajara.">
+<title>SIVIA · Inspección preventiva: el compromiso de tu ciudad</title>
+<meta name="description" content="SIVIA, Sistema Inteligente de Vigilancia de Infraestructura y Anomalías: inspección preventiva con inteligencia artificial del entorno de escuelas, guarderías y hospitales de Guadalajara.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/publico/estilo.css">
+<script>try{var t=localStorage.getItem("sivia_tema");if(t)document.documentElement.dataset.tema=t}catch(e){}</script>
+<script src="/publico/tema.js?v=3" defer></script>
+<link rel="stylesheet" href="/publico/estilo.css?v=4">
 <link rel="icon" type="image/png" href="/publico/logo_icono.png">
 </head>
 <body>
 <header class="barra">
   <div class="envoltura">
     <a class="marca" href="/" aria-label="SIVIA, inicio">
-      <img src="/publico/logo_icono.png" alt="" width="38" height="34">SIVIA
+      <img class="solo-oscuro" src="/publico/logo_icono.png" alt="" width="38" height="34"><img class="solo-claro" src="/publico/logo_icono_claro.png" alt="" width="38" height="34">SIVIA
     </a>
-    <p class="estado" id="estado" aria-live="polite"><span class="punto"></span><span class="txt">Consultando el pronóstico del SMN…</span></p>
+    <p class="estado" id="estado" aria-live="polite" title="Pronóstico oficial del Servicio Meteorológico Nacional para Guadalajara, la hora más cercana"><span class="punto"></span><span class="txt">Consultando el pronóstico del SMN…</span></p>
+    <button class="tema-btn" type="button" data-cambia-tema aria-label="Cambiar entre tema claro y oscuro" title="Tema claro u oscuro"><svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
     __ACCION_BARRA__
   </div>
 </header>
@@ -25,27 +28,33 @@
   <section class="portada">
     <div class="envoltura">
       <div>
-        <h1>La ciudad revisa <em>antes</em> de que alguien se lastime.</h1>
-        <p class="entrada">SIVIA inspecciona con inteligencia artificial el entorno de las escuelas, guarderías y hospitales de Guadalajara: detecta fallas en fotos de calle, las asigna a la dependencia que las atiende y las ordena por riesgo vial y pronóstico del clima.</p>
+        <h1>Inspección preventiva: <em>el compromiso</em> de tu ciudad</h1>
+        <p class="nombre-sistema"><b>SIVIA</b> · Sistema Inteligente de Vigilancia de Infraestructura y Anomalías</p>
+        <p class="entrada">SIVIA revisa con inteligencia artificial las calles alrededor de las escuelas, guarderías y hospitales de Guadalajara. Encuentra baches, rejillas tapadas y árboles en riesgo, avisa a la dependencia que debe atenderlos y decide qué va primero según los accidentes de la zona y el pronóstico del clima.</p>
         <div class="acciones">__ACCION__</div>
-        <dl class="registro">
-          <div><dt>Instituciones vigiladas</dt><dd>1,646</dd></div>
-          <div><dt>Órdenes priorizadas</dt><dd>494</dd></div>
-          <div><dt>Detecciones por validar</dt><dd>127</dd></div>
-          <div><dt>Dependencias</dt><dd>5</dd></div>
-          <div><dt>Accidentes analizados</dt><dd>11,568</dd></div>
-          <div><dt>Años de lluvia (SMN)</dt><dd>45</dd></div>
+        <dl class="registro" aria-label="Cifras de la primera inspección">
+          <div><dt>Instituciones vigiladas<small>Escuelas, guarderías y hospitales (DENUE, INEGI)</small></dt><dd>1,646</dd></div>
+          <div><dt>Órdenes de trabajo<small>Listas para una dependencia, ordenadas por prioridad</small></dt><dd>494</dd></div>
+          <div><dt>Detecciones por validar<small>Hallazgos de la IA que una persona confirma</small></dt><dd>127</dd></div>
+          <div><dt>Dependencias<small>Parques, Pavimentos, Movilidad, Alumbrado y SIAPA</small></dt><dd>5</dd></div>
+          <div><dt>Accidentes analizados<small>Tránsito 2022-2024, a 200 m de cada institución</small></dt><dd>11,568</dd></div>
+          <div><dt>Años de lluvia<small>Registros diarios del SMN, para anticipar el temporal</small></dt><dd>45</dd></div>
         </dl>
       </div>
       <figure class="mapa">
-        <div class="rejilla" aria-hidden="true"></div>
-        <span class="fuente">GDL · 20.67°N 103.35°O</span>
-        <div class="lienzo"><img src="/publico/mapa.svg" alt="Mapa de Guadalajara con los accidentes de tránsito de 2022 a 2024 y las 1,646 instituciones coloreadas por nivel de riesgo" width="1000" height="992"></div>
+        <div class="mapa-cabeza">
+          <h2 class="mapa-titulo">Mapa de riesgo de Guadalajara</h2>
+          <p>Dentro del límite municipal (INEGI): dónde se juntan los accidentes y qué tan riesgoso es el entorno de cada escuela, guardería u hospital.</p>
+        </div>
+        <div class="lienzo"><div class="rejilla" aria-hidden="true"></div><canvas id="mapa3d" hidden role="img" aria-label="Municipio de Guadalajara en 3D dividido en zonas: la altura de cada zona es el número de accidentes de tránsito y su color el riesgo más alto de sus escuelas, guarderías y hospitales. Arrastra para girarlo."></canvas><div class="mapa3d-info" id="mapa3d-info" hidden></div><img id="mapa-plano" src="/publico/mapa.svg" alt="Mapa de Guadalajara con los accidentes de tránsito de 2022 a 2024 y las 1,646 instituciones coloreadas por nivel de riesgo" width="1000" height="992"></div>
+        <p class="mapa3d-ayuda" id="mapa3d-ayuda" hidden>Vista 3D del municipio en zonas de unos 700 m: la <b>altura</b> es el número de accidentes de tránsito 2022-2024 y el <b>color</b>, el riesgo más alto de las instituciones de esa zona (gris: sin instituciones). Pasa el cursor por una zona para ver su detalle; arrastra para girar.</p>
         <figcaption>
-          <span class="ley"><i class="r"></i>Riesgo alto <b>152</b></span>
-          <span class="ley"><i class="a"></i>Medio <b>544</b></span>
-          <span class="ley"><i class="s"></i>Bajo <b>950</b></span>
-          <span class="ley"><i class="x"></i>Accidentes 2022-2024 <b>11,568</b></span>
+          <ul class="leyenda">
+            <li><i class="r"></i><span><b>Riesgo alto · 152</b>Falla detectada con atropellamientos cerca, o sin cruce peatonal visible</span></li>
+            <li><i class="a"></i><span><b>Riesgo medio · 544</b>Alguna falla, atropellamientos o 15 o más accidentes cerca</span></li>
+            <li><i class="s"></i><span><b>Riesgo bajo · 950</b>Sin hallazgos ni accidentes relevantes</span></li>
+            <li><i class="x"></i><span><b>Accidentes · 11,568</b>Tránsito 2022-2024, INEGI</span></li>
+          </ul>
         </figcaption>
       </figure>
     </div>
@@ -53,33 +62,59 @@
 
   <section class="seccion" id="como-funciona">
     <div class="envoltura">
-      <h2>De la foto de calle a la orden de trabajo</h2>
-      <p class="lead">Cinco agentes trabajan en cadena. Ninguna detección se vuelve orden sin que una persona la confirme, y cada paso queda en la bitácora.</p>
+      <h2>Cómo funciona: de la foto de calle a la orden de trabajo</h2>
+      <p class="lead">Cinco agentes de inteligencia artificial trabajan en cadena. Ninguna detección se vuelve orden sin que una persona autorizada la confirme, y cada paso queda en la bitácora.</p>
       <ol class="flujo">
-        <li><h3>Inspector</h3><p>Un detector YOLO11s propio marca árboles en riesgo, baches y rejillas en imágenes de calle.</p></li>
-        <li><h3>Clasificador</h3><p>Asigna cada falla a la dependencia que la atiende.</p></li>
-        <li><h3>Evaluador</h3><p>Pondera el tipo y tamaño de la institución y los accidentes a 200 m.</p></li>
-        <li><h3>Vigía</h3><p>Sube la prioridad cuando el SMN pronostica lluvia o viento fuerte.</p></li>
-        <li><h3>Coordinador</h3><p>Emite la orden priorizada, con foto de evidencia y explicación.</p></li>
+        <li><h3>1. Inspector</h3><p>Revisa fotos de calle con un detector propio y marca lo que encuentra.</p></li>
+        <li><h3>2. Clasificador</h3><p>Decide qué dependencia atiende cada falla.</p></li>
+        <li><h3>3. Evaluador</h3><p>Pesa a quién afecta: tipo y tamaño de la institución y accidentes a 200 m.</p></li>
+        <li><h3>4. Vigía</h3><p>Sube la prioridad si el SMN pronostica lluvia fuerte o viento.</p></li>
+        <li><h3>5. Coordinador</h3><p>Emite la orden con foto de evidencia y la explicación de su prioridad.</p></li>
       </ol>
       <p class="formula">Prioridad = gravedad <span>×</span> impacto <span>×</span> riesgo vial <span>×</span> clima</p>
+      <div class="detecta">
+        <h3>Qué encuentra</h3>
+        <ul>
+          <li>Árboles con ramas sobre cables o tronco inclinado</li>
+          <li>Baches y grietas en el pavimento</li>
+          <li>Rejillas pluviales tapadas antes del temporal</li>
+          <li>Alcantarillas abiertas o dañadas</li>
+          <li>Escuelas sin cruce peatonal en calles con atropellamientos</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="tablero">
+    <div class="envoltura">
+      <h2>Qué hay dentro del tablero</h2>
+      <p class="lead">Al iniciar sesión ves el mapa de la ciudad y cinco pestañas. Esto es lo que hace cada una.</p>
+      <dl class="pestanas">
+        <div><dt>Órdenes</dt><dd>La lista de trabajos priorizados. Filtra por dependencia o busca un lugar; al elegir una orden, el mapa te lleva a ella.</dd></div>
+        <div><dt>Validación IA</dt><dd>Lo que detectó el modelo, con su foto. Un operador lo confirma o lo descarta; solo lo confirmado se vuelve orden.</dd></div>
+        <div><dt>Clima SMN</dt><dd>El pronóstico oficial, actualizado cada 15 minutos, y cuánto sube cada tipo de orden si llueve o hay viento fuerte.</dd></div>
+        <div><dt>Sismos SSN</dt><dd>Los últimos sismos reportados por el Servicio Sismológico Nacional. Es contexto: no cambia prioridades.</dd></div>
+        <div><dt>Análisis</dt><dd>Cifras por zona, por dependencia y por tipo de falla, para planear rutas y presupuesto.</dd></div>
+      </dl>
     </div>
   </section>
 
   <section class="seccion acceso">
     <div class="envoltura">
       <div>
-        <img class="logo-seccion" src="/publico/logo.png" alt="SIVIA · Inteligencia para Prevenir" width="150" height="161">
+        <img class="logo-seccion solo-oscuro" src="/publico/logo.png" alt="SIVIA · Sistema Inteligente de Vigilancia de Infraestructura y Anomalías" width="170" height="192">
+        <img class="logo-seccion solo-claro" src="/publico/logo_claro.png" alt="SIVIA · Sistema Inteligente de Vigilancia de Infraestructura y Anomalías" width="170" height="192">
         <h2>Acceso solo para personal autorizado</h2>
-        <p>Las cuentas las da de alta el administrador de la plataforma; no hay registro abierto. Cada inicio de sesión y cada cambio de estado queda registrado con el nombre de quien lo hizo.</p>
+        <p>Las cuentas las da de alta el administrador de la plataforma; no hay registro abierto. Cada inicio de sesión y cada cambio queda registrado con el nombre de quien lo hizo.</p>
         __ACCION_ACCESO__
       </div>
       <table class="roles">
+        <caption>Qué puede hacer cada tipo de cuenta</caption>
         <thead><tr><th>Rol</th><th>Qué puede hacer</th><th>Valida IA</th></tr></thead>
         <tbody>
-          <tr><td>Consulta</td><td>Ve el mapa, las órdenes y el clima</td><td class="no">no</td></tr>
-          <tr><td>Dependencia</td><td>Atiende y actualiza las órdenes de su dependencia</td><td class="no">no</td></tr>
-          <tr><td>Operador</td><td>Valida detecciones del modelo y actualiza cualquier orden</td><td class="si">sí</td></tr>
+          <tr><td>Consulta</td><td>Ve el mapa, las órdenes y el clima, sin cambiar nada</td><td class="no">no</td></tr>
+          <tr><td>Dependencia</td><td>Atiende y actualiza solo las órdenes de su dependencia</td><td class="no">no</td></tr>
+          <tr><td>Operador</td><td>Confirma o descarta lo que detectó la IA y actualiza cualquier orden</td><td class="si">sí</td></tr>
           <tr><td>Administrador</td><td>Todo lo anterior y da de alta cuentas</td><td class="si">sí</td></tr>
         </tbody>
       </table>
@@ -90,10 +125,12 @@
 <footer class="pie">
   <div class="envoltura">
     <span>Datos: DENUE y accidentes de tránsito (INEGI) · lluvia y pronóstico (SMN/CONAGUA) · imágenes © Mapillary, CC BY-SA 4.0</span>
-    <span><span class="lema-marca">SIVIA · Inteligencia para Prevenir</span> · Hackathon Jalisco 2026, Reto 01 Ciudades Inteligentes</span>
+    <span><span class="lema-marca">SIVIA · Inspección preventiva: el compromiso de tu ciudad</span> · Hackathon Jalisco 2026, Reto 01 Ciudades Inteligentes</span>
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="/publico/mapa3d.js?v=7" defer></script>
 <script>
 (async () => {
   const caja = document.getElementById("estado"), txt = caja.querySelector(".txt");
@@ -101,14 +138,14 @@
     const r = await fetch("/api/publico", { cache: "no-store" });
     const j = await r.json();
     if (!j.ok) throw new Error();
-    const partes = ["SMN · Guadalajara", j.cielo];
+    const partes = ["Clima ahora (SMN)", j.cielo];
     if (j.temperatura != null) partes.push(`${Math.round(j.temperatura)} °C`);
     if (j.lluvia != null) partes.push(`lluvia ${Math.round(j.lluvia)} %`);
     if (j.viento != null) partes.push(`viento ${Math.round(j.viento)} km/h`);
     txt.textContent = partes.filter(Boolean).join(" · ");
     caja.classList.add("vivo");
   } catch (_) {
-    txt.textContent = "SMN sin conexión; el sistema usa el último pronóstico guardado";
+    txt.textContent = "SMN sin conexión; se usa el último pronóstico guardado";
     caja.classList.add("caido");
   }
 })();

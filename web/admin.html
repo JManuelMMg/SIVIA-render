@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIVIA · Panel de administración</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>try{var t=localStorage.getItem("sivia_tema");if(t)document.documentElement.dataset.tema=t}catch(e){}</script>
+<script src="/publico/tema.js?v=3" defer></script>
+<link rel="stylesheet" href="/publico/estilo.css?v=4">
+<link rel="icon" type="image/png" href="/publico/logo_icono.png">
+<style>
+  .adm { padding: 32px 0 80px; }
+  .adm-cabeza { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+  .adm-cabeza h1 { font-size: clamp(28px, 3.4vw, 40px); font-stretch: 105%; }
+  .adm-cabeza p { margin: 6px 0 0; color: var(--suave); }
+  .pestanas-adm { display: flex; gap: 4px; border-bottom: 1px solid var(--linea); margin-bottom: 28px; overflow-x: auto; }
+  .pestanas-adm button { appearance: none; background: none; border: 0; border-bottom: 2px solid transparent; color: var(--suave);
+    font: 600 15px var(--display); padding: 12px 16px; cursor: pointer; white-space: nowrap; }
+  .pestanas-adm button:hover { color: var(--texto); }
+  .pestanas-adm button[aria-selected="true"] { color: var(--texto); border-bottom-color: var(--acento); }
+  .vista[hidden] { display: none; }
+
+  .bloques { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .bloque { background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 18px 20px; }
+  .bloque h2 { font-size: 16px; font-stretch: 100%; letter-spacing: 0; margin: 0 0 4px; }
+  .bloque .ayuda { margin: 0 0 12px; color: var(--tenue); font-size: 13px; }
+  .bloque dl { margin: 0; }
+  .bloque dl div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--linea); font-size: 14px; }
+  .bloque dt { color: var(--suave); }
+  .bloque dd { margin: 0; font: 500 15px var(--mono); font-variant-numeric: tabular-nums; }
+  .barra-prog { height: 8px; border-radius: 99px; background: var(--linea); display: flex; overflow: hidden; margin: 6px 0 10px; }
+  .barra-prog span { display: block; height: 100%; }
+
+  .herr { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 16px; }
+  .herr .campo { min-width: 180px; }
+  .herr .campo label { font-size: 13px; color: var(--suave); }
+  .herr .campo input, .herr .campo select, .alta select, td select { min-height: 42px; }
+  select { width: 100%; padding: 0 12px; border-radius: var(--radio); border: 1px solid var(--linea-2); background: var(--fondo-2);
+    color: var(--texto); font: 400 15px var(--display); }
+  select:focus { outline: none; border-color: var(--acento); box-shadow: 0 0 0 3px rgba(60, 200, 212, .22); }
+  .herr .esp { flex: 1; }
+
+  .alta { background: var(--panel); border: 1px solid var(--linea-2); border-radius: 14px; padding: 20px; margin-bottom: 18px; }
+  .alta[hidden] { display: none; }
+  .alta h2 { font-size: 18px; margin: 0 0 4px; font-stretch: 100%; }
+  .alta > p { margin: 0 0 16px; color: var(--suave); font-size: 14px; }
+  .alta .rejilla-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .alta .pie-form { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+  .tabla-cont { overflow-x: auto; border: 1px solid var(--linea); border-radius: 14px; }
+  table.adm-tabla { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 860px; }
+  .adm-tabla th { text-align: left; padding: 11px 14px; color: var(--tenue); font: 500 12px var(--mono); letter-spacing: .04em;
+    text-transform: uppercase; background: var(--fondo-2); border-bottom: 1px solid var(--linea); }
+  .adm-tabla td { padding: 12px 14px; border-bottom: 1px solid var(--linea); vertical-align: middle; color: var(--suave); }
+  .adm-tabla tr:last-child td { border-bottom: 0; }
+  .adm-tabla td.persona b { display: block; color: var(--texto); font-weight: 600; }
+  .adm-tabla td.persona span { font: 13px var(--mono); }
+  .adm-tabla td.num { font: 500 14px var(--mono); font-variant-numeric: tabular-nums; }
+  .adm-tabla td select { min-width: 150px; }
+  .adm-tabla td:nth-child(3) select { min-width: 210px; }
+  .adm-tabla td:nth-child(5) { white-space: nowrap; }
+  .adm-tabla .acciones-fila { display: flex; gap: 6px; flex-wrap: wrap; }
+  .adm-tabla tr.baja td { opacity: .6; }
+  .chip { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 12.5px; font-weight: 600; border: 1px solid var(--linea-2); }
+  .chip.ok { color: var(--acento); border-color: rgba(60, 200, 212, .5); }
+  .chip.no { color: var(--tenue); }
+  .chip.alerta-chip { color: var(--ambar); border-color: rgba(242, 179, 61, .5); }
+  .boton.mini { min-height: 32px; padding: 0 12px; font-size: 13px; }
+  .boton.peligro { background: transparent; color: var(--alerta-txt); border-color: rgba(255, 107, 107, .45); }
+  .boton.peligro:hover { background: rgba(255, 107, 107, .1); }
+  .vacio { padding: 28px; text-align: center; color: var(--tenue); }
+
+  dialog { border: 1px solid var(--linea-2); border-radius: 14px; background: var(--panel); color: var(--texto); padding: 24px; width: min(440px, 92vw); }
+  dialog::backdrop { background: rgba(2, 5, 12, .7); }
+  dialog h2 { font-size: 20px; margin: 0 0 6px; font-stretch: 100%; }
+  dialog p { margin: 0 0 16px; color: var(--suave); font-size: 14px; }
+  dialog .pie-form { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+
+  .aviso-flot { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 50; padding: 12px 18px; border-radius: 12px;
+    background: var(--panel); border: 1px solid var(--linea-2); box-shadow: var(--sombra); font-size: 14px; max-width: 92vw; }
+  .aviso-flot.error { border-color: rgba(255, 107, 107, .55); color: var(--alerta-txt); }
+  .aviso-flot[hidden] { display: none; }
+  .cargando { color: var(--tenue); padding: 20px 0; }
+</style>
+</head>
+<body>
+<header class="barra">
+  <div class="envoltura">
+    <a class="marca" href="/" aria-label="SIVIA, inicio"><img class="solo-oscuro" src="/publico/logo_icono.png" alt="" width="38" height="34"><img class="solo-claro" src="/publico/logo_icono_claro.png" alt="" width="38" height="34">SIVIA</a>
+    <nav style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button class="tema-btn" type="button" data-cambia-tema aria-label="Cambiar entre tema claro y oscuro" title="Tema claro u oscuro"><svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
+      <a class="boton chico sec" href="/tablero">Tablero</a>
+      <a class="boton chico sec" href="/cuenta">Mi cuenta</a>
+      <a class="boton chico" href="/salir">Salir</a>
+    </nav>
+  </div>
+</header>
+
+<main class="adm">
+  <div class="envoltura">
+    <div class="adm-cabeza">
+      <div>
+        <h1>Panel de administración</h1>
+        <p>Hola, __USUARIO__. Aquí das de alta cuentas, cambias roles y revisas quién hizo qué.</p>
+      </div>
+    </div>
+
+    <div class="pestanas-adm" role="tablist" aria-label="Secciones del panel">
+      <button role="tab" id="t-resumen" aria-controls="v-resumen" aria-selected="true">Resumen</button>
+      <button role="tab" id="t-usuarios" aria-controls="v-usuarios" aria-selected="false">Usuarios</button>
+      <button role="tab" id="t-bitacora" aria-controls="v-bitacora" aria-selected="false">Bitácora</button>
+    </div>
+
+    <!-- Resumen -->
+    <section class="vista" id="v-resumen" role="tabpanel" aria-labelledby="t-resumen">
+      <div class="bloques" id="resumen"><p class="cargando">Cargando…</p></div>
+    </section>
+
+    <!-- Usuarios -->
+    <section class="vista" id="v-usuarios" role="tabpanel" aria-labelledby="t-usuarios" hidden>
+      <div class="herr">
+        <div class="campo"><label for="buscar">Buscar</label><input id="buscar" type="search" placeholder="Nombre o correo"></div>
+        <div class="campo"><label for="filtro-rol">Rol</label>
+          <select id="filtro-rol"><option value="">Todos</option></select></div>
+        <div class="esp"></div>
+        <button class="boton" id="abrir-alta" type="button">Nueva cuenta</button>
+      </div>
+
+      <form class="alta" id="alta" hidden autocomplete="off">
+        <h2>Nueva cuenta</h2>
+        <p>Solo correos institucionales (.gob.mx), Gmail o excepciones autorizadas. Comparte la contraseña inicial por un canal seguro y pide a la persona que la cambie en «Mi cuenta».</p>
+        <div class="rejilla-form">
+          <div class="campo"><label for="a-nombre">Nombre</label><input id="a-nombre" required maxlength="80" placeholder="Ana López"></div>
+          <div class="campo"><label for="a-correo">Correo</label><input id="a-correo" type="email" required placeholder="ana.lopez@guadalajara.gob.mx"></div>
+          <div class="campo"><label for="a-rol">Rol</label><select id="a-rol" required></select></div>
+          <div class="campo" id="a-dep-caja" hidden><label for="a-dep">Dependencia</label><select id="a-dep"></select></div>
+          <div class="campo"><label for="a-clave">Contraseña inicial</label><input id="a-clave" type="password" required minlength="12" autocomplete="new-password" placeholder="12+ caracteres, letras y números"></div>
+        </div>
+        <div class="pie-form">
+          <button class="boton" type="submit">Crear cuenta</button>
+          <button class="boton sec" type="button" id="cerrar-alta">Cancelar</button>
+        </div>
+      </form>
+
+      <div class="tabla-cont">
+        <table class="adm-tabla">
+          <thead><tr><th>Persona</th><th>Rol</th><th>Dependencia</th><th>Estado</th><th>Último acceso</th><th>Cambios</th><th>Acciones</th></tr></thead>
+          <tbody id="usuarios"><tr><td colspan="7" class="vacio">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Bitácora -->
+    <section class="vista" id="v-bitacora" role="tabpanel" aria-labelledby="t-bitacora" hidden>
+      <div class="herr">
+        <div class="campo"><label for="b-tipo">Tipo</label>
+          <select id="b-tipo">
+            <option value="">Todo</option><option value="acceso">Accesos</option><option value="candidatos">Validación IA</option>
+            <option value="ordenes">Órdenes</option><option value="usuarios">Cuentas</option>
+          </select></div>
+        <div class="campo"><label for="b-usuario">Persona</label><select id="b-usuario"><option value="">Todas</option></select></div>
+        <div class="campo"><label for="b-texto">Contiene</label><input id="b-texto" type="search" placeholder="registro, estado o nota"></div>
+        <div class="esp"></div>
+        <a class="boton sec" id="b-csv" href="/api/admin/bitacora.csv" download>Descargar CSV</a>
+      </div>
+      <div class="tabla-cont">
+        <table class="adm-tabla">
+          <thead><tr><th>Fecha</th><th>Tipo</th><th>Registro</th><th>Estado</th><th>Persona</th><th>Nota</th></tr></thead>
+          <tbody id="eventos"><tr><td colspan="6" class="vacio">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<dialog id="dlg-clave">
+  <form method="dialog" id="f-clave">
+    <h2>Restablecer contraseña</h2>
+    <p id="dlg-clave-txt"></p>
+    <div class="campo"><label for="n-clave">Contraseña nueva</label><input id="n-clave" type="password" minlength="12" autocomplete="new-password" required></div>
+    <div class="pie-form"><button class="boton sec" value="cancelar" type="button" id="cancelar-clave">Cancelar</button><button class="boton" value="ok" type="submit">Guardar</button></div>
+  </form>
+</dialog>
+
+<div class="aviso-flot" id="aviso" role="status" aria-live="polite" hidden></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const ROLES = { consulta: "Consulta", dependencia: "Dependencia", operador: "Operador", admin: "Administrador" };
+  const TIPOS = { acceso: "Acceso", candidatos: "Validación IA", ordenes: "Orden", usuarios: "Cuenta" };
+  let datos = { usuarios: [], bloqueados: [], dependencias: [], yo: "" };
+
+  function el(tag, props = {}, hijos = []) {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) {
+      if (k === "texto") n.textContent = v; else if (k === "clase") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+    }
+    for (const h of [].concat(hijos)) if (h) n.append(h);
+    return n;
+  }
+  let temporizador;
+  function aviso(txt, error = false) {
+    const a = $("aviso"); a.textContent = txt; a.className = "aviso-flot" + (error ? " error" : ""); a.hidden = false;
+    clearTimeout(temporizador); temporizador = setTimeout(() => (a.hidden = true), 4200);
+  }
+  async function api(url, cuerpo) {
+    const op = cuerpo ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(cuerpo) } : { cache: "no-store" };
+    const r = await fetch(url, op);
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401 && j.login) { location.href = "/login?siguiente=/admin"; throw new Error("sesión"); }
+    if (!r.ok || !j.ok) throw new Error(j.error || "No se pudo completar la acción");
+    return j;
+  }
+  const fecha = v => v ? new Date(v).toLocaleString("es-MX", { dateStyle: "medium", timeStyle: "short" }) : "Nunca";
+
+  // --- pestañas -------------------------------------------------------------------------------
+  const tabs = ["resumen", "usuarios", "bitacora"];
+  function abre(nombre) {
+    for (const t of tabs) {
+      $("t-" + t).setAttribute("aria-selected", t === nombre); $("v-" + t).hidden = t !== nombre;
+    }
+    if (nombre === "resumen") cargaResumen(); else if (nombre === "usuarios") cargaUsuarios(); else cargaBitacora();
+    history.replaceState(null, "", "#" + nombre);
+  }
+  tabs.forEach(t => $("t-" + t).addEventListener("click", () => abre(t)));
+
+  // --- resumen --------------------------------------------------------------------------------
+  function bloque(titulo, ayuda, filas, barra) {
+    const dl = el("dl", {}, filas.map(([k, v]) => el("div", {}, [el("dt", { texto: k }), el("dd", { texto: String(v) })])));
+    return el("article", { clase: "bloque" }, [el("h2", { texto: titulo }), el("p", { clase: "ayuda", texto: ayuda }), barra, dl]);
+  }
+  function barraProg(partes) {
+    const total = partes.reduce((s, p) => s + p[1], 0) || 1;
+    return el("div", { clase: "barra-prog", role: "img", "aria-label": partes.map(p => `${p[0]} ${p[1]}`).join(", ") },
+      partes.map(([, v, color]) => el("span", { style: `width:${(100 * v / total).toFixed(1)}%;background:${color}` })));
+  }
+  async function cargaResumen() {
+    const caja = $("resumen");
+    try {
+      const j = await api("/api/admin/resumen");
+      const c = j.candidatos || {}, o = j.ordenes || {}, a = j.accesos_7d || {}, r = j.usuarios_por_rol || {};
+      caja.replaceChildren(
+        bloque("Cuentas", "Personas que pueden entrar a la plataforma.",
+          [["Activas", j.usuarios_activos], ...Object.keys(ROLES).map(k => [ROLES[k], r[k] || 0]), ["Dadas de baja", j.usuarios_baja],
+           ["Bloqueadas ahora (5 intentos fallidos)", (j.bloqueados || []).length]]),
+        bloque("Validación de la IA", "Detecciones del modelo que una persona confirma o descarta.",
+          [["Pendientes", c.pendiente || 0], ["Confirmadas", c.confirmado || 0], ["Descartadas", c.descartado || 0]],
+          barraProg([["Confirmadas", c.confirmado || 0, "var(--acento)"], ["Descartadas", c.descartado || 0, "var(--tenue)"], ["Pendientes", c.pendiente || 0, "var(--linea-2)"]])),
+        bloque("Órdenes de trabajo", "Estado de las órdenes que atienden las dependencias.",
+          [["Pendientes", o.pendiente || 0], ["Asignadas", o.asignada || 0], ["En atención", o.en_atencion || 0], ["Resueltas", o.resuelta || 0], ["Descartadas", o.descartada || 0]]),
+        bloque("Actividad de los últimos 7 días", "Inicios de sesión y cambios registrados en la bitácora.",
+          [["Inicios de sesión", a.inicio || 0], ["Intentos rechazados", a.rechazado || 0], ["Cambios de estado", j.cambios_7d || 0]]),
+        bloque("Órdenes por dependencia", "Carga de trabajo de cada dependencia.",
+          Object.entries(j.ordenes_por_dependencia || {}).sort((x, y) => y[1] - x[1])));
+    } catch (e) { caja.replaceChildren(el("p", { clase: "cargando", texto: "No se pudo cargar el resumen: " + e.message })); }
+  }
+
+  // --- usuarios -------------------------------------------------------------------------------
+  function opciones(sel, lista, actual) {
+    sel.replaceChildren(...lista.map(([v, t]) => { const o = el("option", { value: v, texto: t }); if (v === actual) o.selected = true; return o; }));
+  }
+  async function cargaUsuarios() {
+    try {
+      datos = await api("/api/admin/usuarios");
+      if ($("a-rol").options.length === 0) {
+        opciones($("a-rol"), Object.entries(ROLES), "consulta");
+        opciones($("a-dep"), datos.dependencias.map(d => [d, d]));
+        opciones($("filtro-rol"), [["", "Todos"], ...Object.entries(ROLES)], "");
+      }
+      pintaUsuarios();
+    } catch (e) { $("usuarios").replaceChildren(el("tr", {}, el("td", { colspan: 7, clase: "vacio", texto: "No se pudo cargar: " + e.message }))); }
+  }
+  function pintaUsuarios() {
+    const q = $("buscar").value.trim().toLowerCase(), rol = $("filtro-rol").value;
+    const lista = datos.usuarios.filter(u => (!rol || u.rol === rol) && (!q || (u.nombre + " " + u.correo).toLowerCase().includes(q)));
+    if (!lista.length) return $("usuarios").replaceChildren(el("tr", {}, el("td", { colspan: 7, clase: "vacio", texto: "No hay cuentas con ese filtro." })));
+    $("usuarios").replaceChildren(...lista.map(fila));
+  }
+  function fila(u) {
+    const yo = u.correo === datos.yo, bloqueado = datos.bloqueados.includes(u.correo);
+    const selRol = el("select", { "aria-label": "Rol de " + u.nombre });
+    opciones(selRol, Object.entries(ROLES), u.rol);
+    if (yo) selRol.disabled = true;
+    const selDep = el("select", { "aria-label": "Dependencia de " + u.nombre });
+    opciones(selDep, [["", "—"], ...datos.dependencias.map(d => [d, d])], u.dependencia || "");
+    selDep.disabled = u.rol !== "dependencia";
+    const guardaRol = async () => {
+      const rol = selRol.value, dep = selDep.value;
+      if (rol === "dependencia" && !dep) { selDep.disabled = false; selDep.focus(); return aviso("Elige la dependencia para este rol."); }
+      try { await api("/api/admin/usuarios/" + encodeURIComponent(u.correo), { accion: "rol", rol, dependencia: dep }); aviso(`Rol de ${u.nombre}: ${ROLES[rol]}.`); cargaUsuarios(); }
+      catch (e) { aviso(e.message, true); selRol.value = u.rol; }
+    };
+    selRol.addEventListener("change", () => { selDep.disabled = selRol.value !== "dependencia"; if (selRol.value !== "dependencia" || selDep.value) guardaRol(); else { selDep.focus(); aviso("Elige la dependencia."); } });
+    selDep.addEventListener("change", guardaRol);
+
+    const acciones = el("div", { clase: "acciones-fila" }, [
+      el("button", { clase: "boton mini sec", type: "button", texto: "Contraseña", onclick: () => restablece(u) }),
+      yo ? null : el("button", {
+        clase: "boton mini " + (u.activo ? "peligro" : "sec"), type: "button", texto: u.activo ? "Dar de baja" : "Reactivar",
+        onclick: async () => {
+          if (u.activo && !confirm(`¿Dar de baja a ${u.nombre}? Ya no podrá entrar; su historial se conserva.`)) return;
+          try { await api("/api/admin/usuarios/" + encodeURIComponent(u.correo), { accion: u.activo ? "baja" : "reactivar" }); aviso(u.activo ? `${u.nombre} quedó dado de baja.` : `${u.nombre} puede entrar de nuevo.`); cargaUsuarios(); }
+          catch (e) { aviso(e.message, true); }
+        } }),
+      bloqueado ? el("button", { clase: "boton mini sec", type: "button", texto: "Desbloquear",
+        onclick: async () => { try { await api("/api/admin/desbloquear", { correo: u.correo }); aviso(`${u.nombre} puede intentar entrar de nuevo.`); cargaUsuarios(); } catch (e) { aviso(e.message, true); } } }) : null]);
+
+    const estado = el("td", {}, [el("span", { clase: "chip " + (u.activo ? "ok" : "no"), texto: u.activo ? "Activa" : "Baja" }), " ",
+      bloqueado ? el("span", { clase: "chip alerta-chip", texto: "Bloqueada 15 min" }) : null]);
+    return el("tr", { clase: u.activo ? "" : "baja" }, [
+      el("td", { clase: "persona" }, [el("b", { texto: u.nombre + (yo ? " (tú)" : "") }), el("span", { texto: u.correo })]),
+      el("td", {}, selRol), el("td", {}, selDep), estado,
+      el("td", { texto: fecha(u.ultimo_acceso) }), el("td", { clase: "num", texto: String(u.cambios) }), el("td", {}, acciones)]);
+  }
+  $("buscar").addEventListener("input", pintaUsuarios);
+  $("filtro-rol").addEventListener("change", pintaUsuarios);
+  $("abrir-alta").addEventListener("click", () => { $("alta").hidden = false; $("a-nombre").focus(); });
+  $("cerrar-alta").addEventListener("click", () => { $("alta").reset(); $("alta").hidden = true; });
+  $("a-rol").addEventListener("change", () => ($("a-dep-caja").hidden = $("a-rol").value !== "dependencia"));
+  $("alta").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    const b = ev.submitter; b.disabled = true;
+    try {
+      await api("/api/admin/usuarios", { nombre: $("a-nombre").value, correo: $("a-correo").value, rol: $("a-rol").value,
+        dependencia: $("a-rol").value === "dependencia" ? $("a-dep").value : null, clave: $("a-clave").value });
+      aviso(`Cuenta creada para ${$("a-nombre").value}.`); $("alta").reset(); $("alta").hidden = true; $("a-dep-caja").hidden = true; cargaUsuarios();
+    } catch (e) { aviso(e.message, true); } finally { b.disabled = false; }
+  });
+
+  let objetivo = null;
+  function restablece(u) {
+    objetivo = u; $("dlg-clave-txt").textContent = `Nueva contraseña para ${u.nombre} (${u.correo}). Compártela por un canal seguro.`;
+    $("n-clave").value = ""; $("dlg-clave").showModal(); $("n-clave").focus();
+  }
+  $("cancelar-clave").addEventListener("click", () => $("dlg-clave").close());
+  $("f-clave").addEventListener("submit", async ev => {
+    ev.preventDefault();
+    try { await api("/api/admin/usuarios/" + encodeURIComponent(objetivo.correo), { accion: "clave", clave: $("n-clave").value }); $("dlg-clave").close(); aviso(`Contraseña de ${objetivo.nombre} actualizada.`); }
+    catch (e) { aviso(e.message, true); }
+  });
+
+  // --- bitácora -------------------------------------------------------------------------------
+  function parametros() {
+    const p = new URLSearchParams();
+    if ($("b-tipo").value) p.set("tipo", $("b-tipo").value);
+    if ($("b-usuario").value) p.set("usuario", $("b-usuario").value);
+    if ($("b-texto").value.trim()) p.set("texto", $("b-texto").value.trim());
+    return p.toString();
+  }
+  async function cargaBitacora() {
+    const q = parametros();
+    $("b-csv").href = "/api/admin/bitacora.csv" + (q ? "?" + q : "");
+    try {
+      if ($("b-usuario").options.length <= 1) {
+        const us = await api("/api/admin/usuarios");
+        opciones($("b-usuario"), [["", "Todas"], ...us.usuarios.map(u => [u.correo, u.nombre]), ["local", "Uso local"], ["admin-cli", "Consola del administrador"]], "");
+      }
+      const j = await api("/api/admin/bitacora?limite=300" + (q ? "&" + q : ""));
+      if (!j.eventos.length) return $("eventos").replaceChildren(el("tr", {}, el("td", { colspan: 6, clase: "vacio", texto: "Sin movimientos con ese filtro." })));
+      $("eventos").replaceChildren(...j.eventos.map(e => el("tr", {}, [
+        el("td", { texto: fecha(e.fecha) }), el("td", { texto: TIPOS[e.tabla] || e.tabla }), el("td", { texto: e.registro }),
+        el("td", {}, el("span", { clase: "chip " + (e.estado === "rechazado" ? "alerta-chip" : ""), texto: e.estado })),
+        el("td", { texto: e.usuario || "—" }), el("td", { texto: e.nota || "" })])));
+    } catch (e) { $("eventos").replaceChildren(el("tr", {}, el("td", { colspan: 6, clase: "vacio", texto: "No se pudo cargar: " + e.message }))); }
+  }
+  let espera;
+  ["b-tipo", "b-usuario"].forEach(i => $(i).addEventListener("change", cargaBitacora));
+  $("b-texto").addEventListener("input", () => { clearTimeout(espera); espera = setTimeout(cargaBitacora, 350); });
+
+  abre(tabs.includes(location.hash.slice(1)) ? location.hash.slice(1) : "resumen");
+})();
+</script>
+</body>
+</html>

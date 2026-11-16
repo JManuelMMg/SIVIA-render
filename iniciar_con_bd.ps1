@@ -26,6 +26,15 @@ try {
             $env:AWS_SECRET_ACCESS_KEY = Leer-Oculto "Secret access key"
         }
     }
+    if ($Accion -eq 'servidor' -and -not $env:CAMARA_TOKENS) {
+        # token temporal para probar la camara en local; en Render se define CAMARA_TOKENS en Environment
+        $tok = [guid]::NewGuid().ToString('N') + [guid]::NewGuid().ToString('N').Substring(0, 8)
+        $env:CAMARA_TOKENS = "LOCAL-01:$tok"
+        $nombres += 'CAMARA_TOKENS'
+        Write-Host "Camara de prueba (en OTRA ventana, desde prototipo):"
+        Write-Host "  `$env:SIVIA_TOKEN_CAMARA = '$tok'"
+        Write-Host "  python agente\camara_simulada.py --plataforma http://127.0.0.1:8000 --vehiculo LOCAL-01"
+    }
     switch ($Accion) {
         'servidor' { python servidor.py }
         'cargar'   { python cargar_bd.py }

@@ -6,7 +6,9 @@
 <title>SIVIA · Iniciar sesión</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/publico/estilo.css">
+<script>try{var t=localStorage.getItem("sivia_tema");if(t)document.documentElement.dataset.tema=t}catch(e){}</script>
+<script src="/publico/tema.js?v=3" defer></script>
+<link rel="stylesheet" href="/publico/estilo.css?v=4">
 <link rel="icon" type="image/png" href="/publico/logo_icono.png">
 </head>
 <body>
@@ -14,16 +16,17 @@
   <div class="lado-mapa" aria-hidden="true">
     <img src="/publico/mapa.svg" alt="">
     <div class="pie-mapa">
-      <p>1,646 instituciones vigiladas. 152 en riesgo alto.</p>
-      <small>Accidentes 2022-2024 · INEGI · niveles de riesgo SIVIA</small>
+      <p>Inspección preventiva: el compromiso de tu ciudad.</p>
+      <small>1,646 escuelas, guarderías y hospitales vigilados; 152 en riesgo alto. Los puntos rojos son riesgo alto, los ámbar medio y los azules bajo; los tenues, accidentes de tránsito 2022-2024 (INEGI).</small>
     </div>
   </div>
   <main class="lado-form">
-    <a class="volver" href="/">&larr; Volver al inicio</a>
-    <img class="logo-acceso" src="/publico/logo.png" alt="SIVIA · Inteligencia para Prevenir" width="210" height="226">
+    <div style="display:flex;justify-content:space-between;align-items:center"><a class="volver" href="/">&larr; Volver al inicio</a><button class="tema-btn" type="button" data-cambia-tema aria-label="Cambiar entre tema claro y oscuro" title="Tema claro u oscuro"><svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button></div>
+    <img class="logo-acceso solo-oscuro" src="/publico/logo.png" alt="SIVIA · Sistema Inteligente de Vigilancia de Infraestructura y Anomalías" width="200" height="226">
+    <img class="logo-acceso solo-claro" src="/publico/logo_claro.png" alt="SIVIA · Sistema Inteligente de Vigilancia de Infraestructura y Anomalías" width="200" height="226">
     <div>
       <h1>Iniciar sesión</h1>
-      <p class="entrada">Usa tu correo institucional (.gob.mx) o el Gmail que dio de alta el administrador.</p>
+      <p class="entrada">Entra con el correo que dio de alta el administrador: institucional (.gob.mx) o Gmail. Si no tienes cuenta, pídela al administrador.</p>
     </div>
     <form class="acceso-form" method="post" action="/login" autocomplete="on">
       <input type="hidden" name="siguiente" value="__SIG__">

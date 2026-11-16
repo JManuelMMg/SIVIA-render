@@ -151,21 +151,129 @@
   .footer-note { padding:8px 10px; border-top:1px solid var(--line); color:var(--mut); font-size:9px; }
   .mly img { width:100%; margin-top:6px; border-radius:6px; }
   .leaflet-popup-content { line-height:1.5; }
-  body.dark { --bg:#1f2528; --panel:#2a3236; --tx:#eef2f2; --mut:#adb8bc; --line:#3b464a; --shadow:0 2px 9px rgba(0,0,0,.22); }
-  body.dark .tabs .tab,body.dark .segmented button,body.dark .select,body.dark .secondary-btn,body.dark .action,body.dark .theme-btn { background:#2a3236; color:var(--tx); }
-  body.dark .tab.active,body.dark .tab:hover,body.dark .ai-card:hover { background:#313c40; }
-  body.dark .intro,body.dark .toolbar,body.dark .weather-card,body.dark .map-dock { background:#2a3236; }
-  body.dark .radar-player { border-color:#48545a; background:rgba(34,42,46,.95); color:#edf3f4; }
-  body.dark .radar-player-labels span,body.dark .radar-player-history { color:#bbc5c8; }
   @media (max-width:1150px) { .kpis { grid-template-columns:repeat(3,minmax(0,1fr)); } main { height:auto; min-height:0; grid-template-columns:1fr; } .map-wrap { height:54vh; min-height:370px; } .panel { height:62vh; min-height:430px; } }
   @media (max-width:650px) { header { align-items:flex-start; flex-direction:column; gap:9px; } .clima-head { flex-wrap:wrap; } .kpis { grid-template-columns:repeat(2,minmax(0,1fr)); padding:8px; gap:7px; } main { padding:0 8px 8px; } .map-wrap { height:48vh; min-height:300px; } .panel { height:68vh; } .ai-card { grid-template-columns:94px minmax(0,1fr); gap:7px; } .evidence { width:94px; height:70px; } .tabs .tab { font-size:10px; } .search-field { flex:1; width:auto; min-width:120px; } .radar-player { bottom:24px; width:calc(100% - 18px); grid-template-columns:32px minmax(0,1fr); gap:7px; padding:7px 8px; } .radar-player button { width:32px; height:32px; } .radar-player-history { display:none; } }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="icon" type="image/png" href="/publico/logo_icono.png">
+<style>
+/* SIVIA · capa de diseño del tablero (se inyecta sobre la plantilla del colaborador B).
+   Dos temas con contraste revisado: claro por defecto y oscuro con body.dark. Los colores de nivel de riesgo y
+   del radar son datos y no se tocan. */
+:root {
+  --bg: #eef2f8; --panel: #ffffff; --panel-2: #f5f8fc; --tx: #121a2b; --mut: #4f5c74; --line: #d9e1ee;
+  --red: #c2343f; --amber: #a8680b; --green: #24805a; --teal: #0b7c89; --blue: #1d4e9e;
+  --acento: #0b7c89; --sobre: #ffffff; --card: var(--panel-2);
+  --shadow: 0 1px 2px rgba(18, 26, 43, .06), 0 10px 26px -18px rgba(18, 26, 43, .3); --radius: 12px;
+}
+body.dark {
+  --bg: #05080f; --panel: #0d1426; --panel-2: #121b33; --tx: #eaf0f8; --mut: #aeb9cd; --line: #22304f;
+  --red: #ff7b7b; --amber: #f2b33d; --green: #5cc98f; --teal: #3cc8d4; --blue: #8eaaf2;
+  --acento: #3cc8d4; --sobre: #031417; --card: var(--panel-2);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 12px 30px -20px rgba(0, 0, 0, .9);
+}
+body { font: 13.5px/1.45 "Archivo", "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--tx); }
+::selection { background: var(--acento); color: var(--sobre); }
+
+/* encabezado */
+header { min-height: 66px; background: var(--panel); border-bottom: 1px solid var(--line); padding: 10px 18px; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand img { height: 38px; width: auto; flex: none; }
+.brand img.solo-claro { display: none; }
+body:not(.dark) .brand img.solo-oscuro { display: none; }
+body:not(.dark) .brand img.solo-claro { display: block; }
+.brand h1 { font-size: 17px; font-weight: 800; font-stretch: 115%; letter-spacing: .02em; color: var(--tx); }
+.brand .sub { color: var(--mut); font-size: 11.5px; }
+.clima-head { color: var(--mut); font-size: 12px; }
+.help-clima { color: var(--mut); font-size: 11px; }
+.segmented { border-color: var(--line); border-radius: 9px; background: var(--panel); }
+.segmented button { background: var(--panel); color: var(--tx); border-right-color: var(--line); padding: 7px 11px; font-size: 12px; }
+.segmented button:hover:not(.active) { background: var(--panel-2); }
+.segmented button.active { background: var(--acento); color: var(--sobre); font-weight: 650; }
+.theme-btn { width: 34px; height: 34px; border-radius: 9px; border-color: var(--line); background: var(--panel); color: var(--tx);
+  display: inline-grid; place-items: center; font-size: 0; }
+.theme-btn:hover { background: var(--panel-2); }
+.theme-btn svg { width: 17px; height: 17px; }
+.theme-btn .sol { display: none; }
+body:not(.dark) .theme-btn .luna { display: none; }
+body:not(.dark) .theme-btn .sol { display: block; }
+
+/* indicadores */
+.kpis { gap: 10px; padding: 12px 18px; }
+.kpi { border-color: var(--line); background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); padding: 10px 13px; }
+.kpi .v { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 500; font-size: 22px; color: var(--tx); }
+.kpi .l { color: var(--mut); font-size: 11px; }
+.kpi.green .v { color: var(--green); } .kpi.red .v { color: var(--red); } .kpi.amber .v { color: var(--amber); }
+
+/* mapa y panel */
+main { gap: 12px; padding: 0 18px 16px; }
+.map-wrap, .panel { border-color: var(--line); background: var(--panel); border-radius: var(--radius); box-shadow: var(--shadow); }
+#mapa { background: var(--panel-2); }
+.map-docks { border-bottom-color: var(--line); }
+.map-dock { background: var(--panel); border-color: var(--line); border-radius: 9px; }
+.map-dock summary { color: var(--tx); font-size: 11px; }
+.legend, .map-layer-status, .radar-legend small { color: var(--mut); }
+.legend { color: var(--tx); }
+.tabs { border-bottom-color: var(--line); background: var(--panel); }
+.tab { background: var(--panel); color: var(--mut); font-size: 12px; font-weight: 600; }
+.tab:hover { color: var(--acento); background: var(--panel-2); }
+.tab.active { color: var(--tx); font-weight: 700; background: var(--panel); }
+.tab.active::after { background: var(--acento); height: 3px; border-radius: 3px 3px 0 0; }
+.intro, .toolbar { background: var(--panel); border-bottom-color: var(--line); }
+.intro h2, .analysis h2 { color: var(--tx); font-size: 13px; }
+.intro p, .summary, .history-intro, .footer-note { color: var(--mut); }
+.select, .secondary-btn, .action { background: var(--panel); color: var(--tx); border-color: var(--line); border-radius: 8px; }
+.select:focus, .secondary-btn:focus-visible, .action:focus-visible, .tab:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+.secondary-btn:hover, .action:hover { background: var(--panel-2); }
+.action.confirm { background: var(--acento); border-color: var(--acento); color: var(--sobre); font-weight: 650; }
+.action.confirm:hover { filter: brightness(1.08); background: var(--acento); }
+.action.discard:hover { border-color: var(--red); color: var(--red); }
+select option { background: var(--panel); color: var(--tx); }
+input { color: var(--tx); }
+.ai-card, .order-row, .stat-row, .ssn-event { border-bottom-color: var(--line); }
+.ai-card:hover, .order-row:hover { background: var(--panel-2); }
+.card-title strong, .order-name { color: var(--tx); }
+.confidence, .card-place, .order-meta, .order-no { color: var(--mut); }
+.card-status { color: var(--amber); }
+.empty { color: var(--mut); } .empty b { color: var(--tx); }
+.history-card { background: var(--panel); border-color: var(--line); }
+.history-head h3 { color: var(--tx); } .history-head p, .history-footnote { color: var(--mut); }
+.history-change { color: var(--acento); }
+.stat-row span:last-child { color: var(--mut); }
+.weather-card { background: var(--panel-2); border-color: var(--line); }
+.weather-card h2 { color: var(--tx); } .weather-card p { color: var(--mut); }
+.weather-stats div { background: var(--panel); border-color: var(--line); }
+.weather-stats b { color: var(--tx); font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 500; }
+.weather-stats span, .source-note { color: var(--mut); }
+.source-note a, .ssn-event a, .leaflet-container a { color: var(--acento); }
+.ssn-event h3 { color: var(--tx); } .ssn-event p { color: var(--mut); }
+.ssn-status { background: var(--panel-2); color: var(--green); border: 1px solid var(--line); }
+.score { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+/* reproductor de radar */
+.radar-player { background: var(--panel); border-color: var(--line); color: var(--tx); box-shadow: var(--shadow); }
+.radar-player button { background: var(--acento); color: var(--sobre); }
+.radar-player button:hover { filter: brightness(1.08); background: var(--acento); }
+.radar-player-labels span, .radar-player-history { color: var(--mut); }
+.radar-player input[type="range"] { accent-color: var(--acento); }
+
+/* Leaflet con tema */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--panel); color: var(--tx); box-shadow: var(--shadow); }
+.leaflet-control-layers, .leaflet-bar a, .leaflet-bar a:hover { background: var(--panel); color: var(--tx); border-color: var(--line); }
+.leaflet-control-layers label, .leaflet-control-layers-base, .leaflet-control-layers-overlays { color: var(--tx); }
+.leaflet-container .leaflet-control-attribution { background: var(--panel); color: var(--mut); opacity: .92; }
+
 </style>
 </head>
 <body>
 <header>
   <div class="brand">
-    <h1>SIVIA · Inspección urbana alrededor de escuelas, guarderías y hospitales</h1>
-    <div class="sub">Guadalajara, Jalisco · Plataforma de inspección preventiva · Hackathon Jalisco 2026, Reto 01 Ciudades Inteligentes</div>
+    <img class="solo-oscuro" src="/publico/logo_icono.png" alt=""><img class="solo-claro" src="/publico/logo_icono_claro.png" alt="">
+    <div>
+    <h1>SIVIA · Tablero de inspección</h1>
+    <div class="sub">Guadalajara, Jalisco · Escuelas, guarderías y hospitales · Inspección preventiva: el compromiso de tu ciudad</div>
+    </div>
   </div>
   <div class="clima-head">
     <span>Escenario climático</span>
@@ -175,7 +283,7 @@
       <button data-scenario="sin">Sin clima</button>
     </div>
     <span class="help-clima" id="estadoSMN" title="Si aparece desconectado, ejecuta iniciar_tablero.bat">consultando SMN…</span>
-    <button class="theme-btn" id="tema" title="Cambiar tema" aria-label="Cambiar tema">◐</button>
+    <button class="theme-btn" id="tema" title="Tema claro u oscuro" aria-label="Cambiar entre tema claro y oscuro"><svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
   </div>
 </header>
 
@@ -1301,7 +1409,7 @@ document.getElementById("exportar").addEventListener("click",()=>{
 });
 
 climaBotones.forEach(b=>b.addEventListener("click",()=>{escenario=b.dataset.scenario;pintarClima();indicadores();pintarMapa();if(tabActiva==="ordenes")pintarOrdenes();}));
-document.getElementById("tema").addEventListener("click",()=>document.body.classList.toggle("dark"));
+(()=>{const raiz=document.documentElement;const ef=()=>raiz.dataset.tema||(matchMedia("(prefers-color-scheme: light)").matches?"claro":"oscuro");const aplica=()=>document.body.classList.toggle("dark",ef()==="oscuro");try{const t=localStorage.getItem("sivia_tema");if(t)raiz.dataset.tema=t;}catch(_){}aplica();matchMedia("(prefers-color-scheme: light)").addEventListener("change",aplica);document.getElementById("tema").addEventListener("click",()=>{const n=ef()==="claro"?"oscuro":"claro";raiz.dataset.tema=n;try{localStorage.setItem("sivia_tema",n);}catch(_){}aplica();});})();
 
 indicadores(); pintarClima(); pintarAnalisis(); pintarMapa(); pintarIA(); pintarOrdenes();
 async function sincronizarBD(){try{const r=await fetch("/api/candidatos",{cache:"no-store"});if(r.status===401){const e=await r.json().catch(()=>({}));if(e.login){location.href="/login";return;}}if(!r.ok)return;const j=await r.json();if(!j.ok)return;Object.assign(revisiones,j.estados);Object.keys(revisiones).forEach(k=>{if(revisiones[k]==="pendiente")delete revisiones[k];});indicadores();pintarIA();pintarAnalisis();pintarOrdenes();}catch(_){}}
@@ -1321,6 +1429,75 @@ document.addEventListener("visibilitychange", actualizarFuentesAlVolver);
 window.addEventListener("online", actualizarFuentesAlVolver);
 document.getElementById("filtroIA").value="pendiente";
 setTimeout(()=>mapa.invalidateSize(),120);
+</script>
+<style>.cam-aviso{position:fixed;left:50%;top:76px;transform:translateX(-50%);z-index:10000;max-width:min(560px,92vw);padding:11px 16px;border-radius:12px;background:var(--panel);color:var(--tx);border:1px solid var(--acento);box-shadow:var(--shadow);font-size:13px}.cam-aviso[hidden]{display:none}.cam-veh{position:relative}.cam-veh-punto{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--acento);border:3px solid var(--panel);box-shadow:0 0 0 4px rgba(60,200,212,.35)}.cam-veh-nombre{position:absolute;left:12px;top:-10px;padding:1px 7px;border-radius:6px;background:var(--panel);color:var(--tx);border:1px solid var(--line);font:600 11px/1.6 'IBM Plex Mono',monospace;white-space:nowrap}</style>
+<script>
+/* Tablero · detecciones en vivo de las cámaras de los vehículos.
+   Cada 20 s trae de la plataforma las detecciones nuevas (modelo YOLO11s v9 corriendo en la cámara) y las suma a
+   la pestaña Validación IA y al mapa como candidatos pendientes. También muestra dónde va cada vehículo. */
+(() => {
+  if (typeof DATOS === "undefined" || typeof mapa === "undefined") return;
+  const vistos = new Set(DATOS.map(h => h.id));
+  let capaVeh = null, primera = true;
+
+  const aviso = document.createElement("div");
+  aviso.className = "cam-aviso";
+  aviso.setAttribute("role", "status");
+  aviso.setAttribute("aria-live", "polite");
+  aviso.hidden = true;
+  document.body.append(aviso);
+  let reloj;
+  function avisa(txt) {
+    aviso.textContent = txt; aviso.hidden = false;
+    clearTimeout(reloj); reloj = setTimeout(() => (aviso.hidden = true), 6000);
+  }
+
+  async function detecciones() {
+    try {
+      const r = await fetch("/api/camara/candidatos", { cache: "no-store" });
+      if (!r.ok) return;
+      const j = await r.json();
+      if (!j.ok) return;
+      let nuevos = 0, ultimo = null;
+      for (const h of j.candidatos) {
+        const previo = DATOS.find(d => d.id === h.id);
+        if (previo) { Object.assign(previo, { vistas: h.vistas, descripcion: h.descripcion, confianza: h.confianza }); continue; }
+        if (vistos.has(h.id)) continue;
+        vistos.add(h.id); DATOS.push(h); nuevos++; ultimo = h;
+      }
+      if (nuevos) {
+        indicadores(); pintarMapa(); pintarIA(); pintarAnalisis(); pintarOrdenes();
+        if (!primera) avisa(nuevos === 1
+          ? `Nueva detección de la cámara ${ultimo.vehiculo}: ${ultimo.modelo_clase} cerca de ${ultimo.nombre}. Revísala en Validación IA.`
+          : `${nuevos} detecciones nuevas de las cámaras. Revísalas en Validación IA.`);
+      }
+    } catch (_) { /* sin conexión: se intenta en la siguiente vuelta */ }
+    primera = false;
+  }
+
+  async function vehiculos() {
+    try {
+      const r = await fetch("/api/camara/vehiculos", { cache: "no-store" });
+      if (!r.ok) return;
+      const j = await r.json();
+      if (!j.ok) return;
+      if (!capaVeh) capaVeh = L.layerGroup().addTo(mapa);
+      capaVeh.clearLayers();
+      for (const v of j.vehiculos) {
+        const icono = L.divIcon({ className: "cam-veh", html: `<span class="cam-veh-punto"></span><span class="cam-veh-nombre"></span>`, iconSize: [0, 0] });
+        const m = L.marker([v.lat, v.lng], { icon: icono, zIndexOffset: 1000, keyboard: false }).addTo(capaVeh);
+        const el = m.getElement();
+        if (el) el.querySelector(".cam-veh-nombre").textContent = v.vehiculo;
+        m.bindTooltip(`Cámara ${v.vehiculo} · hace ${v.hace_s} s`, { direction: "top" });
+      }
+    } catch (_) { /* sin conexión */ }
+  }
+
+  detecciones(); vehiculos();
+  setInterval(detecciones, 20000);
+  setInterval(vehiculos, 5000);
+})();
+
 </script>
 </body>
 </html>

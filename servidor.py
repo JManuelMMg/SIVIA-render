@@ -6,6 +6,10 @@ Extiende smn_server.py (clima SMN, GOES, radar, INEGI, SSN, USGS; sin cambios) c
   GET  /login, POST /login, GET /salir   inicio y cierre de sesión
   GET  /salud                          verificación para el hospedaje (no expone datos)
   GET  /api/sesion                     quién está conectado y con qué rol
+  GET  /admin, /api/admin/...          panel del administrador: resumen, usuarios, bitácora, bloqueos (solo admin)
+  GET  /cuenta, POST /api/cuenta/clave cada usuario cambia su propia contraseña
+  POST /api/camara/deteccion, /posicion  cámaras de los vehículos (token de dispositivo en CAMARA_TOKENS)
+  GET  /api/camara/candidatos, /vehiculos detecciones de cámara y vehículos activos para el tablero (con sesión)
   GET  /api/bd/estado                  conexión y conteos
   GET  /api/candidatos                 {id: estado} de los candidatos del modelo
   POST /api/candidatos/<id>            {"estado": "confirmado"|"descartado"|"pendiente"}      (operador, admin)
@@ -51,6 +55,8 @@ from urllib.parse import parse_qs, quote, unquote, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import smn_server  # noqa: E402
+import admin  # noqa: E402
+import camaras  # noqa: E402
 
 DB = os.environ.get("DATABASE_URL")
 BUCKET = os.environ.get("BUCKET", "reportbucket")
@@ -296,6 +302,11 @@ PUBLICOS = {"/publico/estilo.css": ("estilo.css", "text/css; charset=utf-8"),
             "/publico/mapa.svg": ("mapa.svg", "image/svg+xml"),
             "/publico/logo.png": ("logo.png", "image/png"),
             "/publico/logo_icono.png": ("logo_icono.png", "image/png"),
+            "/publico/logo_claro.png": ("logo_claro.png", "image/png"),
+            "/publico/logo_icono_claro.png": ("logo_icono_claro.png", "image/png"),
+            "/publico/tema.js": ("tema.js", "text/javascript; charset=utf-8"),
+            "/publico/mapa3d.js": ("mapa3d.js", "text/javascript; charset=utf-8"),
+            "/publico/municipio3d.json": ("municipio3d.json", "application/json"),
             "/favicon.ico": ("logo_icono.png", "image/png")}
 
 ERRORES = {
@@ -311,11 +322,12 @@ ETIQUETAS = {403: "Acceso denegado", 404: "No encontrado", 405: "No permitido", 
              500: "Error del servidor", 503: "Sin servicio"}
 
 BARRA = """<div id="sivia-sesion" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;align-items:center;
-gap:10px;padding:7px 8px 7px 14px;border-radius:999px;background:rgba(6,10,19,.93);border:1px solid #2b3c63;color:#eef2fa;
+gap:10px;padding:7px 8px 7px 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--tx);
 font:500 13px/1.2 system-ui,'Segoe UI',sans-serif;box-shadow:0 12px 28px -12px rgba(0,0,0,.6)">
 <img src="/publico/logo_icono.png" alt="" style="width:24px;height:auto">
-<span>__USUARIO__ <span style="color:#a9b5cf">· __ROL__</span></span>
-<a href="/salir" style="padding:5px 12px;border-radius:999px;background:#e3a83a;color:#1a1204;font-weight:700;text-decoration:none">Salir</a>
+<span>__USUARIO__ <span style="color:var(--mut)">· __ROL__</span></span>
+__EXTRA__<a href="/cuenta" style="padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--tx);text-decoration:none">Mi cuenta</a>
+<a href="/salir" style="padding:5px 12px;border-radius:999px;background:var(--acento);color:var(--sobre);font-weight:700;text-decoration:none">Salir</a>
 </div></body>"""
 
 
@@ -371,6 +383,42 @@ class Handler(smn_server.Handler):
             return json.loads(self._cuerpo_crudo() or b"{}")
         except ValueError:
             return {}
+
+    def _cuerpo_grande(self, maximo=1_400_000):
+        n = int(self.headers.get("Content-Length") or 0)
+        if n > maximo:
+            raise camaras.ErrorCamara("mensaje demasiado grande", 413)
+        try:
+            return json.loads(self.rfile.read(n) or b"{}") if n > 0 else {}
+        except ValueError:
+            raise camaras.ErrorCamara("JSON inválido")
+
+    def _post_camara(self, ruta):
+        """Detecciones y posición que mandan las cámaras de los vehículos (sin sesión: token de dispositivo)."""
+        if not camaras.tokens():
+            return self._json({"ok": False, "error": "cámaras no configuradas (CAMARA_TOKENS)"}, 503)
+        veh = camaras.autentica(self.headers.get("Authorization"))
+        if not veh:
+            return self._json({"ok": False, "error": "token de cámara inválido"}, 401)
+        if not camaras.ritmo_ok(veh):
+            return self._json({"ok": False, "error": "demasiados envíos; espera un momento"}, 429)
+        try:
+            datos = self._cuerpo_grande()
+            if ruta == "/api/camara/posicion":
+                camaras.posicion(veh, datos)
+                return self._json({"ok": True})
+            if ruta == "/api/camara/deteccion":
+                if not DB:
+                    return self._json({"ok": False, "error": "sin base de datos (DATABASE_URL)"}, 503)
+                with con() as c:
+                    return self._json({"ok": True, **camaras.registra(c, datos, veh, s3(), BUCKET)})
+        except camaras.ErrorCamara as e:
+            return self._json({"ok": False, "error": str(e)}, e.codigo)
+        except (TypeError, ValueError):
+            return self._json({"ok": False, "error": "dato inválido"}, 400)
+        except Exception as e:
+            return self._json({"ok": False, "error": type(e).__name__}, 502)
+        return self._json({"ok": False, "error": "ruta desconocida"}, 404)
 
     def _cookie(self, valor, edad):
         return (f"sivia_sesion={valor}; Path=/; Max-Age={edad}; HttpOnly; SameSite=Strict"
@@ -439,7 +487,9 @@ class Handler(smn_server.Handler):
         texto = (Path(smn_server.ROOT) / "index.html").read_text(encoding="utf-8")
         if self.sesion:
             barra = (BARRA.replace("__USUARIO__", html.escape(self.sesion.get("n") or self.sesion["u"]))
-                     .replace("__ROL__", html.escape(self.sesion["r"] + (f" ({self.sesion['d']})" if self.sesion.get("d") else ""))))
+                     .replace("__ROL__", html.escape(self.sesion["r"] + (f" ({self.sesion['d']})" if self.sesion.get("d") else "")))
+                     .replace("__EXTRA__", '<a href="/admin" style="padding:5px 10px;border-radius:999px;border:1px solid '
+                              'var(--acento);color:var(--acento);text-decoration:none">Panel</a>' if self.sesion["r"] == "admin" else ""))
             texto = texto.replace("</body>", barra, 1)
         return self._html(texto)
 
@@ -459,7 +509,9 @@ class Handler(smn_server.Handler):
     def _inicio(self):
         s = self._sesion() if SECRETO else {"n": "local"}
         if s:
-            accion = '<a class="boton" href="/tablero">Ir al tablero</a><a class="boton sec" href="/salir">Cerrar sesión</a>'
+            accion = '<a class="boton" href="/tablero">Ir al tablero</a>' + (
+                '<a class="boton sec" href="/admin">Panel de administración</a>' if s.get("r") == "admin" else "") + \
+                '<a class="boton sec" href="/salir">Cerrar sesión</a>'
             barra = '<a class="boton chico" href="/tablero">Tablero</a>'
             acceso = '<a class="boton sec" href="/tablero">Abrir el tablero</a>'
         else:
@@ -474,7 +526,8 @@ class Handler(smn_server.Handler):
         cuerpo = (WEB / nombre).read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", tipo)
-        self.send_header("Cache-Control", "public, max-age=86400")
+        corto = nombre.endswith((".js", ".css", ".json"))       # código y datos: se renuevan pronto
+        self.send_header("Cache-Control", "public, max-age=" + ("300" if corto else "86400"))
         self.send_header("Content-Length", str(len(cuerpo)))
         self.end_headers()
         self.wfile.write(cuerpo)
@@ -493,6 +546,100 @@ class Handler(smn_server.Handler):
                                "hora": r.get("fecha_hora")})
         except Exception:
             return self._json({"ok": False}, 200)
+
+    def _actor(self):
+        return self.sesion["u"] if self.sesion else "local"
+
+    def _es_admin(self):
+        """Sesión de administrador y, en la base, cuenta admin activa (por si la cambiaron después del login)."""
+        if not SECRETO:
+            return True
+        if not self.sesion or self.sesion.get("r") != "admin" or not DB:
+            return False
+        try:
+            with con() as c:
+                return admin.es_admin_activo(c, self.sesion["u"])
+        except Exception:
+            return False
+
+    def _correo_valido(self, correo):
+        return bool(CORREO_OK.match(correo) and es_gobierno(correo))
+
+    def _bloqueos(self):
+        ahora = time.time()
+        with _candado:
+            return sorted({k.split("|")[0] for k, f in _fallos.items() if f[1] > ahora and k.split("|")[0]})
+
+    def _desbloquea(self, correo):
+        with _candado:
+            for k in [k for k in _fallos if k == correo or k.startswith(correo + "|")]:
+                del _fallos[k]
+
+    def _get_admin(self, ruta, consulta):
+        if not self._es_admin():
+            return self._json({"ok": False, "error": "solo para administradores"}, 403)
+        if not DB:
+            return self._json({"ok": False, "error": "sin base de datos (DATABASE_URL)"}, 503)
+        q = parse_qs(consulta)
+        filtros = {"tabla": q.get("tipo", [None])[0] or None, "usuario": q.get("usuario", [None])[0] or None,
+                   "texto": (q.get("texto", [""])[0] or "").strip()[:60] or None}
+        try:
+            with con() as c:
+                if ruta == "/api/admin/resumen":
+                    return self._json({"ok": True, **admin.resumen(c), "bloqueados": self._bloqueos()})
+                if ruta == "/api/admin/usuarios":
+                    return self._json({"ok": True, "usuarios": admin.usuarios(c), "bloqueados": self._bloqueos(),
+                                       "roles": admin.ROLES, "dependencias": admin.DEPENDENCIAS, "yo": self._actor()})
+                if ruta == "/api/admin/bitacora":
+                    return self._json({"ok": True, "eventos": admin.eventos(c, limite=q.get("limite", [300])[0], **filtros)})
+                if ruta == "/api/admin/bitacora.csv":
+                    cuerpo = admin.eventos_csv(c, **filtros).encode("utf-8")
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/csv; charset=utf-8")
+                    self.send_header("Content-Disposition", 'attachment; filename="bitacora_sivia.csv"')
+                    self.send_header("Cache-Control", "no-store")
+                    self.send_header("Content-Length", str(len(cuerpo)))
+                    self.end_headers()
+                    self.wfile.write(cuerpo)
+                    return None
+        except Exception as e:
+            return self._json({"ok": False, "error": type(e).__name__}, 502)
+        return self._json({"ok": False, "error": "ruta desconocida"}, 404)
+
+    def _post_admin(self, ruta):
+        datos = self._cuerpo()
+        actor = self._actor()
+        if ruta == "/api/cuenta/clave":
+            if not self.sesion and SECRETO:
+                return self._json({"ok": False, "login": True, "error": "inicia sesión"}, 401)
+            try:
+                with con() as c:
+                    admin.cambiar_mi_clave(c, actor, str(datos.get("actual", "")), str(datos.get("nueva", "")),
+                                           verifica_clave, hash_clave)
+                return self._json({"ok": True})
+            except admin.ErrorAdmin as e:
+                return self._json({"ok": False, "error": str(e)}, e.codigo)
+            except Exception as e:
+                return self._json({"ok": False, "error": type(e).__name__}, 502)
+        if not self._es_admin():
+            return self._json({"ok": False, "error": "solo para administradores"}, 403)
+        try:
+            if ruta == "/api/admin/desbloquear":
+                correo = str(datos.get("correo", "")).strip().lower()
+                self._desbloquea(correo)
+                bitacora("usuarios", correo[:120], "desbloqueo", actor, "panel")
+                return self._json({"ok": True})
+            with con() as c:
+                if ruta == "/api/admin/usuarios":
+                    return self._json({"ok": True, **admin.alta(c, datos, actor, self._correo_valido, hash_clave)})
+                m = re.match(r"^/api/admin/usuarios/([^/]+)$", ruta)
+                if m:
+                    return self._json({"ok": True, **admin.actualizar(c, unquote(m.group(1)), datos, actor, hash_clave)})
+        except admin.ErrorAdmin as e:
+            return self._json({"ok": False, "error": str(e)}, e.codigo)
+        except Exception as e:
+            return self._json({"ok": False, "error": type(e).__name__}, 502)
+        return self._json({"ok": False, "error": "ruta desconocida"}, 404)
 
     def do_HEAD(self):
         return self._json({"ok": True}) if urlsplit(self.path).path in ("/salud", "/") else self.send_error(405)
@@ -518,6 +665,27 @@ class Handler(smn_server.Handler):
             return self._redir("/", self._cookie("", 0))
         if self._protegido(ruta):
             return None
+        if ruta == "/admin":
+            if not self._es_admin():
+                return self._pagina_error(403)
+            nombre = (self.sesion or {}).get("n") or self._actor()
+            return self._html(plantilla("admin.html").replace("__USUARIO__", html.escape(nombre)))
+        if ruta == "/cuenta":
+            s = self.sesion or {"u": "local", "n": "Uso local", "r": "admin"}
+            return self._html(plantilla("cuenta.html").replace("__USUARIO__", html.escape(s.get("n") or s["u"]))
+                              .replace("__CORREO__", html.escape(s["u"])).replace("__ROL__", html.escape(s["r"])))
+        if ruta.startswith("/api/admin/"):
+            return self._get_admin(ruta, u.query)
+        if ruta == "/api/camara/vehiculos":
+            return self._json({"ok": True, "vehiculos": camaras.vehiculos()})
+        if ruta == "/api/camara/candidatos":
+            if not DB:
+                return self._json({"ok": True, "candidatos": []})
+            try:
+                with con() as c:
+                    return self._json({"ok": True, "candidatos": camaras.lista(c, WEB)})
+            except Exception as e:
+                return self._json({"ok": False, "error": type(e).__name__}, 502)
         if ruta == "/api/sesion":
             s = self.sesion or {}
             return self._json({"ok": True, "login": bool(SECRETO), "correo": s.get("u"), "nombre": s.get("n"),
@@ -589,6 +757,16 @@ class Handler(smn_server.Handler):
         u = urlsplit(self.path)
         if u.path == "/login" and SECRETO:
             return self._login()
+        if u.path.startswith("/api/camara/"):
+            return self._post_camara(u.path)
+        if u.path.startswith(("/api/admin/", "/api/cuenta/")):
+            if self._protegido(u.path):
+                return None
+            if SECRETO and self.headers.get("Origin") and urlsplit(self.headers["Origin"]).netloc != self.headers.get("Host"):
+                return self._json({"ok": False, "error": "origen no permitido"}, 403)
+            if not DB:
+                return self._json({"ok": False, "error": "sin base de datos (DATABASE_URL)"}, 503)
+            return self._post_admin(u.path)
         m = re.match(r"^/api/(candidatos|ordenes)/([^/]+)$", u.path)
         if not m:
             return self._json({"ok": False, "error": "ruta desconocida"}, 404)
@@ -634,9 +812,11 @@ def main():
     a = ap.parse_args()
     if a.host not in ("127.0.0.1", "localhost") and (not SECRETO or len(SECRETO) < 32 or not DB):
         sys.exit("Para abrirlo a la red define DATABASE_URL y SESION_SECRETO (32+ caracteres): sin ellos no hay login.")
-    if SECRETO and DB:
+    if DB:
         with con() as c:
-            c.execute(ESQUEMA_USUARIOS)
+            c.execute(camaras.ESQUEMA)
+            if SECRETO:
+                c.execute(ESQUEMA_USUARIOS)
     threading.Thread(target=limites_inegi, daemon=True).start()   # precarga para que el tablero abra rápido
     srv = ThreadingHTTPServer((a.host, a.port), Handler)
     print(f"Tablero: http://{a.host}:{a.port}/index.html")
