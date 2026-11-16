@@ -41,25 +41,113 @@
     primera = false;
   }
 
+  /* Panel "Cámara en vivo": lo que está viendo la cámara del vehículo, con los recuadros del modelo. */
+  const panel = document.createElement("section");
+  panel.className = "cam-vivo";
+  panel.hidden = true;
+  panel.setAttribute("aria-label", "Cámara en vivo");
+  panel.innerHTML = `
+    <header><span class="cam-vivo-luz" aria-hidden="true"></span><b class="cam-vivo-titulo">Cámara en vivo</b>
+      <button type="button" class="cam-vivo-cerrar" aria-label="Cerrar la vista de la cámara">×</button></header>
+    <div class="cam-vivo-marco"><img hidden alt="Último cuadro que vio la cámara, con lo que detectó el modelo"><p class="cam-vivo-espera">Esperando el primer cuadro…</p></div>
+    <p class="cam-vivo-estado"></p>
+    <ul class="cam-vivo-dets"></ul>
+    <label class="cam-vivo-seguir"><input type="checkbox"> Seguir al vehículo en el mapa</label>`;
+  document.body.append(panel);
+  const pImg = panel.querySelector("img"), pEspera = panel.querySelector(".cam-vivo-espera");
+  const pTitulo = panel.querySelector(".cam-vivo-titulo"), pEstado = panel.querySelector(".cam-vivo-estado");
+  const pDets = panel.querySelector(".cam-vivo-dets"), pSeguir = panel.querySelector(".cam-vivo-seguir input");
+  pSeguir.addEventListener("change", () => { if (pSeguir.checked) centra(); });
+  function centra() {
+    const v = activos.find(x => x.vehiculo === elegido);
+    if (v) mapa.setView([v.lat, v.lng], Math.max(mapa.getZoom(), 15), { animate: true });
+  }
+  let elegido = null, cerradoPor = null, urlVista = null, activos = [];
+  panel.querySelector(".cam-vivo-cerrar").addEventListener("click", () => { cerradoPor = elegido; panel.hidden = true; });
+
+  function abre(veh) { elegido = veh; cerradoPor = null; panel.hidden = false; pinta(); vista(); }
+
+  function pinta() {
+    const v = activos.find(x => x.vehiculo === elegido);
+    if (!v) return;
+    pTitulo.textContent = `Cámara ${v.vehiculo} · en vivo`;
+    panel.classList.toggle("cam-vivo-quieta", v.hace_s > 15);
+    const partes = [];
+    if (v.cuadro) partes.push(v.total ? `Cuadro ${v.cuadro} de ${v.total}` : `Cuadro ${v.cuadro}`);
+    if (v.km) partes.push(`${v.km.toFixed(1)} km recorridos`);
+    if (v.ms) partes.push(`modelo ${v.ms} ms`);
+    partes.push(v.hace_s <= 2 ? "ahora" : `hace ${v.hace_s} s`);
+    pEstado.textContent = partes.join(" · ");
+    pDets.replaceChildren();
+    const lista = v.dets && v.dets.length ? v.dets : null;
+    if (!lista) {
+      const li = document.createElement("li"); li.className = "cam-vivo-nada";
+      li.textContent = "Sin fallas en este cuadro"; pDets.append(li);
+    } else for (const d of lista) {
+      const li = document.createElement("li");
+      li.textContent = `${d.clase.replace(/_/g, " ")} · ${Math.round(d.confianza * 100)}%`;
+      pDets.append(li);
+    }
+  }
+
+  async function vista() {
+    if (panel.hidden || !elegido || document.hidden) return;
+    try {
+      const r = await fetch("/api/camara/vista?v=" + encodeURIComponent(elegido), { cache: "no-store" });
+      if (!r.ok) return;
+      const url = URL.createObjectURL(await r.blob());
+      const nueva = new Image();                    // se precarga para no mostrar un cuadro a medias
+      nueva.onload = () => {
+        pImg.src = url; pImg.hidden = false; pEspera.hidden = true;
+        if (urlVista) URL.revokeObjectURL(urlVista);
+        urlVista = url;
+      };
+      nueva.onerror = () => URL.revokeObjectURL(url);
+      nueva.src = url;
+    } catch (_) { /* sin conexión */ }
+  }
+
   async function vehiculos() {
     try {
       const r = await fetch("/api/camara/vehiculos", { cache: "no-store" });
       if (!r.ok) return;
       const j = await r.json();
       if (!j.ok) return;
+      activos = j.vehiculos;
       if (!capaVeh) capaVeh = L.layerGroup().addTo(mapa);
       capaVeh.clearLayers();
-      for (const v of j.vehiculos) {
+      for (const v of activos) {
+        // recorrido en vivo: por dónde ha pasado el vehículo
+        if (v.ruta && v.ruta.length > 1) {
+          L.polyline(v.ruta, { color: "#0b1220", weight: 8, opacity: .35, interactive: false }).addTo(capaVeh);
+          L.polyline(v.ruta, { color: "#3cc8d4", weight: 4, opacity: .95, interactive: false }).addTo(capaVeh);
+          L.circleMarker(v.ruta[0], { radius: 5, color: "#3cc8d4", weight: 2, fillColor: "#0b1220", fillOpacity: 1, interactive: false })
+            .addTo(capaVeh);
+          let km = 0;
+          for (let i = 1; i < v.ruta.length; i++) km += mapa.distance(v.ruta[i - 1], v.ruta[i]) / 1000;
+          v.km = km;
+        }
         const icono = L.divIcon({ className: "cam-veh", html: `<span class="cam-veh-punto"></span><span class="cam-veh-nombre"></span>`, iconSize: [0, 0] });
         const m = L.marker([v.lat, v.lng], { icon: icono, zIndexOffset: 1000, keyboard: false }).addTo(capaVeh);
         const el = m.getElement();
         if (el) el.querySelector(".cam-veh-nombre").textContent = v.vehiculo;
-        m.bindTooltip(`Cámara ${v.vehiculo} · hace ${v.hace_s} s`, { direction: "top" });
+        m.bindTooltip(`Cámara ${v.vehiculo} · clic para ver lo que está viendo`, { direction: "top" });
+        m.on("click", () => abre(v.vehiculo));
       }
+      // se abre sola con la primera cámara activa (salvo que la persona la haya cerrado)
+      if (!activos.some(v => v.vehiculo === elegido)) elegido = null;
+      if (!elegido && activos.length) {
+        const v = activos.find(x => x.vista && x.hace_s < 60 && x.vehiculo !== cerradoPor);
+        if (v) abre(v.vehiculo);
+      }
+      if (!activos.length) panel.hidden = true;
+      pinta();
+      if (pSeguir.checked && !panel.hidden) centra();
     } catch (_) { /* sin conexión */ }
   }
 
   detecciones(); vehiculos();
   setInterval(detecciones, 20000);
-  setInterval(vehiculos, 5000);
+  setInterval(vehiculos, 3000);
+  setInterval(vista, 2000);
 })();

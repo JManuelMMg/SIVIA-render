@@ -10,11 +10,14 @@ Extiende smn_server.py (clima SMN, GOES, radar, INEGI, SSN, USGS; sin cambios) c
   GET  /cuenta, POST /api/cuenta/clave cada usuario cambia su propia contraseña
   POST /api/camara/deteccion, /posicion  cámaras de los vehículos (token de dispositivo en CAMARA_TOKENS)
   GET  /api/camara/candidatos, /vehiculos detecciones de cámara y vehículos activos para el tablero (con sesión)
+  GET  /api/camara/vista?v=GDL-01        último cuadro que vio esa cámara, con los recuadros (con sesión)
   GET  /api/bd/estado                  conexión y conteos
   GET  /api/candidatos                 {id: estado} de los candidatos del modelo
   POST /api/candidatos/<id>            {"estado": "confirmado"|"descartado"|"pendiente"}      (operador, admin)
   GET  /api/ordenes?dependencia=...    órdenes con su estado (el rol "dependencia" ve solo las suyas)
-  POST /api/ordenes/<id>               {"estado": "asignada"|"en_atencion"|"resuelta"|"descartada"|"pendiente"}
+  POST /api/ordenes/<id>               {"estado": "asignada"|"en_atencion"|"resuelta"|"descartada"|"pendiente", "nota"}
+  POST /api/ordenes/nueva              formulario de la validación: confirma el candidato y turna su orden (operador, admin)
+  GET  /api/ordenes/turnadas           órdenes creadas desde la validación (el rol "dependencia" ve solo las suyas)
   GET  /api/evidencia/<archivo>        redirige a una liga firmada del bucket (si está configurado)
 
 Seguridad (se activa al definir SESION_SECRETO; en Render es obligatorio):
@@ -57,6 +60,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import smn_server  # noqa: E402
 import admin  # noqa: E402
 import camaras  # noqa: E402
+import turnado  # noqa: E402
 
 DB = os.environ.get("DATABASE_URL")
 BUCKET = os.environ.get("BUCKET", "reportbucket")
@@ -678,6 +682,17 @@ class Handler(smn_server.Handler):
             return self._get_admin(ruta, u.query)
         if ruta == "/api/camara/vehiculos":
             return self._json({"ok": True, "vehiculos": camaras.vehiculos()})
+        if ruta == "/api/camara/vista":
+            foto = camaras.vista(parse_qs(u.query).get("v", [""])[0])
+            if not foto:
+                return self._json({"ok": False, "error": "sin vista de esa cámara"}, 404)
+            self.send_response(200)
+            self.send_header("Content-Type", "image/jpeg")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(foto)))
+            self.end_headers()
+            self.wfile.write(foto)
+            return None
         if ruta == "/api/camara/candidatos":
             if not DB:
                 return self._json({"ok": True, "candidatos": []})
@@ -724,6 +739,12 @@ class Handler(smn_server.Handler):
                 with con() as c:
                     filas = c.execute("SELECT id, estado FROM candidatos").fetchall()
                 return self._json({"ok": True, "estados": dict(filas)})
+            if ruta in ("/api/ordenes/turnadas", "/api/ordenes/dependencias"):
+                with con() as c:
+                    if ruta.endswith("dependencias"):
+                        return self._json({"ok": True, "dependencias": turnado.dependencias(c, WEB)})
+                    dep = self.sesion.get("d") if self.sesion and self.sesion["r"] == "dependencia" else None
+                    return self._json({"ok": True, "ordenes": turnado.lista(c, dep), "mi_dependencia": dep})
             if ruta == "/api/ordenes":
                 dep = parse_qs(u.query).get("dependencia", [None])[0]
                 if self.sesion and self.sesion["r"] == "dependencia":
@@ -776,8 +797,12 @@ class Handler(smn_server.Handler):
             return self._json({"ok": False, "error": "origen no permitido"}, 403)
         if not DB:
             return self._json({"ok": False, "error": "sin base de datos (DATABASE_URL)"}, 503)
+        if u.path == "/api/ordenes/nueva":
+            return self._orden_nueva()
         tabla, rid = m.group(1), unquote(m.group(2))
-        estado = str(self._cuerpo().get("estado", ""))
+        cuerpo = self._cuerpo()
+        estado = str(cuerpo.get("estado", ""))
+        nota = " ".join(str(cuerpo.get("nota") or "").split())[:300] or None
         if not ID_OK.match(rid) or estado not in (EST_CAND if tabla == "candidatos" else EST_ORD):
             return self._json({"ok": False, "error": "dato inválido"}, 400)
         rol = self.sesion["r"] if self.sesion else "admin"
@@ -796,11 +821,30 @@ class Handler(smn_server.Handler):
                         return self._json({"ok": False, "error": "cuenta desactivada"}, 403)
                 n = c.execute(f"UPDATE {tabla} SET estado = %s, {extra} WHERE id = %s{filtro}", params).rowcount
                 if n:
-                    c.execute("INSERT INTO eventos (tabla, registro, estado, usuario) VALUES (%s, %s, %s, %s)",
-                              (tabla, rid, estado, usuario))
+                    c.execute("INSERT INTO eventos (tabla, registro, estado, usuario, nota) VALUES (%s, %s, %s, %s, %s)",
+                              (tabla, rid, estado, usuario, nota))
         except Exception as e:
             return self._json({"ok": False, "error": type(e).__name__}, 502)
         return self._json({"ok": bool(n), "id": rid, "estado": estado}, 200 if n else 404)
+
+    def _orden_nueva(self):
+        """Formulario de la validación: confirma el candidato y crea su orden turnada a la dependencia."""
+        rol = self.sesion["r"] if self.sesion else "admin"
+        usuario = self.sesion["u"] if self.sesion else "local"
+        if rol not in ("operador", "admin"):
+            return self._json({"ok": False, "error": "solo operador o admin pueden crear órdenes"}, 403)
+        try:
+            datos = self._cuerpo()
+            with con() as c:
+                if SECRETO:
+                    act = c.execute("SELECT activo FROM usuarios WHERE correo = %s", (usuario,)).fetchone()
+                    if not act or not act[0]:
+                        return self._json({"ok": False, "error": "cuenta desactivada"}, 403)
+                return self._json({"ok": True, **turnado.crear(c, datos, usuario, WEB)})
+        except turnado.ErrorOrden as e:
+            return self._json({"ok": False, "error": str(e)}, e.codigo)
+        except Exception as e:
+            return self._json({"ok": False, "error": type(e).__name__}, 502)
 
 
 def main():
@@ -815,6 +859,7 @@ def main():
     if DB:
         with con() as c:
             c.execute(camaras.ESQUEMA)
+            c.execute(turnado.ESQUEMA)
             if SECRETO:
                 c.execute(ESQUEMA_USUARIOS)
     threading.Thread(target=limites_inegi, daemon=True).start()   # precarga para que el tablero abra rápido
