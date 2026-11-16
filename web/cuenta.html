@@ -6,7 +6,9 @@
 <title>SIVIA · Mi cuenta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/publico/estilo.css">
+<script>try{var t=localStorage.getItem("sivia_tema");if(t)document.documentElement.dataset.tema=t}catch(e){}</script>
+<script src="/publico/tema.js?v=3" defer></script>
+<link rel="stylesheet" href="/publico/estilo.css?v=4">
 <link rel="icon" type="image/png" href="/publico/logo_icono.png">
 <style>
   .cuenta { padding: 48px 0 80px; }
@@ -18,14 +20,15 @@
   .cuenta h2 { font-size: 20px; margin: 0 0 6px; font-stretch: 100%; }
   .cuenta .ayuda { margin: 0 0 18px; color: var(--suave); font-size: 14px; }
   form { display: grid; gap: 16px; }
-  .ok-msg { margin: 0; padding: 12px 14px; border-radius: var(--radio); border: 1px solid rgba(60, 200, 212, .5); background: rgba(60, 200, 212, .08); color: var(--acento-claro); font-size: 14px; }
+  .ok-msg { margin: 0; padding: 12px 14px; border-radius: var(--radio); border: 1px solid rgba(60, 200, 212, .5); background: rgba(60, 200, 212, .08); color: var(--ok-txt); font-size: 14px; }
 </style>
 </head>
 <body>
 <header class="barra">
   <div class="envoltura">
-    <a class="marca" href="/" aria-label="SIVIA, inicio"><img src="/publico/logo_icono.png" alt="" width="38" height="34">SIVIA</a>
+    <a class="marca" href="/" aria-label="SIVIA, inicio"><img class="solo-oscuro" src="/publico/logo_icono.png" alt="" width="38" height="34"><img class="solo-claro" src="/publico/logo_icono_claro.png" alt="" width="38" height="34">SIVIA</a>
     <nav style="margin-left:auto;display:flex;gap:8px">
+      <button class="tema-btn" type="button" data-cambia-tema aria-label="Cambiar entre tema claro y oscuro" title="Tema claro u oscuro"><svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
       <a class="boton chico sec" href="/tablero">Tablero</a>
       <a class="boton chico" href="/salir">Salir</a>
     </nav>

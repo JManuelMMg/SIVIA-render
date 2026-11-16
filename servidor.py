@@ -8,6 +8,8 @@ Extiende smn_server.py (clima SMN, GOES, radar, INEGI, SSN, USGS; sin cambios) c
   GET  /api/sesion                     quién está conectado y con qué rol
   GET  /admin, /api/admin/...          panel del administrador: resumen, usuarios, bitácora, bloqueos (solo admin)
   GET  /cuenta, POST /api/cuenta/clave cada usuario cambia su propia contraseña
+  POST /api/camara/deteccion, /posicion  cámaras de los vehículos (token de dispositivo en CAMARA_TOKENS)
+  GET  /api/camara/candidatos, /vehiculos detecciones de cámara y vehículos activos para el tablero (con sesión)
   GET  /api/bd/estado                  conexión y conteos
   GET  /api/candidatos                 {id: estado} de los candidatos del modelo
   POST /api/candidatos/<id>            {"estado": "confirmado"|"descartado"|"pendiente"}      (operador, admin)
@@ -54,6 +56,7 @@ from urllib.parse import parse_qs, quote, unquote, urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import smn_server  # noqa: E402
 import admin  # noqa: E402
+import camaras  # noqa: E402
 
 DB = os.environ.get("DATABASE_URL")
 BUCKET = os.environ.get("BUCKET", "reportbucket")
@@ -299,6 +302,11 @@ PUBLICOS = {"/publico/estilo.css": ("estilo.css", "text/css; charset=utf-8"),
             "/publico/mapa.svg": ("mapa.svg", "image/svg+xml"),
             "/publico/logo.png": ("logo.png", "image/png"),
             "/publico/logo_icono.png": ("logo_icono.png", "image/png"),
+            "/publico/logo_claro.png": ("logo_claro.png", "image/png"),
+            "/publico/logo_icono_claro.png": ("logo_icono_claro.png", "image/png"),
+            "/publico/tema.js": ("tema.js", "text/javascript; charset=utf-8"),
+            "/publico/mapa3d.js": ("mapa3d.js", "text/javascript; charset=utf-8"),
+            "/publico/municipio3d.json": ("municipio3d.json", "application/json"),
             "/favicon.ico": ("logo_icono.png", "image/png")}
 
 ERRORES = {
@@ -314,12 +322,12 @@ ETIQUETAS = {403: "Acceso denegado", 404: "No encontrado", 405: "No permitido", 
              500: "Error del servidor", 503: "Sin servicio"}
 
 BARRA = """<div id="sivia-sesion" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;align-items:center;
-gap:10px;padding:7px 8px 7px 14px;border-radius:999px;background:rgba(5,8,15,.94);border:1px solid #2a3a5e;color:#eaf0f8;
+gap:10px;padding:7px 8px 7px 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--tx);
 font:500 13px/1.2 system-ui,'Segoe UI',sans-serif;box-shadow:0 12px 28px -12px rgba(0,0,0,.6)">
 <img src="/publico/logo_icono.png" alt="" style="width:24px;height:auto">
-<span>__USUARIO__ <span style="color:#aeb9cd">· __ROL__</span></span>
-__EXTRA__<a href="/cuenta" style="padding:5px 10px;border-radius:999px;border:1px solid #2a3a5e;color:#eaf0f8;text-decoration:none">Mi cuenta</a>
-<a href="/salir" style="padding:5px 12px;border-radius:999px;background:#3cc8d4;color:#031417;font-weight:700;text-decoration:none">Salir</a>
+<span>__USUARIO__ <span style="color:var(--mut)">· __ROL__</span></span>
+__EXTRA__<a href="/cuenta" style="padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--tx);text-decoration:none">Mi cuenta</a>
+<a href="/salir" style="padding:5px 12px;border-radius:999px;background:var(--acento);color:var(--sobre);font-weight:700;text-decoration:none">Salir</a>
 </div></body>"""
 
 
@@ -375,6 +383,42 @@ class Handler(smn_server.Handler):
             return json.loads(self._cuerpo_crudo() or b"{}")
         except ValueError:
             return {}
+
+    def _cuerpo_grande(self, maximo=1_400_000):
+        n = int(self.headers.get("Content-Length") or 0)
+        if n > maximo:
+            raise camaras.ErrorCamara("mensaje demasiado grande", 413)
+        try:
+            return json.loads(self.rfile.read(n) or b"{}") if n > 0 else {}
+        except ValueError:
+            raise camaras.ErrorCamara("JSON inválido")
+
+    def _post_camara(self, ruta):
+        """Detecciones y posición que mandan las cámaras de los vehículos (sin sesión: token de dispositivo)."""
+        if not camaras.tokens():
+            return self._json({"ok": False, "error": "cámaras no configuradas (CAMARA_TOKENS)"}, 503)
+        veh = camaras.autentica(self.headers.get("Authorization"))
+        if not veh:
+            return self._json({"ok": False, "error": "token de cámara inválido"}, 401)
+        if not camaras.ritmo_ok(veh):
+            return self._json({"ok": False, "error": "demasiados envíos; espera un momento"}, 429)
+        try:
+            datos = self._cuerpo_grande()
+            if ruta == "/api/camara/posicion":
+                camaras.posicion(veh, datos)
+                return self._json({"ok": True})
+            if ruta == "/api/camara/deteccion":
+                if not DB:
+                    return self._json({"ok": False, "error": "sin base de datos (DATABASE_URL)"}, 503)
+                with con() as c:
+                    return self._json({"ok": True, **camaras.registra(c, datos, veh, s3(), BUCKET)})
+        except camaras.ErrorCamara as e:
+            return self._json({"ok": False, "error": str(e)}, e.codigo)
+        except (TypeError, ValueError):
+            return self._json({"ok": False, "error": "dato inválido"}, 400)
+        except Exception as e:
+            return self._json({"ok": False, "error": type(e).__name__}, 502)
+        return self._json({"ok": False, "error": "ruta desconocida"}, 404)
 
     def _cookie(self, valor, edad):
         return (f"sivia_sesion={valor}; Path=/; Max-Age={edad}; HttpOnly; SameSite=Strict"
@@ -445,7 +489,7 @@ class Handler(smn_server.Handler):
             barra = (BARRA.replace("__USUARIO__", html.escape(self.sesion.get("n") or self.sesion["u"]))
                      .replace("__ROL__", html.escape(self.sesion["r"] + (f" ({self.sesion['d']})" if self.sesion.get("d") else "")))
                      .replace("__EXTRA__", '<a href="/admin" style="padding:5px 10px;border-radius:999px;border:1px solid '
-                              '#3cc8d4;color:#3cc8d4;text-decoration:none">Panel</a>' if self.sesion["r"] == "admin" else ""))
+                              'var(--acento);color:var(--acento);text-decoration:none">Panel</a>' if self.sesion["r"] == "admin" else ""))
             texto = texto.replace("</body>", barra, 1)
         return self._html(texto)
 
@@ -482,7 +526,8 @@ class Handler(smn_server.Handler):
         cuerpo = (WEB / nombre).read_bytes()
         self.send_response(200)
         self.send_header("Content-Type", tipo)
-        self.send_header("Cache-Control", "public, max-age=86400")
+        corto = nombre.endswith((".js", ".css", ".json"))       # código y datos: se renuevan pronto
+        self.send_header("Cache-Control", "public, max-age=" + ("300" if corto else "86400"))
         self.send_header("Content-Length", str(len(cuerpo)))
         self.end_headers()
         self.wfile.write(cuerpo)
@@ -631,6 +676,16 @@ class Handler(smn_server.Handler):
                               .replace("__CORREO__", html.escape(s["u"])).replace("__ROL__", html.escape(s["r"])))
         if ruta.startswith("/api/admin/"):
             return self._get_admin(ruta, u.query)
+        if ruta == "/api/camara/vehiculos":
+            return self._json({"ok": True, "vehiculos": camaras.vehiculos()})
+        if ruta == "/api/camara/candidatos":
+            if not DB:
+                return self._json({"ok": True, "candidatos": []})
+            try:
+                with con() as c:
+                    return self._json({"ok": True, "candidatos": camaras.lista(c, WEB)})
+            except Exception as e:
+                return self._json({"ok": False, "error": type(e).__name__}, 502)
         if ruta == "/api/sesion":
             s = self.sesion or {}
             return self._json({"ok": True, "login": bool(SECRETO), "correo": s.get("u"), "nombre": s.get("n"),
@@ -702,6 +757,8 @@ class Handler(smn_server.Handler):
         u = urlsplit(self.path)
         if u.path == "/login" and SECRETO:
             return self._login()
+        if u.path.startswith("/api/camara/"):
+            return self._post_camara(u.path)
         if u.path.startswith(("/api/admin/", "/api/cuenta/")):
             if self._protegido(u.path):
                 return None
@@ -755,9 +812,11 @@ def main():
     a = ap.parse_args()
     if a.host not in ("127.0.0.1", "localhost") and (not SECRETO or len(SECRETO) < 32 or not DB):
         sys.exit("Para abrirlo a la red define DATABASE_URL y SESION_SECRETO (32+ caracteres): sin ellos no hay login.")
-    if SECRETO and DB:
+    if DB:
         with con() as c:
-            c.execute(ESQUEMA_USUARIOS)
+            c.execute(camaras.ESQUEMA)
+            if SECRETO:
+                c.execute(ESQUEMA_USUARIOS)
     threading.Thread(target=limites_inegi, daemon=True).start()   # precarga para que el tablero abra rápido
     srv = ThreadingHTTPServer((a.host, a.port), Handler)
     print(f"Tablero: http://{a.host}:{a.port}/index.html")

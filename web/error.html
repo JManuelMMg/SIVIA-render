@@ -6,14 +6,17 @@
 <title>SIVIA · __TITULO__</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/publico/estilo.css">
+<script>try{var t=localStorage.getItem("sivia_tema");if(t)document.documentElement.dataset.tema=t}catch(e){}</script>
+<script src="/publico/tema.js?v=3" defer></script>
+<link rel="stylesheet" href="/publico/estilo.css?v=4">
 <link rel="icon" type="image/png" href="/publico/logo_icono.png">
 </head>
 <body>
 <main class="pantalla-error">
+  <div style="position:absolute;top:16px;right:16px;z-index:2"><button class="tema-btn" type="button" data-cambia-tema aria-label="Cambiar entre tema claro y oscuro" title="Tema claro u oscuro"><svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button></div>
   <img src="/publico/mapa.svg" alt="" aria-hidden="true">
   <div class="aviso __GRAVEDAD__" role="alert">
-    <img class="logo-aviso" src="/publico/logo_icono.png" alt="SIVIA">
+    <img class="logo-aviso solo-oscuro" src="/publico/logo_icono.png" alt="SIVIA"><img class="logo-aviso solo-claro" src="/publico/logo_icono_claro.png" alt="SIVIA">
     <p class="codigo"><b>__CODIGO__</b>__ETIQUETA__</p>
     <h1>__TITULO__</h1>
     <p>__MENSAJE__</p>

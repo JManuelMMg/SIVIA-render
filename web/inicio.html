@@ -7,16 +7,19 @@
 <meta name="description" content="SIVIA, Sistema Inteligente de Vigilancia de Infraestructura y Anomalías: inspección preventiva con inteligencia artificial del entorno de escuelas, guarderías y hospitales de Guadalajara.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/publico/estilo.css">
+<script>try{var t=localStorage.getItem("sivia_tema");if(t)document.documentElement.dataset.tema=t}catch(e){}</script>
+<script src="/publico/tema.js?v=3" defer></script>
+<link rel="stylesheet" href="/publico/estilo.css?v=4">
 <link rel="icon" type="image/png" href="/publico/logo_icono.png">
 </head>
 <body>
 <header class="barra">
   <div class="envoltura">
     <a class="marca" href="/" aria-label="SIVIA, inicio">
-      <img src="/publico/logo_icono.png" alt="" width="38" height="34">SIVIA
+      <img class="solo-oscuro" src="/publico/logo_icono.png" alt="" width="38" height="34"><img class="solo-claro" src="/publico/logo_icono_claro.png" alt="" width="38" height="34">SIVIA
     </a>
     <p class="estado" id="estado" aria-live="polite" title="Pronóstico oficial del Servicio Meteorológico Nacional para Guadalajara, la hora más cercana"><span class="punto"></span><span class="txt">Consultando el pronóstico del SMN…</span></p>
+    <button class="tema-btn" type="button" data-cambia-tema aria-label="Cambiar entre tema claro y oscuro" title="Tema claro u oscuro"><svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg></button>
     __ACCION_BARRA__
   </div>
 </header>
@@ -41,9 +44,10 @@
       <figure class="mapa">
         <div class="mapa-cabeza">
           <h2 class="mapa-titulo">Mapa de riesgo de Guadalajara</h2>
-          <p>Cada punto es una escuela, guardería u hospital. Su color dice qué tan riesgoso es su entorno; los puntos tenues son accidentes de tránsito.</p>
+          <p>Dentro del límite municipal (INEGI): dónde se juntan los accidentes y qué tan riesgoso es el entorno de cada escuela, guardería u hospital.</p>
         </div>
-        <div class="lienzo"><div class="rejilla" aria-hidden="true"></div><img src="/publico/mapa.svg" alt="Mapa de Guadalajara con los accidentes de tránsito de 2022 a 2024 y las 1,646 instituciones coloreadas por nivel de riesgo" width="1000" height="992"></div>
+        <div class="lienzo"><div class="rejilla" aria-hidden="true"></div><canvas id="mapa3d" hidden role="img" aria-label="Municipio de Guadalajara en 3D dividido en zonas: la altura de cada zona es el número de accidentes de tránsito y su color el riesgo más alto de sus escuelas, guarderías y hospitales. Arrastra para girarlo."></canvas><div class="mapa3d-info" id="mapa3d-info" hidden></div><img id="mapa-plano" src="/publico/mapa.svg" alt="Mapa de Guadalajara con los accidentes de tránsito de 2022 a 2024 y las 1,646 instituciones coloreadas por nivel de riesgo" width="1000" height="992"></div>
+        <p class="mapa3d-ayuda" id="mapa3d-ayuda" hidden>Vista 3D del municipio en zonas de unos 700 m: la <b>altura</b> es el número de accidentes de tránsito 2022-2024 y el <b>color</b>, el riesgo más alto de las instituciones de esa zona (gris: sin instituciones). Pasa el cursor por una zona para ver su detalle; arrastra para girar.</p>
         <figcaption>
           <ul class="leyenda">
             <li><i class="r"></i><span><b>Riesgo alto · 152</b>Falla detectada con atropellamientos cerca, o sin cruce peatonal visible</span></li>
@@ -98,7 +102,8 @@
   <section class="seccion acceso">
     <div class="envoltura">
       <div>
-        <img class="logo-seccion" src="/publico/logo.png" alt="SIVIA · Sistema Inteligente de Vigilancia de Infraestructura y Anomalías" width="170" height="192">
+        <img class="logo-seccion solo-oscuro" src="/publico/logo.png" alt="SIVIA · Sistema Inteligente de Vigilancia de Infraestructura y Anomalías" width="170" height="192">
+        <img class="logo-seccion solo-claro" src="/publico/logo_claro.png" alt="SIVIA · Sistema Inteligente de Vigilancia de Infraestructura y Anomalías" width="170" height="192">
         <h2>Acceso solo para personal autorizado</h2>
         <p>Las cuentas las da de alta el administrador de la plataforma; no hay registro abierto. Cada inicio de sesión y cada cambio queda registrado con el nombre de quien lo hizo.</p>
         __ACCION_ACCESO__
@@ -124,6 +129,8 @@
   </div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="/publico/mapa3d.js?v=7" defer></script>
 <script>
 (async () => {
   const caja = document.getElementById("estado"), txt = caja.querySelector(".txt");
